@@ -3062,7 +3062,7 @@ function doReorder(si,ii){
   var el=document.getElementById('sec-'+si);
   if(el)el.outerHTML=renderSec(S.wod.sections[si],si);
 }
-function openExerciseVideo(name){var q=encodeURIComponent(name+' crossfit');var a=document.createElement('a');a.href='https://www.youtube.com/results?search_query='+q;a.target='_blank';a.rel='noopener noreferrer';document.body.appendChild(a);a.click();document.body.removeChild(a);}
+function openExerciseVideo(name){var q=encodeURIComponent(name+' crossfit');window.location.href='https://www.youtube.com/results?search_query='+q;}
 function renderStr(it,si,ii,num,roundIdx){
   var ex=it.ex;
   var emTag=it.emomMin?'<span style="background:var(--og);color:var(--or);font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;margin-left:5px">'+it.emomMin+'</span>':'';
