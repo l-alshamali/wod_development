@@ -638,8 +638,10 @@ var CARDIO=[
   {name:'Ski Erg',      amount:1000, unit:'m',    alts:['Row','Run','Assault Bike']},
   {name:'Ski Erg',      amount:20,   unit:'Cal',  alts:['Row','Run','Assault Bike']},
   {name:'Ski Erg',      amount:30,   unit:'Cal',  alts:['Row','Run','Assault Bike']},
-  {name:'Double-Unders',amount:30,   unit:'reps', alts:['Single-Unders','Jump Rope']},
-  {name:'Double-Unders',amount:50,   unit:'reps', alts:['Single-Unders','Jump Rope']},
+  {name:'Double-Unders',amount:30,   unit:'reps', alts:['Single-Unders','Row','Assault Bike']},
+  {name:'Double-Unders',amount:50,   unit:'reps', alts:['Single-Unders','Row','Assault Bike']},
+  {name:'Single-Unders',amount:30,   unit:'reps', altOnly:true, alts:['Double-Unders','Row','Assault Bike']},
+  {name:'Single-Unders',amount:50,   unit:'reps', altOnly:true, alts:['Double-Unders','Row','Assault Bike']},
   {name:'Sprint',       amount:100,  unit:'m',    alts:['Run','Row']}];
 var TABATA_STR_NAMES=['Air Squat','Push-Up','Burpee','Mountain Climber','Box Jump','Box Step-Up','Slam Ball','Wall Ball','V-Up','Knees-to-Chest','Broad Jump','KB Swing','American KB Swing','KB Thruster','DB Thruster','DB Snatch','DB Lunge','DB Box Step-Up','DB Push Press','Walking Lunge','Lunge','Reverse Lunge'];
 var TABATA_CARDIO=[
@@ -738,7 +740,8 @@ function getSecondsPerRep(ex,lv,team,split){
     else if(ex.cat==='barbell')base=[3.0,3.2,3.2,4.5][t-1]||3.0;
     else if(ex.cat==='kettlebell')base=[2.5,2.7,3.5,4.25][t-1]||2.5;
     else if(ex.cat==='dumbbell')base=[3.0,3.0,5.0,4.0][t-1]||3.0;
-    else base=3.0;
+    else if(ex.unit==='carry')base=2.0;  // DEFAULT_SPEED carry: elite=2.0→adv=2.4→int=2.8→beg=3.2
+    else base=3.0;                        // DEFAULT_SPEED reps:  elite=3.0→adv=3.6→int=4.2→beg=4.8
   }
   return base*spd;
 }
@@ -823,11 +826,14 @@ function _cardioSecEst(cEx,lv,team,split){
     rate={elite:3.0,advanced:4.2,intermediate:5.7,beginner:6.9}[lv2]||5.7;
   }else if(nm==='double-unders'||nm==='double under'||nm==='double unders'){
     rate={elite:0.46,advanced:0.64,intermediate:0.87,beginner:1.06}[lv2]||0.87;
+  }else if(nm==='single-unders'||nm==='single under'||nm==='single unders'){
+    rate={elite:0.30,advanced:0.42,intermediate:0.57,beginner:0.69}[lv2]||0.57;
   }else{
-    var spd=({elite:0.80,advanced:1.00,intermediate:1.20,beginner:1.60}[lv2]||1.20)*_teamF;
-    if(u==='Cal')return a*5.5*spd;
-    if(u==='m')return(a/10)*3.0*spd;
-    return a*3.0*spd;
+    // DEFAULT_CARDIO_SPEED fallback — manual entry / unknown machine
+    var _dfRate=u==='Cal'?({elite:2.5,advanced:3.5,intermediate:4.75,beginner:5.75}[lv2]||4.75)
+               :u==='m'? ({elite:0.20,advanced:0.28,intermediate:0.38,beginner:0.46}[lv2]||0.38)
+               :         ({elite:0.46,advanced:0.64,intermediate:0.87,beginner:1.06}[lv2]||0.87);
+    return a*_dfRate*_teamF;
   }
   return a*rate*_teamF;
 }
@@ -1056,7 +1062,7 @@ function mkAmrap(time,lv,team,cfg){
   // ── Unified transition table (solo: level-based | team=2: 18s) — AMRAP & YGIG same values ──
   var _amrTm=cfg.noTeamSplit?1:team;
   var _amrTrans=_amrTm===2?18:({beginner:22,intermediate:16,advanced:10,elite:6}[lv]||16);
-  var _amrapCPool=cfg.cardioAmt?CARDIO.filter(function(c){return c.unit==='Cal';}):CARDIO;
+  var _amrapCPool=cfg.cardioAmt?CARDIO.filter(function(c){return c.unit==='Cal'&&!c.altOnly;}):CARDIO.filter(function(c){return !c.altOnly;});
   var _amrapPickEx=_amrapCPool.length?pk(_amrapCPool):null;
   var _amrapExUnit=_amrapPickEx?_amrapPickEx.unit:'Cal';
   var _amrapInitAmt=cfg.cardioAmt||(_amrapExUnit==='Cal'?_amrCL.calMin:_amrCL.mtrMin);
@@ -1742,7 +1748,7 @@ function mkChipper(time,lv,team,cfg){
   var _clCLInit=_chipperCL(lv,team);
   var cEx=addCardio?(function(){if(!CARDIO.length)return null;var _cp=pk(CARDIO);var _cu=_cp.unit;var _mn=_cu==='Cal'?_clCLInit.calMin:_cu==='m'?_clCLInit.mtrMin:_clCLInit.duMin;var _mx=_cu==='Cal'?_clCLInit.calMax:_cu==='m'?_clCLInit.mtrMax:_clCLInit.duMax;return Object.assign({},_cp,{amount:_cardioPickFlat(_cu,_mn,_mx,true).amount});})():null;
   var _clBudget=time*60;
-  var _swapCardio=function(curCex,CL){var _alts=CARDIO.filter(function(c){return!curCex||c.unit!==curCex.unit;});if(!_alts.length)return curCex;var _nc=pk(_alts);return Object.assign({},_nc,{amount:_cardioInitAmt(_nc.unit,CL)});};
+  var _swapCardio=function(curCex,CL){var _alts=CARDIO.filter(function(c){return(!curCex||c.unit!==curCex.unit)&&!c.altOnly;});if(!_alts.length)return curCex;var _nc=pk(_alts);return Object.assign({},_nc,{amount:_cardioInitAmt(_nc.unit,CL)});};
   {
     // ── Limits ──
     var _clLims=_exLimsForTime(chosen,lv,team,true);
@@ -3056,7 +3062,7 @@ function doReorder(si,ii){
   var el=document.getElementById('sec-'+si);
   if(el)el.outerHTML=renderSec(S.wod.sections[si],si);
 }
-function openExerciseVideo(name){var q=encodeURIComponent(name+' crossfit');window.open('https://www.youtube.com/results?search_query='+q,'_blank');}
+function openExerciseVideo(name){var q=encodeURIComponent(name+' crossfit');var a=document.createElement('a');a.href='https://www.youtube.com/results?search_query='+q;a.target='_blank';a.rel='noopener noreferrer';document.body.appendChild(a);a.click();document.body.removeChild(a);}
 function renderStr(it,si,ii,num,roundIdx){
   var ex=it.ex;
   var emTag=it.emomMin?'<span style="background:var(--og);color:var(--or);font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;margin-left:5px">'+it.emomMin+'</span>':'';
@@ -3439,7 +3445,7 @@ function regenEx(si,ii,kind){
   var isTabata=sec.type==='Tabata';
   var newEx;
   if(kind==='cardio'){
-    var _cardioPool=isTabata?TABATA_CARDIO:CARDIO;
+    var _cardioPool=isTabata?TABATA_CARDIO:CARDIO.filter(function(c){return !c.altOnly;});
     if(isTabata){
       do{newEx=pk(_cardioPool);}while(newEx.name===(old.ex&&old.ex._raw||old.ex&&old.ex.name));
       S.wod.sections[si].items[ii]=Object.assign({},old,{ex:tabataCardioEx(newEx)});
