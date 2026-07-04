@@ -3422,9 +3422,22 @@ function swapCardio(si,ii,name){
   var found=null;for(var i=0;i<CARDIO.length;i++){if(CARDIO[i].name===name){found=CARDIO[i];break;}}
   var newUnit=found?found.unit:cur.unit;
   var _swIsChip=sec.type==='Chipper';
-  var newAmount=(found&&found.unit!==cur.unit)
-    ?_cardioAmtNew(newUnit,S.level,S.teamSize,_swIsChip)
-    :_cardioClamp(newUnit,cur.amount,S.level,S.teamSize,_swIsChip);
+  var _swIsYgig=sec.type==='YGIG / Partner WOD'||sec.type==='Group A'||sec.type==='Group B'; // solo stations
+  var _swIsEMOM=sec.type==='EMOM';
+  var _swTeam=_swIsYgig?1:S.teamSize;
+  var newAmount;
+  if(found&&found.unit!==cur.unit){
+    // وحدة مختلفة — time-equivalent: حوّل زمن التمرين الحالي للوحدة الجديدة
+    var _swCurTime=_cardioSecEst(cur,S.level,1,false);
+    var _swRatePerUnit=_cardioSecEst(Object.assign({},found,{amount:1}),S.level,1,false);
+    var _swEquiv=(_swRatePerUnit>0&&_swCurTime>0)?Math.round(_swCurTime/_swRatePerUnit):0;
+    newAmount=_cardioClamp(newUnit,_swEquiv||_cardioAmtNew(newUnit,S.level,_swTeam,_swIsChip),S.level,_swTeam,_swIsChip);
+  }else{
+    // نفس الوحدة — احتفظ بكمية اليوزر
+    newAmount=_cardioClamp(newUnit,cur.amount,S.level,_swTeam,_swIsChip);
+  }
+  // 30% time-cap (EMOM معفي — حدوده أصلاً ضيقة)
+  if(!_swIsEMOM){var _swCL=_swIsChip?_chipperCL(S.level,_swTeam):_cardioLimits(_swTeam,true,S.level);var _swCapped=_cardioCapSec({name:name,unit:newUnit,amount:newAmount},S.time*60*0.30,_swCL,S.level,_swTeam,_swTeam===2);newAmount=_swCapped.amount;}
   // rotate alts
   var newAlts=(cur.alts||[]).filter(function(a){return a!==name;});
   if(cur.name&&newAlts.indexOf(cur.name)<0)newAlts.unshift(cur.name);
@@ -3434,7 +3447,7 @@ function swapCardio(si,ii,name){
   // Ladder: preserve scheme amounts; others: clamp to unit limits
   if(old.cardioAmounts){
     if(sec.type==='Ladder'&&sec.scheme&&sec.scheme.length){newItem.cardioAmounts=sec.scheme.slice();}
-    else{newItem.cardioAmounts=old.cardioAmounts.map(function(a){return _cardioClamp(newUnit,a,S.level,S.teamSize,_swIsChip);});}
+    else{newItem.cardioAmounts=old.cardioAmounts.map(function(a){return _cardioClamp(newUnit,a,S.level,_swTeam,_swIsChip);});}
   }
   sec.items[ii]=newItem;
   reRenderSec(si);toast('✅ Swapped!');
@@ -3452,23 +3465,37 @@ function regenEx(si,ii,kind){
     }else{
       var _oldUnit=old.ex&&old.ex.unit;
       var _oldName=old.ex&&old.ex.name;
-      var _userAmt=old.ex&&old.ex.amount; // الكمية اللي عدّلها اليوزر
+      var _userAmt=old.ex&&old.ex.amount;
+      var _rgIsChip=sec.type==='Chipper';
+      var _isEMOM=sec.type==='EMOM';
+      var _rgIsYgig=sec.type==='YGIG / Partner WOD'||sec.type==='Group A'||sec.type==='Group B'; // solo: each athlete works alone
+      var _rgTeam=_rgIsYgig?1:S.teamSize;
+      // FIX #3: EMOM-aware clamp — يستخدم _emomCardioLimits بدل _cardioLimits
+      var _rgClamp=function(unit,amt){
+        if(_isEMOM){var _ec=_emomCardioLimits(S.level,_rgTeam);var _emn=unit==='Cal'?_ec.calMin:unit==='m'?_ec.mtrMin:_ec.duMin;var _emx=unit==='Cal'?_ec.calMax:unit==='m'?_ec.mtrMax:_ec.duMax;return _cardioNearestSer(unit,Math.max(_emn,Math.min(_emx,amt||_emn)),_emn,_emx);}
+        return _cardioClamp(unit,amt,S.level,_rgTeam,_rgIsChip);
+      };
+      // FIX #3: EMOM-aware amount generator
+      var _rgAmtNew=function(unit){
+        if(_isEMOM){var _ec2=_emomCardioLimits(S.level,_rgTeam);var _emn2=unit==='Cal'?_ec2.calMin:unit==='m'?_ec2.mtrMin:_ec2.duMin;var _emx2=unit==='Cal'?_ec2.calMax:unit==='m'?_ec2.mtrMax:_ec2.duMax;return _cardioPickFlat(unit,_emn2,_emx2).amount;}
+        return _cardioAmtNew(unit,S.level,_rgTeam,_rgIsChip);
+      };
       // حاول نفس الوحدة أولاً
       var _sameUnit=_cardioPool.filter(function(c){return c.unit===_oldUnit;});
       var _diffNames=_sameUnit.map(function(c){return c.name;}).filter(function(n,i,a){return a.indexOf(n)===i&&n!==_oldName;});
       if(_diffNames.length){
-        // يوجد بديل بنفس الوحدة — احتفظ بكمية اليوزر
         var _newName=pk(_diffNames);
         var _newBase=_sameUnit.filter(function(c){return c.name===_newName;})[0]||_sameUnit[0];
-        var _rgIsChip=sec.type==='Chipper';newEx=Object.assign({},_newBase,{amount:_cardioClamp(_oldUnit||_newBase.unit,_userAmt,S.level,S.teamSize,_rgIsChip),unit:_oldUnit||_newBase.unit});
+        newEx=Object.assign({},_newBase,{amount:_rgClamp(_oldUnit||_newBase.unit,_userAmt),unit:_oldUnit||_newBase.unit});
       }else{
-        // لا يوجد بديل بنفس الوحدة — لو نفس الوحدة احتفظ بالكمية، غير ذلك كمية جديدة
         var _anyDiff=_cardioPool.filter(function(c){return c.name!==_oldName;});
         var _picked=pk(_anyDiff.length?_anyDiff:_cardioPool);
-        var _newAmt=(_picked.unit===_oldUnit&&_userAmt)?_cardioClamp(_picked.unit,_userAmt,S.level,S.teamSize,_rgIsChip):_cardioAmtNew(_picked.unit,S.level,S.teamSize,_rgIsChip);
+        var _newAmt=(_picked.unit===_oldUnit&&_userAmt)?_rgClamp(_picked.unit,_userAmt):_rgAmtNew(_picked.unit);
         newEx=Object.assign({},_picked,{amount:_newAmt});
       }
-      var _newItem4=Object.assign({},old,{ex:newEx});if(old.cardioAmounts){if(sec.type==='Ladder'&&sec.scheme&&sec.scheme.length){_newItem4.cardioAmounts=sec.scheme.slice();}else{_newItem4.cardioAmounts=old.cardioAmounts.map(function(a){return _cardioClamp(newEx.unit,a,S.level,S.teamSize,_rgIsChip);});}}S.wod.sections[si].items[ii]=_newItem4;
+      // FIX #2: 30% time-cap (EMOM already tight via _emomCardioLimits)
+      if(!_isEMOM){var _rgCL=_rgIsChip?_chipperCL(S.level,_rgTeam):_cardioLimits(_rgTeam,true,S.level);newEx=_cardioCapSec(newEx,S.time*60*0.30,_rgCL,S.level,_rgTeam,_rgTeam===2);}
+      var _newItem4=Object.assign({},old,{ex:newEx});if(old.cardioAmounts){if(sec.type==='Ladder'&&sec.scheme&&sec.scheme.length){_newItem4.cardioAmounts=sec.scheme.slice();}else{_newItem4.cardioAmounts=old.cardioAmounts.map(function(a){return _rgClamp(newEx.unit,a);});}}S.wod.sections[si].items[ii]=_newItem4;
     }
   }else{
     var _basePool=(sec.type==='Ladder'||sec.type==='Chipper')?getChipperPool(S.level,S.teamSize):getPool(S.level,null,S.teamSize);
