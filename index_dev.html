@@ -100,8 +100,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;heigh
 .spinner{width:48px;height:48px;border:3px solid var(--bdr);border-top-color:var(--or);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 16px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .lt{font-size:14px;color:var(--txt2);font-weight:600}
-.tst{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--gr);color:#000;padding:10px 20px;border-radius:30px;font-weight:700;font-size:13px;transition:transform .3s;z-index:999;text-align:center;max-width:85vw;pointer-events:none}
-.tst.show{transform:translateX(-50%) translateY(0)}
+.tst{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--gr);color:#000;padding:10px 20px;border-radius:30px;font-weight:700;font-size:13px;transition:transform .3s,opacity .3s;opacity:0;z-index:999;text-align:center;max-width:85vw;pointer-events:none}
+.tst.show{transform:translateX(-50%) translateY(0);opacity:1}
 @keyframes su{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .ani{animation:su .25s ease}
 @media(max-width:380px){.wn{font-size:30px}.ob{padding:10px 6px}.on{font-size:12px}}
@@ -2588,7 +2588,7 @@ function renderWod(){
   var w=S.wod;
   app.innerHTML=dots(4)+'<div class="wh ani"><div class="wl">'+t('wod_day')+'</div><div class="wn"><bdi dir="ltr">'+S.wodName+'</bdi></div><div class="wm"><span class="wb o">'+(TL[w.type]||w.type)+'</span><span class="wb">'+({'beginner':t('lv_b'),'intermediate':t('lv_i'),'advanced':t('lv_a'),'elite':t('lv_e')}[S.level]||LL[S.level])+'</span><span class="wb"'+(CFG.lang==='ar'?' dir="ltr"':'')+'>'+S.time+' '+(CFG.lang==='ar'?arMin(S.time):'min')+'</span>'+(S.teamSize>1?'<span class="wb b">'+(CFG.lang==='ar'?t('team_chip'):'Team')+' '+S.teamSize+'</span>':'')+'</div></div>'
   +'<div id="secs">'+w.sections.map(function(s,i){return renderSec(s,i)}).join('')+'</div>'
-  +'<div class="ar"><button class="ab pri" onclick="regen()" style="flex:2;font-size:14px">'+t('new_wod')+'</button><button class="ab" onclick="_swDoSave()" style="background:rgba(255,102,0,0.08);color:var(--or);border:1px solid rgba(255,102,0,0.3);font-size:12px">'+(CFG.lang==='ar'?(_SW_editId!==null?'💾 تحديث':'💾 حفظ'):(_SW_editId!==null?'💾 Update':'💾 Save'))+'</button><button class="ab" onclick="shareWod()" style="background:rgba(255,102,0,0.08);color:var(--or);border:1px solid rgba(255,102,0,0.3);font-size:12px">'+t('share')+'</button></div>'
+  +'<div class="ar"><button class="ab pri" onclick="regen()" style="flex:2;font-size:14px">'+t('new_wod')+'</button><button class="ab pri" onclick="_swDoSave()" style="font-size:12px">'+(CFG.lang==='ar'?(_SW_editId!==null?'💾 تحديث':'💾 حفظ'):(_SW_editId!==null?'💾 Update':'💾 Save'))+'</button><button class="ab pri" onclick="shareWod()" style="font-size:12px">'+t('share')+'</button></div>'
   +'<button class="bk" style="margin:8px 4px 0" onclick="S.cfgStore={};S.step=3;_SW_editId=null;render()">'+t('back_ty')+'</button>'
   +'<div style="text-align:center;padding:16px 0 8px"><button onclick="showTnC()" style="background:none;border:none;color:var(--txt3);font-size:11px;cursor:pointer;text-decoration:underline">'+t('tnc')+'</button></div>';
 }
@@ -5730,7 +5730,7 @@ function _swDoSave(){
     toast('⚠️ Not found','#ff6600');return;
   }
   var saved2=_swLoad();
-  if(saved2.length>=_SW_MAX){toast(CFG.lang==='ar'?'تم الوصول للحد الأقصى<br>يرجى حذف تمرين محفوظ قبل إضافة تمرين جديد.':'Maximum limit reached<br>please delete a saved WOD before adding a new one.','#ff6600',4500);return;}
+  if(saved2.length>=_SW_MAX){toast(CFG.lang==='ar'?'تم الوصول للحد الأقصى — يرجى حذف تمرين محفوظ قبل إضافة تمرين جديد.':'Maximum limit reached — please delete a saved WOD before adding a new one.','#ff6600',4500);return;}
   saved2.unshift({id:Date.now(),dateSaved:_swFmtDate(),customName:null,snap:snap});
   try{localStorage.setItem(_SW_KEY,JSON.stringify(saved2));toast(CFG.lang==='ar'?'💾 تم الحفظ!':'💾 Saved!','#22c55e');_swUpdateBadge();}
   catch(e3){toast('⚠️ '+e3.message,'#ff4444');}
