@@ -1638,7 +1638,10 @@ function mkChipper(time,lv,team,cfg){
     var _stBdg=time*60;
     var _gCapCal=Math.min(_stCL.calMax,_roundCal(_stBdg*0.30/numStations/5.5,team));
     var _gCapMtr=Math.min(_stCL.mtrMax,_roundMtr(_stBdg*0.30/numStations/0.30));
-    var gFixedAmt=cfg.cardioAmt||(gUnit==='Cal'?Math.max(10,Math.ceil(_stCL.calMin/10)*10):_stCL.mtrMin);
+    var _gStMin=gUnit==='Cal'?_stCL.calMin:_stCL.mtrMin;
+    var _gStCap=gUnit==='Cal'?Math.max(_stCL.calMin,_gCapCal):Math.max(_stCL.mtrMin,_gCapMtr);
+    var gFixedAmt=cfg.cardioAmt||_cardioNearestSer(gUnit,_gStMin,_gStMin,_gStCap);
+    if(isNaN(gFixedAmt)||!gFixedAmt)gFixedAmt=_gStMin;
     // ── Loop scaler: هدف 90-100% من الوقت ──
     var _stMaxSt=Math.max.apply(null,_availStCnts);
     var _stMinSt=Math.min.apply(null,_availStCnts);
@@ -1670,8 +1673,8 @@ function mkChipper(time,lv,team,cfg){
           // rep بالحد ↓ — نزّل الكارديو
           if(!cfg.cardioAmt){
             var _stCdnChanged=false;
-            if(gUnit==='Cal'){var _ncG=Math.max(10,gFixedAmt-10);if(_ncG!==gFixedAmt){gFixedAmt=_ncG;_stCdnChanged=true;}}
-            else{var _nmG=Math.max(_stCL.mtrMin,gFixedAmt-_stCL.mtrStep);if(_nmG!==gFixedAmt){gFixedAmt=_nmG;_stCdnChanged=true;}}
+            if(gUnit==='Cal'){var _ncG=_cardioNextSer('Cal',gFixedAmt,-1,_stCL.calMin,_stCL.calMax,true);if(!isNaN(_ncG)&&_ncG!==gFixedAmt){gFixedAmt=_ncG;_stCdnChanged=true;}}
+            else{var _nmG=_cardioNextSer('m',gFixedAmt,-1,_stCL.mtrMin,_stCL.mtrMax);if(!isNaN(_nmG)&&_nmG!==gFixedAmt){gFixedAmt=_nmG;_stCdnChanged=true;}}
             if(_stCdnChanged)continue;
           }
           // كل الكنوبات بالحد ↓ — نزّل ستيشن (فقط لو مو مقفّل)
@@ -1685,8 +1688,8 @@ function mkChipper(time,lv,team,cfg){
           // rep بالسقف ↑ — ارفع الكارديو
           if(!cfg.cardioAmt){
             var _stCupChanged=false;
-            if(gUnit==='Cal'){var _ngC=Math.min(_gCapCal,gFixedAmt+10);if(_ngC!==gFixedAmt){gFixedAmt=_ngC;_stCupChanged=true;}}
-            else{var _ngM=Math.min(_gCapMtr,gFixedAmt+_stCL.mtrStep);if(_ngM!==gFixedAmt){gFixedAmt=_ngM;_stCupChanged=true;}}
+            if(gUnit==='Cal'){var _ngC=Math.min(_gCapCal,_cardioNextSer('Cal',gFixedAmt,1,_stCL.calMin,_stCL.calMax,true));if(!isNaN(_ngC)&&_ngC!==gFixedAmt){gFixedAmt=_ngC;_stCupChanged=true;}}
+            else{var _ngM=Math.min(_gCapMtr,_cardioNextSer('m',gFixedAmt,1,_stCL.mtrMin,_stCL.mtrMax));if(!isNaN(_ngM)&&_ngM!==gFixedAmt){gFixedAmt=_ngM;_stCupChanged=true;}}
             if(_stCupChanged)continue;
           }
           // كل الكنوبات بالسقف ↑ — زد ستيشن (فقط لو مو مقفّل)
@@ -1724,6 +1727,8 @@ function mkChipper(time,lv,team,cfg){
         var avail=gatePool.filter(function(m){return usedGates.indexOf(m)<0;});
         var machineName=pk(avail.length?avail:gatePool);
         usedGates.push(machineName);
+        if(isNaN(gFixedAmt)||!gFixedAmt){gFixedAmt=gUnit==='Cal'?_stCL.calMin:_stCL.mtrMin;}
+        gFixedAmt=_cardioNearestSer(gUnit,gFixedAmt,gUnit==='Cal'?_stCL.calMin:_stCL.mtrMin,gUnit==='Cal'?_stCL.calMax:_stCL.mtrMax);
         var gEx={name:machineName,amount:gFixedAmt,unit:gUnit};
         items.push({kind:'station-gate',ex:gEx,stationNum:s+1,isLast:isLast});
       }
@@ -1836,18 +1841,18 @@ function mkChipper(time,lv,team,cfg){
         else if(_upPick==='exercise'){var _clAP=getChipperPool(lv,team).filter(function(e){return!chosen.some(function(c){return c.name===e.name;});});if(_clAP.length){chosen.push(pk(_clAP));repsArr=_isFlat?repsArr.concat([_snapBase]):_isAsc?_ascGen(_ascBot):_descGen(_dTop);}}
       }
     }
-    // ── Post-loop: اضغط الكارديو وحده لسد الفجوة (cap 45%) ──
+    // ── Post-loop: اضغط الكارديو وحده لسد الفجوة (cap 30%) ──
     if(addCardio&&cEx&&!cfg.cardioAmt){
       var _postCL=_chipperCL(lv,team);
       for(var _ptL=0;_ptL<20;_ptL++){
         var _ptEst=_wodEstTime(repsArr,chosen,cEx,chosen.length+1,team,lv,true);
         if(_ptEst>=_clBudget*0.90)break;
-        if(!_cardioAtMax(cEx,_postCL)&&_cardioSecEst(cEx,lv,team,true)<_clBudget*0.45){cEx=_cardioUp(cEx,_postCL,true);}
+        if(!_cardioAtMax(cEx,_postCL)&&_cardioSecEst(cEx,lv,team,true)<_clBudget*0.30){cEx=_cardioUp(cEx,_postCL,true);}
         else break; // لا swap في الـ post-loop — الهدف يوصل calMax ويوقف مو يدور
       }
     }
-    // كاب الكارديو عند 40% (يمنح مجال كافي للـ post-loop يسد الفجوة)
-    if(addCardio&&cEx)cEx=_cardioCapSec(cEx,_clBudget*0.40,_clCLInit,lv,team,true,true);
+    // كاب الكارديو عند 30%
+    if(addCardio&&cEx)cEx=_cardioCapSec(cEx,_clBudget*0.30,_clCLInit,lv,team,true,true);
   }
   // ── Guard: fix NaN amount before building items ──
   if(addCardio&&cEx&&(isNaN(cEx.amount)||!cEx.amount)){var _fbCL=_chipperCL(lv,team);cEx=Object.assign({},cEx,{amount:_cardioInitAmt(cEx.unit,_fbCL)});}
@@ -1973,13 +1978,15 @@ function buildLadderItems(scheme,chosen,cardioExs,lv,team){
 }
 var _SCHEME_LIBRARY={
   ascending:{
-    6:[[2,4,6,8,10,12],[3,6,9,12,15,18],[5,10,15,20,25,30]],
+    5:[[5,10,15,20,25]],
+    6:[[2,4,6,8,10,12],[3,6,9,12,15,18]],
     7:[[2,4,6,8,10,12,14]],
     8:[[1,2,3,4,5,6,7,8],[2,4,6,8,10,12,14,16]],
     10:[[1,2,3,4,5,6,7,8,9,10]]
   },
   descending:{
-    6:[[12,10,8,6,4,2],[18,15,12,9,6,3],[21,18,15,12,9,6],[30,25,20,15,10,5],[50,40,30,20,10,5]],
+    5:[[25,20,15,10,5]],
+    6:[[12,10,8,6,4,2],[18,15,12,9,6,3],[21,18,15,12,9,6],[50,40,30,20,10,5]],
     7:[[14,12,10,8,6,4,2],[21,19,17,15,13,11,9],[30,25,20,15,12,9,6]],
     8:[[8,7,6,5,4,3,2,1],[16,14,12,10,8,6,4,2],[20,18,16,14,12,10,8,6],[50,45,40,35,30,25,20,15]],
     10:[[10,9,8,7,6,5,4,3,2,1]]
@@ -2087,7 +2094,7 @@ function mkLadder(time,lv,team,cfg){
   var _estTeam=(_estDiv>1)?1:team;
   var _ldrEst=function(r,ch,cd){return _calcLadderEst(r.map(function(v){return v/_estDiv;}),ch,lv,_estTeam,cd);};
   // Auto-extend scheme to fill time cap (95-105%) — مع فحص hardMax
-  if(!isAsc&&!cfg.customReps&&reps.length>1){var _budget=time*60;var _ldrRepMax=_exLims(chosen,lv,team,team===2).max||100;var _ext=reps.slice();var _extStep=Math.abs(_ext[_ext.length-1]-_ext[_ext.length-2])||dispStep;var _extSign=_ext[_ext.length-1]>_ext[_ext.length-2]?1:-1;for(var _ei=0;_ei<50;_ei++){var _nextVal=_ext[_ext.length-1]+_extSign*_extStep;if(_nextVal<1||_nextVal>300||_nextVal>_ldrRepMax)break;var _testReps=_ext.concat([_nextVal]);var _testEst=_ldrEst(_testReps,chosen,_resolvedCardio);if(_testEst/_budget>1.10)break;_ext=_testReps;if(_testEst/_budget>=0.90)break;}reps=_ext;dispStep=reps.length>1?Math.abs(reps[1]-reps[0]):dispStep;}
+  if(!isAsc&&!cfg.customReps&&reps.length>1){var _budget=time*60;var _ldrRepMax=_exLims(chosen,lv,team,team===2).max||100;var _ext=reps.slice();var _extStep=Math.abs(_ext[_ext.length-1]-_ext[_ext.length-2])||dispStep;var _extSign=_ext[_ext.length-1]>_ext[_ext.length-2]?1:-1;for(var _ei=0;_ei<50;_ei++){var _nextVal=_ext[_ext.length-1]+_extSign*_extStep;if(_nextVal<1||_nextVal>300||_nextVal>_ldrRepMax||(dispStep===5&&_nextVal>25))break;var _testReps=_ext.concat([_nextVal]);var _testEst=_ldrEst(_testReps,chosen,_resolvedCardio);if(_testEst/_budget>1.10)break;_ext=_testReps;if(_testEst/_budget>=0.90)break;}reps=_ext;dispStep=reps.length>1?Math.abs(reps[1]-reps[0]):dispStep;}
   // Station auto-extend: لو fill لسا < 95% بعد scheme extend، أضف محطات جديدة (كل المسارات)
   if(!isAsc&&!cfg.customReps&&!cfg.exCnt&&reps.length){var _stBudget=time*60;var _stFill=_ldrEst(reps,chosen,_resolvedCardio)/_stBudget;if(_stFill<0.90){if(!_resolvedCardio&&cfg.withCardio!==false){var _tryCardioEst=_ldrEst(reps,chosen,true);if(_tryCardioEst/_stBudget<=1.10){_resolvedCardio=true;_stFill=_tryCardioEst/_stBudget;}}var _MAX_ST=6;while(_stFill<0.90&&chosen.length<_MAX_ST){var _stPool=_ladderPool.filter(function(e){return!chosen.some(function(c){return c.name===e.name;});});if(!_stPool.length)break;var _newEx=pk(_stPool);var _testChosen=chosen.concat([_newEx]);var _testEst2=_ldrEst(reps,_testChosen,_resolvedCardio);if(_testEst2/_stBudget>1.10){// قفز فوق 105% — جرّب trim الـ scheme من الآخر لتسوية مساحة
   var _trimReps=reps.slice();while(_trimReps.length>2){_trimReps=_trimReps.slice(0,-1);var _trimEst=_ldrEst(_trimReps,_testChosen,_resolvedCardio);if(_trimEst/_stBudget>=0.90&&_trimEst/_stBudget<=1.10){reps=_trimReps;chosen=_testChosen;_stFill=_trimEst/_stBudget;break;}if(_trimEst/_stBudget<0.90)break;}break;}chosen=_testChosen;_stFill=_testEst2/_stBudget;}}}
@@ -3065,7 +3072,7 @@ function doReorder(si,ii){
   var el=document.getElementById('sec-'+si);
   if(el)el.outerHTML=renderSec(S.wod.sections[si],si);
 }
-function openExerciseVideo(name){var q=encodeURIComponent(name+' crossfit');window.location.href='https://www.youtube.com/results?search_query='+q;}
+function openExerciseVideo(name){var q=encodeURIComponent(name+' crossfit');var url='https://www.youtube.com/results?search_query='+q;var isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);if(isMobile){window.location.href=url;}else{window.open(url,'_blank');}}
 function renderStr(it,si,ii,num,roundIdx){
   var ex=it.ex;
   var emTag=it.emomMin?'<span style="background:var(--og);color:var(--or);font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;margin-left:5px">'+it.emomMin+'</span>':'';
@@ -3493,7 +3500,10 @@ function regenEx(si,ii,kind){
       }else{
         var _anyDiff=_cardioPool.filter(function(c){return c.name!==_oldName;});
         var _picked=pk(_anyDiff.length?_anyDiff:_cardioPool);
-        var _newAmt=(_picked.unit===_oldUnit&&_userAmt)?_rgClamp(_picked.unit,_userAmt):_rgAmtNew(_picked.unit);
+        var _newAmt;
+        if(_picked.unit===_oldUnit&&_userAmt){_newAmt=_rgClamp(_picked.unit,_userAmt);}
+        else if(_userAmt&&_oldUnit&&_oldName){var _oldSec=_cardioSecEst({name:_oldName,unit:_oldUnit,amount:_userAmt},S.level,_rgTeam,_rgIsChip?false:true);var _rate1=_cardioSecEst({name:_picked.name,unit:_picked.unit,amount:1},S.level,_rgTeam,_rgIsChip?false:true);var _eqAmt=(_oldSec>0&&_rate1>0)?_rgClamp(_picked.unit,Math.round(_oldSec/_rate1)):null;_newAmt=_eqAmt?_eqAmt:_rgAmtNew(_picked.unit);}
+        else{_newAmt=_rgAmtNew(_picked.unit);}
         newEx=Object.assign({},_picked,{amount:_newAmt});
       }
       // FIX #2: 30% time-cap (EMOM already tight via _emomCardioLimits)
