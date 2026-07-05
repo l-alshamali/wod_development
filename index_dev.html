@@ -788,7 +788,7 @@ function _cardioInitAmt(unit,CL){
   var mx=unit==='Cal'?CL.calMax:unit==='m'?CL.mtrMax:CL.duMax;
   return _cardioPickFlat(unit,mn,mx).amount;
 }
-function _chipperCL(lv,team){var _b=_cardioLimits(1,false,lv);var m=team!==2?1.5:3.0;return{calMin:_b.calMin*m,calMax:_b.calMax*m,mtrMin:_b.mtrMin*m,mtrMax:_b.mtrMax*m,duMin:_b.duMin*m,duMax:_b.duMax*m};}
+function _chipperCL(lv,team){var _b=_cardioLimits(1,false,lv);var m=team!==2?1.5:3.0;return{calMin:_b.calMin*m,calMax:_b.calMax*m,mtrMin:_b.mtrMin*m,mtrMax:_b.mtrMax*m,mtrStep:_b.mtrStep||100,duMin:_b.duMin*m,duMax:_b.duMax*m};}
 function _cardioAmtNew(unit,lv,team,isChipper){
   var CL=isChipper?_cardioLimits(1,false,lv):_cardioLimits(team,true,lv);
   var cm=isChipper?(team!==2?(_CHIPPER_MULT[lv]||1.5):3.0):1;
@@ -4032,13 +4032,38 @@ function toggleTabataCfg(si){var el=document.getElementById('tabata-cfg-'+si);if
 
 // ─── TABATA TIMER ────────────────────────────────────────────────────────────
 var _tabTimer={iv:null,seq:[],idx:0,rem:0,paused:false};
-function _tabBeep(freq,dur,vol){
-  try{var ctx=new(window.AudioContext||window.webkitAudioContext)();var o=ctx.createOscillator();var g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=freq;g.gain.setValueAtTime(vol||0.4,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);o.start();o.stop(ctx.currentTime+dur);}catch(e){}
+var _audioCtx=null;
+var _audioReady=false;
+function _unlockAudio(){
+  if(_audioReady)return;
+  if(!_audioCtx){try{_audioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){return;}}
+  // silent buffer — فك قفل iOS القديم
+  try{
+    var buf=_audioCtx.createBuffer(1,1,22050);
+    var src=_audioCtx.createBufferSource();
+    src.buffer=buf;src.connect(_audioCtx.destination);src.start(0);
+  }catch(e){}
+  var p=_audioCtx.state==='suspended'?_audioCtx.resume():Promise.resolve();
+  p.then(function(){_audioReady=true;}).catch(function(){});
 }
-function _tabBeepWork(){_tabBeep(880,0.12);setTimeout(function(){_tabBeep(880,0.12);},130);}
-function _tabBeepRest(){_tabBeep(440,0.3);}
+// فك القفل عند أي تفاعل — iOS + Android
+['touchstart','touchend','mousedown','keydown'].forEach(function(ev){
+  document.addEventListener(ev,_unlockAudio,{once:false,passive:true});
+});
+function _getAudioCtx(){
+  if(!_audioCtx){try{_audioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}}
+  if(_audioCtx.state==='suspended'){_audioCtx.resume().catch(function(){});}
+  return _audioCtx;
+}
+function _tabBeep(freq,dur,vol){
+  var ctx=_getAudioCtx();if(!ctx)return;
+  try{var o=ctx.createOscillator();var g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=freq;g.gain.setValueAtTime(vol||0.5,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+(dur||0.1));o.start(ctx.currentTime);o.stop(ctx.currentTime+(dur||0.1));}catch(e){}
+}
+function _tabBeepWork(){_tabBeep(880,0.15);setTimeout(function(){_tabBeep(880,0.15);},160);}
+function _tabBeepRest(){_tabBeep(520,0.12);setTimeout(function(){_tabBeep(440,0.35);},140);}
+function _tabBeepBetween(){_tabBeep(550,0.15);setTimeout(function(){_tabBeep(440,0.15);},180);setTimeout(function(){_tabBeep(330,0.4);},360);}
 function _tabBeepDone(){_tabBeep(660,0.15);setTimeout(function(){_tabBeep(880,0.15);},200);setTimeout(function(){_tabBeep(1100,0.4);},400);}
-function _tabBeepCountdown(){_tabBeep(660,0.08);}
+function _tabBeepCountdown(){_tabBeep(660,0.09);}
 
 function showTabataTimer(si){
   var sec=S.wod.sections[si];
@@ -4078,6 +4103,7 @@ function showTabataTimer(si){
   seq.push({phase:'done',dur:0,label:'DONE!',sub:'',mov:'',intv:0,tot:0});
   _tabTimer.seq=seq;_tabTimer.idx=0;_tabTimer.rem=seq[0].dur;_tabTimer.paused=false;_tabTimer.si=si;
   if(_tabTimer.iv)clearInterval(_tabTimer.iv);
+  _unlockAudio(); // فك قفل الصوت — iOS/Android
 
   // Build overlay
   var ov=document.createElement('div');
@@ -4101,6 +4127,7 @@ function showTabataTimer(si){
       _tabTimer.rem=next.dur;
       if(next.phase==='done'){_tabBeepDone();}
       else if(next.phase==='work')_tabBeepWork();
+      else if(next.phase==='between')_tabBeepBetween();
       else _tabBeepRest();
     }
     _tabTimerRender();
@@ -4298,7 +4325,7 @@ function showWodTimer(type,si){
 
 // ─── AMRAP / RFT / EMOM TIMER ────────────────────────────────────────────────
 var _wodTimer={iv:null,paused:false,elapsed:0,totalSec:0,type:'',curMin:1,totalMin:0,minSec:0,movs:[],finished:false};
-function _wodBeep(freq,dur,vol){try{var ctx=new(window.AudioContext||window.webkitAudioContext)();var o=ctx.createOscillator();var g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=freq;g.gain.setValueAtTime(vol||0.4,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);o.start();o.stop(ctx.currentTime+dur);}catch(e){}}
+function _wodBeep(freq,dur,vol){var ctx=_getAudioCtx();if(!ctx)return;try{var o=ctx.createOscillator();var g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=freq;g.gain.setValueAtTime(vol||0.5,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+(dur||0.1));o.start(ctx.currentTime);o.stop(ctx.currentTime+(dur||0.1));}catch(e){}}
 function _wodBeepStart(){_wodBeep(880,0.12);setTimeout(function(){_wodBeep(880,0.12);},130);}
 function _wodBeepCountdown(){_wodBeep(660,0.08);}
 function _wodBeepDone(){_wodBeep(660,0.15);setTimeout(function(){_wodBeep(880,0.15);},200);setTimeout(function(){_wodBeep(1100,0.4);},400);}
@@ -4309,7 +4336,7 @@ function showAmrapTimer(si){
   var totalMin=(S.wod.cfg.time||20);
   var label=(sec.type==='Group A'?'A/B AMRAP':sec.type==='YGIG / Partner WOD'?'YGIG AMRAP':'AMRAP');
   _wodTimer={iv:null,paused:false,elapsed:0,totalSec:totalMin*60,type:'amrap',curMin:0,totalMin:totalMin,minSec:0,movs:[],finished:false,label:label,si:si};
-  _wodBeepStart();
+  _unlockAudio();_wodBeepStart();
   var ov=document.createElement('div');ov.id='wod-timer-ov';ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;font-family:inherit;overflow:hidden;';
   document.body.appendChild(ov);_lockBodyScroll();_wodTimerRender();
   _wodTimer.iv=setInterval(function(){
@@ -4327,7 +4354,7 @@ function showRftTimer(si){
   var _lbl=sec.type==='Chipper'?'CHIPPER':sec.type==='Buy-In / Cash-Out'?'BUY-IN / CASH-OUT':sec.type==='YGIG / Partner WOD'?'YGIG FOR TIME':'FOR TIME';
   var capSec=(S.wod.cfg.time||20)*60;
   _wodTimer={iv:null,paused:false,elapsed:0,totalSec:capSec,type:'rft',curMin:0,totalMin:0,minSec:0,movs:[],finished:false,label:_lbl,si:si};
-  _wodBeepStart();
+  _unlockAudio();_wodBeepStart();
   var ov=document.createElement('div');ov.id='wod-timer-ov';ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;font-family:inherit;overflow:hidden;';
   document.body.appendChild(ov);_lockBodyScroll();_wodTimerRender();
   _wodTimer.iv=setInterval(function(){
@@ -4347,7 +4374,7 @@ function showCapTimer(si){
   var _lbl=_isDB?'DEATH BY':'LADDER';
   _wodTimer={iv:null,paused:false,elapsed:0,totalSec:capSec,type:'cap',curMin:0,totalMin:0,minSec:0,movs:[],finished:false,label:_lbl,
     isDB:_isDB,dbStart:_iv.s||1,dbInc:_iv.inc||1,dbLastMin:-1,flash:false,si:si};
-  _wodBeepStart();
+  _unlockAudio();_wodBeepStart();
   var ov=document.createElement('div');ov.id='wod-timer-ov';ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;font-family:inherit;overflow:hidden;';
   document.body.appendChild(ov);_lockBodyScroll();_wodTimerRender();
   _wodTimer.iv=setInterval(function(){
@@ -4372,7 +4399,7 @@ function showEmomTimer(si){
   var totalMin=S.wod.cfg.time||20;
   var movs=sec.items.filter(function(it){return it.kind==='str'||it.kind==='cardio';});
   _wodTimer={iv:null,paused:false,elapsed:0,totalSec:totalMin*60,type:'emom',curMin:1,totalMin:totalMin,minSec:60,movs:movs,finished:false,si:si};
-  _wodBeepStart();
+  _unlockAudio();_wodBeepStart();
   var ov=document.createElement('div');ov.id='wod-timer-ov';ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;font-family:inherit;overflow:hidden;';
   document.body.appendChild(ov);_lockBodyScroll();_wodTimerRender();
   _wodTimer.iv=setInterval(function(){
