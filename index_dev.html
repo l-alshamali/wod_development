@@ -171,6 +171,10 @@ body[dir=rtl] .wdi-close{right:auto;left:12px}
         <button id="btn-light" onclick="setTheme('light')">☀️ Light</button>
       </div>
     </div>
+    <div class="cfg-row" onclick="showMyWODs()" style="cursor:pointer;user-select:none;border-top:0.5px solid var(--bdr);margin-top:4px;padding-top:14px">
+      <span class="cfg-lbl" id="sw-lbl">💾 My WODs</span>
+      <span id="sw-badge" style="color:var(--or);font-weight:700;font-size:13px">0/30 →</span>
+    </div>
   </div>
 </div>
 
@@ -394,7 +398,7 @@ function dispDetail(d){
 function collapseDetail(d){if(!d)return d;var m=d.match(/^([\d\s\-]+)\s+(reps|Cal|m|kg|lb|s)$/);if(!m)return d;var nums=m[1].split('-').map(function(x){return x.trim();}).filter(function(x){return x!=='';});if(nums.length>1&&nums.every(function(x){return x===nums[0];}))return nums[0]+' '+m[2];return d;}
 function fixArPlural(s){if(CFG.lang!=='ar'||!s)return s;return s.replace(/(\d+)\s*(دقيقة واحدة|دقيقتان|دقيقة|دقائق)/g,function(_,n){return n+' '+arMin(parseInt(n));});}
 function ti(k,v){var s=t(k);if(v)Object.keys(v).forEach(function(p){s=s.replace(new RegExp('{'+p+'}','g'),v[p]);});return s;}
-function openCfg(){document.getElementById('cfg-overlay').style.display='block';}
+function openCfg(){document.getElementById('cfg-overlay').style.display='block';_swUpdateBadge();}
 function closeCfg(){document.getElementById('cfg-overlay').style.display='none';}
 function setLang(l){
   CFG.lang=l;
@@ -2578,8 +2582,8 @@ function renderWod(){
   var w=S.wod;
   app.innerHTML=dots(4)+'<div class="wh ani"><div class="wl">'+t('wod_day')+'</div><div class="wn"><bdi dir="ltr">'+S.wodName+'</bdi></div><div class="wm"><span class="wb o">'+(TL[w.type]||w.type)+'</span><span class="wb">'+({'beginner':t('lv_b'),'intermediate':t('lv_i'),'advanced':t('lv_a'),'elite':t('lv_e')}[S.level]||LL[S.level])+'</span><span class="wb"'+(CFG.lang==='ar'?' dir="ltr"':'')+'>'+S.time+' '+(CFG.lang==='ar'?arMin(S.time):'min')+'</span>'+(S.teamSize>1?'<span class="wb b">'+(CFG.lang==='ar'?t('team_chip'):'Team')+' '+S.teamSize+'</span>':'')+'</div></div>'
   +'<div id="secs">'+w.sections.map(function(s,i){return renderSec(s,i)}).join('')+'</div>'
-  +'<div class="ar"><button class="ab pri" onclick="regen()">'+t('new_wod')+'</button><button class="ab" onclick="shareWod()" style="background:rgba(255,102,0,0.08);color:var(--or);border:1px solid rgba(255,102,0,0.3)">'+t('share')+'</button></div>'
-  +'<button class="bk" style="margin:8px 4px 0" onclick="S.cfgStore={};S.step=3;render()">'+t('back_ty')+'</button>'
+  +'<div class="ar"><button class="ab pri" onclick="regen()" style="flex:2;font-size:14px">'+t('new_wod')+'</button><button class="ab" onclick="_swDoSave()" style="background:rgba(255,102,0,0.08);color:var(--or);border:1px solid rgba(255,102,0,0.3);font-size:12px">'+(_SW_editId!==null?'💾 Update':'💾 Save')+'</button><button class="ab" onclick="shareWod()" style="background:rgba(255,102,0,0.08);color:var(--or);border:1px solid rgba(255,102,0,0.3);font-size:12px">'+t('share')+'</button></div>'
+  +'<button class="bk" style="margin:8px 4px 0" onclick="S.cfgStore={};S.step=3;_SW_editId=null;render()">'+t('back_ty')+'</button>'
   +'<div style="text-align:center;padding:16px 0 8px"><button onclick="showTnC()" style="background:none;border:none;color:var(--txt3);font-size:11px;cursor:pointer;text-decoration:underline">'+t('tnc')+'</button></div>';
 }
 function renderChipperCfg(sec,si){
@@ -3583,7 +3587,7 @@ function reRenderSec(si){
   el.parentNode.replaceChild(tmp.firstElementChild,el);
   if(sec&&sec.type==='Group B'&&si>0){var _gaSec=S.wod.sections[si-1];if(_gaSec&&_gaSec.type==='Group A'){var _gaEl=document.getElementById('sec-'+(si-1));if(_gaEl){var _gaTmp=document.createElement('div');_gaTmp.innerHTML=renderSec(_gaSec,si-1);_gaEl.parentNode.replaceChild(_gaTmp.firstElementChild,_gaEl);}}}
 }
-function regen(){
+function regen(){_SW_editId=null;
   if(S.wod){
     if(!S.cfgStore)S.cfgStore={};
     S.wod.sections.forEach(function(sec){
@@ -5677,6 +5681,130 @@ checkAccess();
 function setTripletVal(si,key,val,btn){
   sec.tripletCfg[key]=val;btn.style.background='var(--or)';btn.style.borderColor='var(--or)';btn.style.color='#000';
 }
+
+// ─── My WODs (Saved WODs) ────────────────────────────────────────────────────
+var _SW_MAX=30;
+var _SW_KEY='cft_saved_v1';
+var _SW_editId=null; // null=new · id=updating existing
+
+function _swLoad(){try{return JSON.parse(localStorage.getItem(_SW_KEY)||'[]');}catch(e){return[];}}
+function _swStore(arr){try{localStorage.setItem(_SW_KEY,JSON.stringify(arr));}catch(e){toast('⚠️ Storage error','#ff4444');}}
+function _swCount(){return _swLoad().length;}
+function _swUpdateBadge(){var el=document.getElementById('sw-badge');if(el)el.textContent=_swCount()+'/'+_SW_MAX+' →';}
+function _swDeepCopy(obj){try{return JSON.parse(JSON.stringify(obj));}catch(e){return obj;}}
+
+function _swExPreview(snap){
+  if(!snap||!snap.wod||!snap.wod.sections)return'';
+  var names=[];
+  snap.wod.sections.forEach(function(sec){sec.items.forEach(function(it){if(it.ex&&it.ex.name&&names.indexOf(it.ex.name)<0&&names.length<4)names.push(it.ex.name);});});
+  return names.join(', ')+(names.length===4?'…':'');
+}
+function _swFmtDate(){var d=new Date();return d.getDate()+' '+['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][d.getMonth()]+' '+d.getFullYear();}
+
+function _swDoSave(){
+  if(!S||!S.wod){toast('No WOD to save','#ff6600');return;}
+  var snap;
+  try{
+    var _wodClean={type:S.wod.type,sections:S.wod.sections};
+    snap=JSON.parse(JSON.stringify({wod:_wodClean,level:S.level,time:S.time,teamSize:S.teamSize,wodName:S.wodName}));
+  }catch(e){toast('⚠️ Save error: '+e.message,'#ff4444');return;}
+  if(_SW_editId!==null){
+    var saved=_swLoad();
+    for(var i=0;i<saved.length;i++){
+      if(saved[i].id===_SW_editId){
+        saved[i].snap=snap;
+        try{localStorage.setItem(_SW_KEY,JSON.stringify(saved));toast(CFG.lang==='ar'?'💾 تم التحديث!':'💾 Updated!','#22c55e');_swUpdateBadge();}
+        catch(e2){toast('⚠️ '+e2.message,'#ff4444');}
+        return;
+      }
+    }
+    toast('⚠️ Not found','#ff6600');return;
+  }
+  var saved2=_swLoad();
+  if(saved2.length>=_SW_MAX){toast(CFG.lang==='ar'?'الحد الأقصى 30 — احذف وحدة قديمة':'Limit 30 — delete an old WOD first','#ff6600');return;}
+  saved2.unshift({id:Date.now(),dateSaved:_swFmtDate(),customName:null,snap:snap});
+  try{localStorage.setItem(_SW_KEY,JSON.stringify(saved2));toast(CFG.lang==='ar'?'💾 تم الحفظ!':'💾 Saved!','#22c55e');_swUpdateBadge();}
+  catch(e3){toast('⚠️ '+e3.message,'#ff4444');}
+}
+
+function _swDoDelete(id){
+  if(!confirm(CFG.lang==='ar'?'تحذف هذا الـ WOD؟':'Delete this WOD?'))return;
+  _swStore(_swLoad().filter(function(w){return w.id!==id;}));
+  _swUpdateBadge();showMyWODs();
+}
+
+function _swDoRename(id){
+  var saved=_swLoad(),entry=null;
+  for(var i=0;i<saved.length;i++){if(saved[i].id===id){entry=saved[i];break;}}
+  if(!entry)return;
+  var nm=prompt(CFG.lang==='ar'?'اسم الـ WOD:':'WOD name:',entry.customName||entry.dateSaved);
+  if(nm===null)return;
+  entry.customName=nm.trim()||null;
+  _swStore(saved);showMyWODs();
+}
+
+function _swLoadEntry(id,resetEdit){
+  var saved=_swLoad(),entry=null;
+  for(var i=0;i<saved.length;i++){if(saved[i].id===id){entry=saved[i];break;}}
+  if(!entry||!entry.snap)return;
+  var snap=_swDeepCopy(entry.snap);
+  S.wod=snap.wod;S.level=snap.level;S.time=snap.time;S.teamSize=snap.teamSize||1;S.wodName=snap.wodName||'';
+  if(S.wod&&!S.wod.cfg)S.wod.cfg=S;
+  S.step=4;
+  _SW_editId=resetEdit?null:id;
+  _swCloseMyWODs();renderWod();
+}
+
+function _swCloseMyWODs(){var ov=document.getElementById('sw-overlay');if(ov)ov.remove();}
+
+function showMyWODs(){
+  closeCfg();
+  var saved=_swLoad();
+  var ov=document.getElementById('sw-overlay');
+  if(!ov){ov=document.createElement('div');ov.id='sw-overlay';document.body.appendChild(ov);}
+  ov.style.cssText='position:fixed;inset:0;z-index:8000;background:var(--bg);overflow-y:auto;font-family:inherit;-webkit-overflow-scrolling:touch;';
+  var ar=CFG.lang==='ar';
+  var cards='';
+  if(!saved.length){
+    cards='<div style="text-align:center;padding:60px 20px;color:var(--txt3)">'
+      +'<div style="font-size:44px;margin-bottom:14px">💾</div>'
+      +'<div style="font-size:16px;font-weight:700;color:var(--txt2)">'+(ar?'لا يوجد WODs محفوظة':'No saved WODs yet')+'</div>'
+      +'<div style="font-size:13px;margin-top:8px">'+(ar?'اضغط 💾 Save بعد ما تولد WOD':'Tap 💾 Save after generating a WOD')+'</div>'
+      +'</div>';
+  } else {
+    saved.forEach(function(entry){
+      var title=entry.customName||entry.dateSaved;
+      var snap=entry.snap||{};
+      var wod=snap.wod||{};
+      var lv={'beginner':'Beginner','intermediate':'Intermediate','advanced':'Advanced','elite':'Elite'}[snap.level]||snap.level||'';
+      var tm=snap.time||'';
+      var team=snap.teamSize||1;
+      var type=TL[wod.type]||(wod.sections&&wod.sections[0]&&(TL[wod.sections[0].type]||wod.sections[0].type))||'WOD';
+      var preview=_swExPreview(snap);
+      var isSaving=(_SW_editId===entry.id);
+      cards+='<div style="background:var(--bg2);border:0.5px solid '+(isSaving?'#22c55e':'var(--bdr)')+';border-radius:14px;padding:14px 16px;margin:0 0 12px;cursor:pointer" onclick="_swLoadEntry('+entry.id+',false)">'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">'
+        +'<span style="font-weight:800;font-size:15px;color:var(--txt)">'+title+(isSaving?' ✏️':'')+'</span>'
+        +'<span style="display:flex;gap:6px" onclick="event.stopPropagation()">'
+        +'<button onclick="_swDoRename('+entry.id+')" style="background:none;border:none;font-size:18px;cursor:pointer;padding:2px 5px;line-height:1">✏️</button>'
+        +'<button onclick="_swDoDelete('+entry.id+')" style="background:none;border:none;font-size:18px;cursor:pointer;padding:2px 5px;line-height:1">🗑️</button>'
+        +'</span></div>'
+        +'<div style="font-size:12px;color:var(--txt3);margin-bottom:'+(preview?'5':'10')+'px">'+type+' · '+lv+' · '+tm+' min'+(team>1?' · Team '+team:'')+'</div>'
+        +(preview?'<div style="font-size:12px;color:var(--txt2);margin-bottom:10px;line-height:1.5">'+preview+'</div>':'')
+        +'<div onclick="event.stopPropagation()">'
+        +'<button onclick="_swLoadEntry('+entry.id+',true)" style="width:100%;background:rgba(255,102,0,0.10);border:1px solid rgba(255,102,0,0.35);border-radius:10px;padding:9px;font-size:14px;font-weight:700;color:var(--or);cursor:pointer">▶ '+(ar?'ابدأ':'Start')+'</button>'
+        +'</div></div>';
+    });
+  }
+  ov.innerHTML='<div style="max-width:480px;margin:0 auto;padding:16px 16px 40px">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-top:env(safe-area-inset-top,8px)">'
+    +'<button onclick="_swCloseMyWODs()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--txt);padding:4px 8px;line-height:1">←</button>'
+    +'<span style="font-size:17px;font-weight:800;color:var(--txt)">💾 '+(ar?'المحفوظات':'My WODs')+'</span>'
+    +'<span style="font-size:13px;color:var(--txt3);font-weight:600">'+saved.length+'/'+_SW_MAX+'</span>'
+    +'</div>'
+    +cards+'</div>';
+}
+
 </script>
 </body>
 </html>
