@@ -531,7 +531,7 @@ var STR=[
   {name:'Ring Dip',cat:'gymnastics',tier:2,alts:['Bar Dip','Push-Up','Box Dip','Banded Dip']},
   {name:'Chest-to-Bar Pull-Up',cat:'gymnastics',tier:2,alts:['Kipping Pull-Up','Ring Row','Strict Chest-to-bar Pull-up','Strict Pull-Up']},
   {name:'Burpee Box Jump Over',cat:'gymnastics',tier:2,alts:['Bar-Facing Burpee','Box Jump Over','Burpee','Box Jump']},
-  {name:'Sled Push',cat:'gymnastics',tier:2,unit:'carry',alts:['Farmers Carry','Bear Crawl','Sandbag Carry','Overhead Carry']},
+  {name:'Sled Push',cat:'gymnastics',tier:2,unit:'carry',alts:['Farmers Carry','Bear Crawl','Sandbag Carry','Overhead Carry'],altOnly:true},
   {name:'Sandbag Over Shoulder',cat:'gymnastics',tier:2,alts:['D-Ball Over Shoulder','Power Clean','DB Clean','KB Clean'],altOnly:true},
   {name:'Bar Dip',cat:'gymnastics',tier:2,alts:['Ring Dip','Box Dip','Push-Up','Banded Dip']},
   {name:'Pike Push-Up',cat:'gymnastics',tier:2,alts:['Push-Up','DB Shoulder Press','Z-Press','Strict Handstand Push-Up'],altOnly:true},
@@ -589,7 +589,7 @@ var STR=[
   {name:'KB Press',cat:'kettlebell',tier:3,alts:['Shoulder Press','Push Press','DB Shoulder Press','Z-Press'],altOnly:true},
   {name:'Overhead Carry',cat:'kettlebell',tier:3,unit:'carry',alts:['Farmers Carry','Suitcase Carry','Sandbag Carry','Bear Crawl']},
   {name:'KB Windmill',cat:'kettlebell',tier:3,alts:['Turkish Get-Up','KB Press','DB Windmill','Overhead Squat'],altOnly:true},
-  {name:'Turkish Get-Up',cat:'kettlebell',tier:3,unit:'side',alts:['KB Windmill','DB Turkish Get-up','Overhead Lunge','KB Press']},
+  {name:'Turkish Get-Up',cat:'kettlebell',tier:3,unit:'side',alts:['KB Windmill','DB Turkish Get-up','Overhead Lunge','KB Press'],altOnly:true},
   {name:'Double KB Front Squat',cat:'kettlebell',tier:4,alts:['Front Squat','KB Front Squat','Goblet Squat','DB Front Squat'],altOnly:true},
   {name:'Double KB Clean & Press',cat:'kettlebell',tier:4,alts:['Clean & Jerk','KB Thruster','Double KB Front Squat','DB Shoulder-to-Overhead'],altOnly:true},
   {name:'DB Box Step-Up',cat:'dumbbell',tier:1,alts:['Box Step-Up','Box Jump','Reverse Lunge','Walking Lunge']},
@@ -620,7 +620,7 @@ var STR=[
   {name:'Devil\'s Press',cat:'dumbbell',tier:3,alts:['DB Snatch','DB Thruster','Man Maker','DB Clean and Press']},
   {name:'Man Maker',cat:'dumbbell',tier:3,alts:['Devil\'s Press','DB Thruster','DB Clean and Press','DB Turkish Get-up']},
   {name:'DB Clean and Press',cat:'dumbbell',tier:3,alts:['DB Clean','DB Thruster','DB Shoulder-to-Overhead','Power Clean'],altOnly:true},
-  {name:'DB Turkish Get-up',cat:'dumbbell',tier:3,unit:'side',alts:['Turkish Get-Up','Man Maker','DB Clean and Press','Renegade Row']},
+  {name:'DB Turkish Get-up',cat:'dumbbell',tier:3,unit:'side',alts:['Turkish Get-Up','Man Maker','DB Clean and Press','Renegade Row'],altOnly:true},
   {name:'DB Hang Power Snatch',cat:'dumbbell',tier:3,alts:['DB Snatch','Power Snatch','KB Snatch','DB Clean'],altOnly:true},
   {name:'DB Overhead Squat',cat:'dumbbell',tier:3,alts:['Overhead Squat','DB Front Squat','Goblet Squat','Zercher Squat']},
   {name:'DB Windmill',cat:'dumbbell',tier:3,alts:['KB Windmill','Turkish Get-Up','DB Overhead Squat','DB Shoulder Press'],altOnly:true},
@@ -1209,7 +1209,7 @@ function mkAmrap(time,lv,team,cfg){
   _rArr=_rArr.map(function(r){var _rs=Math.round((r||_amrHardMin)/_amrLS)*_amrLS;return Math.max(_amrGuardMin,Math.min(_amrEffCap,_rs));});
   while(_rArr.length<chosen.length)_rArr.push(baseReps||_amrHardMin);
 
-  if(chosen.length>2&&!_amrIsFlat){var _amrSPI=chosen.map(function(_,i){return i;}).sort(function(a,b){return _amrRpType==='desc'?getSecondsPerRep(chosen[b],lv,team)-getSecondsPerRep(chosen[a],lv,team):getSecondsPerRep(chosen[a],lv,team)-getSecondsPerRep(chosen[b],lv,team);});var _amrFSCleanMin=Math.ceil(_amrHardMin/_amrLS)*_amrLS;var _amrFSMaxBase=Math.floor((_amrEffCap-(chosen.length-1)*_amrLS)/_amrLS)*_amrLS;var _amrNC=[],_amrNR=[];var _amrCardioTime=_cardioSecEst(_amrapEx,lv,team,true);var _amrTotalSPR=_amrSPI.reduce(function(s,oi){return s+getSecondsPerRep(chosen[oi],lv,team);},0);var _amrStepContrib=_amrSPI.reduce(function(s,oi,si){return s+(chosen.length-1-si)*getSecondsPerRep(chosen[oi],lv,team);},0)*_amrLS;var _amrMinLadderStr=_amrFSCleanMin*_amrTotalSPR+_amrStepContrib;if(_amrMinLadderStr+_amrCardioTime>_amrTargetSec){_amrSPI.forEach(function(oi){_amrNC.push(chosen[oi]);_amrNR.push(_amrFSCleanMin);});}else if(_amrFSMaxBase>=_amrFSCleanMin){var _amrStrBudget=_amrTargetSec*0.97-_amrCardioTime;var _amrCalcBase=_amrTotalSPR>0?Math.round((_amrStrBudget-_amrStepContrib)/_amrTotalSPR/_amrLS)*_amrLS:_amrFSCleanMin;_amrCalcBase=Math.max(_amrFSCleanMin,Math.min(_amrFSMaxBase,_amrCalcBase));_amrSPI.forEach(function(oi,si){var _rv=Math.min(_amrEffCap,_amrCalcBase+(chosen.length-1-si)*_amrLS);_amrNC.push(chosen[oi]);_amrNR.push(Math.max(_amrFSCleanMin,_rv));});}else{_amrSPI.forEach(function(oi){_amrNC.push(chosen[oi]);_amrNR.push(_amrFSCleanMin);});}chosen=_amrNC;_rArr=_amrNR;}
+  if(chosen.length>2&&!_amrIsFlat){var _amrSPI=chosen.map(function(_,i){return i;}).sort(function(a,b){return getSecondsPerRep(chosen[a],lv,team)-getSecondsPerRep(chosen[b],lv,team);});var _amrFSCleanMin=Math.ceil(_amrHardMin/_amrLS)*_amrLS;var _amrFSMaxBase=Math.floor((_amrEffCap-(chosen.length-1)*_amrLS)/_amrLS)*_amrLS;var _amrNC=[],_amrNR=[];var _amrCardioTime=_cardioSecEst(_amrapEx,lv,team,true);var _amrTotalSPR=_amrSPI.reduce(function(s,oi){return s+getSecondsPerRep(chosen[oi],lv,team);},0);var _amrStepContrib=_amrSPI.reduce(function(s,oi,si){return s+(chosen.length-1-si)*getSecondsPerRep(chosen[oi],lv,team);},0)*_amrLS;var _amrMinLadderStr=_amrFSCleanMin*_amrTotalSPR+_amrStepContrib;if(_amrMinLadderStr+_amrCardioTime>_amrTargetSec){_amrSPI.forEach(function(oi){_amrNC.push(chosen[oi]);_amrNR.push(_amrFSCleanMin);});}else if(_amrFSMaxBase>=_amrFSCleanMin){var _amrStrBudget=_amrTargetSec*0.97-_amrCardioTime;var _amrCalcBase=_amrTotalSPR>0?Math.round((_amrStrBudget-_amrStepContrib)/_amrTotalSPR/_amrLS)*_amrLS:_amrFSCleanMin;_amrCalcBase=Math.max(_amrFSCleanMin,Math.min(_amrFSMaxBase,_amrCalcBase));_amrSPI.forEach(function(oi,si){var _rv=Math.min(_amrEffCap,_amrCalcBase+(chosen.length-1-si)*_amrLS);_amrNC.push(chosen[oi]);_amrNR.push(Math.max(_amrFSCleanMin,_rv));});}else{_amrSPI.forEach(function(oi){_amrNC.push(chosen[oi]);_amrNR.push(_amrFSCleanMin);});}chosen=_amrNC;_rArr=_amrNR;}
   // ── Hard cap enforcement after ladder sort (مهم لـ YGIG: يمنع تجاوز maxTargetSec) ──
   // ── Hard cap safety (post-ladder-sort): يستخدم نفس _amrTm و_amrTrans الموحّدين ──
   if(typeof _amrHardCap!=='undefined'&&_amrHardCap&&chosen.length){
@@ -1745,7 +1745,7 @@ function mkChipper(time,lv,team,cfg){
   // ── Pattern selection (60% ladder, 40% flat) ──
   var _flatPats=team===2?['flat_2','flat_10','flat_20']:['flat_2','flat_5','flat_10','flat_20'];
   var _ladderPats=team===2?['desc_10','asc_10','desc_20','asc_20']:['desc_5','asc_5','desc_10','asc_10','desc_20','asc_20'];
-  var _clPat=cfg.pat||(Math.random()<0.60?pk(_ladderPats):pk(_flatPats));
+  var _clPat=cfg.pat||(Math.random()<0.70?pk(_ladderPats):pk(_flatPats));
   var _isFlat=_clPat.indexOf('flat')===0;
   var _isAsc=_clPat.indexOf('asc')===0;
   var _isDesc=_clPat.indexOf('desc')===0;
@@ -1772,7 +1772,7 @@ function mkChipper(time,lv,team,cfg){
     _clCap=Math.min(_clCap,_clMaxR);
     var _clSnap=function(v,cap){var s=Math.round(v/_clStep)*_clStep;s=Math.max(_clMinR,Math.max(_clStep,s));s=Math.ceil(s/_clStep)*_clStep;return Math.min(cap||_clMaxR,s);};
     // ── Safe step for ladder patterns ──
-    if((_isDesc||_isAsc)&&chosen.length>1){var _clSafeStep=Math.floor((_clCap-_clMinR)/Math.max(1,chosen.length-1));var _clVS=(team===2?[10,20]:[5,10,20]).filter(function(s){return s<=_clSafeStep;});if(_clVS.length){_clStep=Math.max.apply(null,_clVS);}}
+    if((_isDesc||_isAsc)&&chosen.length>1){var _clSafeStep=Math.floor((_clCap-_clMinR)/Math.max(1,chosen.length-1));var _clVS=[10,20].filter(function(s){return s<=_clSafeStep;});if(_clVS.length){_clStep=Math.max.apply(null,_clVS);}}
     // ── Viability for ladder patterns ──
     if(_isDesc||_isAsc){
       var _maxLadderEx=Math.max(1,Math.floor((_clCap-_clMinR)/_clStep)+1);
@@ -1860,7 +1860,7 @@ function mkChipper(time,lv,team,cfg){
   // ── Sort by difficulty: easiest→most reps, hardest→fewest ──
   // DESC: easiest first (most reps) → hardest last (fewest reps)
   // ASC:  hardest first (fewest reps) → easiest last (most reps)
-  if(!_isFlat&&chosen.length>1){var _clRS=repsArr.slice().sort(function(a,b){return a-b;});var _clSI=chosen.map(function(_,i){return i;}).sort(function(a,b){return getSecondsPerRep(chosen[a],lv,team)-getSecondsPerRep(chosen[b],lv,team);});var _clNC=_clSI.map(function(i){return chosen[i];});repsArr=_isDesc?_clRS.slice().reverse():_clRS;chosen=_clNC;}
+  if(!_isFlat&&chosen.length>1){var _clRS=repsArr.slice().sort(function(a,b){return a-b;});var _clSI=chosen.map(function(_,i){return i;}).sort(function(a,b){return _isAsc?getSecondsPerRep(chosen[b],lv,team)-getSecondsPerRep(chosen[a],lv,team):getSecondsPerRep(chosen[a],lv,team)-getSecondsPerRep(chosen[b],lv,team);});var _clNC=_clSI.map(function(i){return chosen[i];});repsArr=_isDesc?_clRS.slice().reverse():_clRS;chosen=_clNC;}
   // ── Build items ──
   strCount=chosen.length;
   // الباترن المختار يبقى كما هو — مرتب حسب الصعوبة
