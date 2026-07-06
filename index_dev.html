@@ -449,7 +449,7 @@ var STR=[
   {name:'Good Morning',cat:'barbell',tier:1,alts:['Romanian Deadlift','Hang Power Clean','Back Squat','KB Good Morning'],altOnly:true},
   {name:'Sumo Deadlift',cat:'barbell',tier:1,alts:['Deadlift','KB Deadlift','DB Deadlift','Romanian Deadlift']},
   {name:'Floor Press',cat:'barbell',tier:1,alts:['Bench Press','DB Floor Press','Push-Up','DB Bench Press'],altOnly:true},
-  {name:'Hip Thrust',cat:'barbell',tier:1,alts:['Glute Bridge','Single-Leg Hip Thrust','DB Hip Thrust','Single-Leg Glute Bridge'],altOnly:true},
+  {name:'Hip Thrust',cat:'barbell',tier:1,alts:['Glute Bridge','Single-Leg Hip Thrust','DB Hip Thrust','Single-Leg Glute Bridge']},
   {name:'Power Clean',cat:'barbell',tier:2,alts:['Hang Power Clean','DB Clean','Muscle Clean','Clean']},
   {name:'Push Press',cat:'barbell',tier:2,alts:['Shoulder Press','Push Jerk','DB Push Press','KB Press']},
   {name:'Thruster',cat:'barbell',tier:2,alts:['DB Thruster','KB Thruster','Wall Ball','Front Squat']},
@@ -460,7 +460,7 @@ var STR=[
   {name:'Shoulder-to-Overhead',cat:'barbell',tier:2,alts:['Push Press','Push Jerk','Shoulder Press','Split Jerk']},
   {name:'Barbell High Pull',cat:'barbell',tier:2,alts:['Sumo Deadlift High Pull','Power Clean','Upright Row','DB High Pull'],altOnly:true},
   {name:'Zercher Squat',cat:'barbell',tier:2,alts:['Front Squat','Goblet Squat','Back Squat','Paused Squat'],altOnly:true},
-  {name:'Barbell Front-rack Lunge',cat:'barbell',tier:2,alts:['Walking Lunge','DB Front Rack Lunge','Reverse Lunge','Front Squat']},
+  
   {name:'Box Squat',cat:'barbell',tier:2,alts:['Back Squat','Front Squat','Paused Squat','Goblet Squat'],altOnly:true},
   {name:'Pause Front Squat',cat:'barbell',tier:2,alts:['Front Squat','Zercher Squat','Goblet Squat','Back Squat'],altOnly:true},
   {name:'Clean Pull',cat:'barbell',tier:2,alts:['Power Clean','Hang Power Clean','Deadlift','Snatch Pull'],altOnly:true},
@@ -468,83 +468,93 @@ var STR=[
   {name:'Upright Row',cat:'barbell',tier:2,alts:['Sumo Deadlift High Pull','Barbell High Pull','KB High Pull','Power Clean'],altOnly:true},
   {name:'Paused Squat',cat:'barbell',tier:2,alts:['Back Squat','Front Squat','Goblet Squat','Box Squat'],altOnly:true},
   {name:'Hang Power Clean',cat:'barbell',tier:3,alts:['Power Clean','High Hang Power Clean','Clean','DB Hang Clean']},
-  {name:'Hang Clean',cat:'barbell',tier:3,alts:['Hang Power Clean','Hang Squat Clean','Clean','Power Clean']},
-  {name:'Power Snatch',cat:'barbell',tier:3,alts:['Hang Power Snatch','DB Snatch','Squat Snatch','Snatch Balance']},
+  {name:'Hang Clean',cat:'barbell',tier:3,alts:['Hang Power Clean','Clean & Jerk','Clean','Power Clean']},
+  {name:'Power Snatch',cat:'barbell',tier:3,alts:['Hang Power Snatch','DB Snatch','Snatch','Snatch Balance']},
   {name:'Ground to Overhead',cat:'barbell',tier:3,alts:['Clean & Jerk','Power Snatch','Thruster','DB Clean and Press']},
   {name:'Push Jerk',cat:'barbell',tier:3,alts:['Push Press','Split Jerk','Shoulder Press','DB Push Jerk']},
   {name:'Overhead Squat',cat:'barbell',tier:3,alts:['Front Squat','DB Overhead Squat','Snatch Balance','Sotts Press']},
-  {name:'Hang Power Snatch',cat:'barbell',tier:3,alts:['Power Snatch','DB Snatch','Overhead Squat','Hang Squat Snatch']},
+  {name:'Hang Power Snatch',cat:'barbell',tier:3,alts:['Power Snatch','DB Snatch','Overhead Squat','Hang Snatch']},
   {name:'High Hang Power Clean',cat:'barbell',tier:3,alts:['Hang Power Clean','Power Clean','Muscle Clean','DB Hang Clean'],altOnly:true},
   {name:'Muscle Snatch',cat:'barbell',tier:3,alts:['Power Snatch','Hang Power Snatch','DB Snatch','Overhead Squat'],altOnly:true},
   {name:'Snatch Pull',cat:'barbell',tier:3,alts:['Power Snatch','Clean Pull','Deadlift','Hang Power Snatch'],altOnly:true},
-  {name:'Overhead Lunge',cat:'barbell',tier:3,alts:['Barbell Front-rack Lunge','DB Overhead Lunge','Walking Lunge','Reverse Lunge'],altOnly:true},
-  {name:'Hang Squat Clean',cat:'barbell',tier:3,alts:['Hang Power Clean','Clean','Power Clean','Muscle Clean']},
+  {name:'Overhead Lunge',cat:'barbell',tier:3,alts:['Front Squat','DB Overhead Lunge','Walking Lunge','Reverse Lunge']},
+  
   {name:'Muscle Clean',cat:'barbell',tier:3,alts:['Power Clean','Hang Power Clean','High Hang Power Clean','Clean'],altOnly:true},
-  {name:'Clean',cat:'barbell',tier:4,alts:['Power Clean','Hang Squat Clean','DB Squat Clean','DB Clean']},
-  {name:'Clean & Jerk',cat:'barbell',tier:4,alts:['Power Clean','Ground to Overhead','DB Clean & Jerk','Push Jerk']},
+  {name:'Clean',cat:'barbell',tier:4,alts:['Power Clean','Hang Clean','DB Squat Clean','DB Clean']},
+  {name:'Clean & Jerk',cat:'barbell',tier:4,alts:['Power Clean','Ground to Overhead','DB Clean & Jerk','KB Clean and Jerk']},
+  {name:'Clean and Press',cat:'barbell',tier:4,alts:['Clean & Jerk','Ground to Overhead','Shoulder-to-Overhead','Thruster']},
   {name:'Split Jerk',cat:'barbell',tier:4,alts:['Push Jerk','Push Press','Power Jerk','DB Push Jerk']},
   {name:'Snatch Balance',cat:'barbell',tier:4,alts:['Overhead Squat','Drop Snatch','Sotts Press','Hang Power Snatch'],altOnly:true},
-  {name:'Squat Snatch',cat:'barbell',tier:4,alts:['Power Snatch','Hang Squat Snatch','Overhead Squat','Hang Power Snatch']},
+  {name:'Snatch',cat:'barbell',tier:4,alts:['Power Snatch','Hang Snatch','Overhead Squat','Hang Power Snatch']},
   {name:'Power Jerk',cat:'barbell',tier:4,alts:['Push Jerk','Split Jerk','Push Press','Clean & Jerk'],altOnly:true},
   {name:'Drop Snatch',cat:'barbell',tier:4,alts:['Snatch Balance','Overhead Squat','Hang Power Snatch','Power Snatch'],altOnly:true},
-  {name:'Hang Squat Snatch',cat:'barbell',tier:4,alts:['Hang Power Snatch','Power Snatch','Squat Snatch','Overhead Squat']},
+  {name:'Hang Snatch',cat:'barbell',tier:4,alts:['Hang Power Snatch','Power Snatch','Snatch','Overhead Squat']},
   {name:'Sotts Press',cat:'barbell',tier:4,alts:['Overhead Squat','Snatch Balance','Z-Press','Strict Handstand Push-Up'],altOnly:true},
-  {name:'Air Squat',cat:'gymnastics',tier:1,alts:['Goblet Squat','Jump Squat','KB Swing','Mountain Climber']},
+  {name:'Air Squat',cat:'gymnastics',tier:1,alts:['Goblet Squat','Jump Squat','Russian KB Swing','Mountain Climber']},
   {name:'Push-Up',cat:'gymnastics',tier:1,alts:['Ring Dip','Hand-Release Push-Up','Wall Walk','Strict Handstand Push-Up']},
-  {name:'Chin-Up',cat:'gymnastics',tier:1,alts:['Jumping Pull-Up','Banded Pull-Up','Ring Row','Strict Pull-Up']},
+  {name:'Chin-Up',cat:'gymnastics',tier:2,alts:['Jumping Pull-Up','Banded Pull-Up','Ring Row','Strict Pull-Up']},
   {name:'Negative Pull-Up',cat:'gymnastics',tier:1,alts:['Jumping Pull-Up','Ring Row','Banded Pull-Up','Strict Pull-Up'],altOnly:true},
   {name:'Hanging Knee Raise',cat:'gymnastics',tier:1,alts:['AbMat Sit-Up','V-Up','Toes-to-Bar','Leg Raise']},
-  {name:'Wall Ball',cat:'gymnastics',tier:1,alts:['DB Thruster','KB Swing','Hollow Rock','Thruster']},
+  {name:'Wall Ball',cat:'gymnastics',tier:1,alts:['DB Thruster','Russian KB Swing','Med Ball Sit-Up','Thruster']},
   {name:'Burpee',cat:'gymnastics',tier:1,alts:['Mountain Climber','Jump Squat','Broad Jump','Box Jump']},
-  {name:'Box Jump',cat:'gymnastics',tier:1,alts:['Box Step-Up','Jump Squat','Box Jump Over','Broad Jump']},
+  {name:'Box Jump',cat:'gymnastics',tier:1,alts:['Box Step-Up','Jump Squat','Box Jump Over','Tuck Jump']},
   {name:'Walking Lunge',cat:'gymnastics',tier:1,alts:['Overhead Lunge','Reverse Lunge','Box Step-Up','DB Lunge']},
-  {name:'AbMat Sit-Up',cat:'gymnastics',tier:1,alts:['Mountain Climber','V-Up','Hollow Rock','Toes-to-Bar']},
-  {name:'Box Step-Up',cat:'gymnastics',tier:1,alts:['Box Jump','Walking Lunge','DB Box Step-Up','Reverse Lunge']},
-  {name:'V-Up',cat:'gymnastics',tier:1,alts:['Leg Raise','Toes-to-Bar','Hollow Rock','Hollow Hold']},
-  {name:'Hollow Rock',cat:'gymnastics',tier:1,alts:['Hollow Hold','V-Up','AbMat Sit-Up','Arch Hold']},
+  {name:'AbMat Sit-Up',cat:'gymnastics',tier:1,alts:['Sit-Up','V-Up','Hollow Rock','Toes-to-Bar']},
+  {name:'Sit-Up',cat:'gymnastics',tier:1,alts:['AbMat Sit-Up','V-Up','Hollow Rock','Toes-to-Bar']},
+  {name:'Box Step-Up',cat:'gymnastics',tier:1,alts:['Box Jump','Walking Lunge','DB Box Step-Up','Med Ball Box Step-Up']},
+  {name:'Med Ball Box Step-Up',cat:'gymnastics',tier:1,alts:['DB Box Step-Up','Box Step-Up','Wall Ball','Slam Ball'],altOnly:true},
+  {name:'V-Up',cat:'gymnastics',tier:1,alts:['Leg Raise','Toes-to-Bar','Hollow Rock','DB Sit-Up']},
+  {name:'Hollow Rock',cat:'gymnastics',tier:1,alts:['Hollow Hold','V-Up','AbMat Sit-Up','Ab Wheel Rollout']},
   {name:'Hollow Hold',cat:'gymnastics',tier:1,unit:'time',alts:['Plank Hold','Arch Hold','V-Up','AbMat Sit-Up']},
   {name:'Arch Hold',cat:'gymnastics',tier:1,unit:'time',alts:['Hollow Hold','Superman Hold','Plank Hold','Side Plank']},
   {name:'Plank Hold',cat:'gymnastics',tier:1,unit:'time',alts:['Hollow Hold','Side Plank','L-Sit','Superman Hold']},
   {name:'Mountain Climber',cat:'gymnastics',tier:1,alts:['Burpee','Bear Crawl','AbMat Sit-Up','Inchworm']},
   {name:'Bear Crawl',cat:'gymnastics',tier:1,unit:'carry',alts:['Handstand Walk','Inchworm','Mountain Climber','Sled Push']},
   {name:'Box Dip',cat:'gymnastics',tier:1,alts:['Ring Dip','Bar Dip','Push-Up','Banded Dip']},
-  {name:'Slam Ball',cat:'gymnastics',tier:1,alts:['Wall Ball','DB Thruster','KB Swing','Burpee']},
+  {name:'Slam Ball',cat:'gymnastics',tier:1,alts:['Wall Ball','DB Thruster','Russian KB Swing','Med Ball Sit-Up']},
+  {name:'Med Ball Sit-Up',cat:'gymnastics',tier:1,alts:['AbMat Sit-Up','DB Sit-Up','Wall Ball','Slam Ball']},
   {name:'Leg Raise',cat:'gymnastics',tier:1,alts:['AbMat Sit-Up','Hanging Knee Raise','V-Up','Toes-to-Bar']},
   {name:'Ring Row',cat:'gymnastics',tier:1,alts:['Banded Pull-Up','Jumping Pull-Up','Negative Pull-Up','Strict Pull-Up']},
   {name:'Reverse Lunge',cat:'gymnastics',tier:1,alts:['Walking Lunge','Lunge','Box Step-Up','Bulgarian Split Squat']},
   {name:'Lunge',cat:'gymnastics',tier:1,alts:['Walking Lunge','Reverse Lunge','Box Step-Up','DB Lunge']},
   {name:'Broad Jump',cat:'gymnastics',tier:1,alts:['Box Jump','Jump Squat','Burpee','Box Step-Up']},
   {name:'Side Plank',cat:'gymnastics',tier:1,unit:'time',alts:['Plank Hold','Hollow Hold','L-Sit','Arch Hold']},
-  {name:'Superman Hold',cat:'gymnastics',tier:1,unit:'time',alts:['Arch Hold','Plank Hold','Hollow Hold','Side Plank']},
-  {name:'Glute Bridge',cat:'gymnastics',tier:1,alts:['Hip Thrust','Single-Leg Glute Bridge','Single-Leg Hip Thrust','DB Hip Thrust']},
+  {name:'Superman Hold',cat:'gymnastics',tier:1,unit:'time',alts:['Arch Hold','Plank Hold','Hollow Hold','Back Extension (GHD)']},
+  {name:'Glute Bridge',cat:'gymnastics',tier:1,alts:['Hip Thrust','Single-Leg Glute Bridge','Single-Leg Hip Thrust','Back Extension (GHD)']},
   {name:'Russian Twist',cat:'gymnastics',tier:1,alts:['AbMat Sit-Up','V-Up','Hollow Rock','Leg Raise']},
-  {name:'Jump Squat',cat:'gymnastics',tier:1,alts:['Air Squat','Box Jump','Broad Jump','Burpee']},
+  {name:'Jump Squat',cat:'gymnastics',tier:1,alts:['Air Squat','Box Jump','Broad Jump','Tuck Jump']},
   {name:'Banded Pull-Up',cat:'gymnastics',tier:1,alts:['Jumping Pull-Up','Ring Row','Negative Pull-Up','Strict Pull-Up'],altOnly:true},
   {name:'Banded Dip',cat:'gymnastics',tier:1,alts:['Box Dip','Bar Dip','Ring Dip','Push-Up'],altOnly:true},
   {name:'Jumping Pull-Up',cat:'gymnastics',tier:1,alts:['Banded Pull-Up','Ring Row','Negative Pull-Up','Strict Pull-Up']},
   {name:'Hand-Release Push-Up',cat:'gymnastics',tier:1,alts:['Push-Up','Ring Push-Up','Pike Push-Up','Box Dip']},
   {name:'Single-Leg Hip Thrust',cat:'gymnastics',tier:1,alts:['Hip Thrust','Glute Bridge','Single-Leg Glute Bridge','DB Hip Thrust'],altOnly:true},
   {name:'Single-Leg Glute Bridge',cat:'gymnastics',tier:1,alts:['Glute Bridge','Hip Thrust','Single-Leg Hip Thrust','DB Hip Thrust'],altOnly:true},
-  {name:'Kipping Pull-Up',cat:'gymnastics',tier:2,alts:['Strict Pull-Up','Jumping Pull-Up','Banded Pull-Up','Ring Row']},
-  {name:'Toes-to-Bar',cat:'gymnastics',tier:2,alts:['Knees-to-Chest','Hanging Knee Raise','V-Up','AbMat Sit-Up']},
+  {name:'Kipping Pull-Up',cat:'gymnastics',tier:2,alts:['Strict Pull-Up','Jumping Pull-Up','Banded Pull-Up','Burpee Pull-Up']},
+  {name:'Toes-to-Bar',cat:'gymnastics',tier:2,alts:['Knees-to-Chest','Hanging Knee Raise','GHD Sit-Up','Toes-to-Rings']},
   {name:'Box Jump Over',cat:'gymnastics',tier:2,alts:['Box Jump','Burpee Box Jump Over','Jump Squat','Broad Jump']},
   {name:'Ring Dip',cat:'gymnastics',tier:2,alts:['Bar Dip','Push-Up','Box Dip','Banded Dip']},
   {name:'Chest-to-Bar Pull-Up',cat:'gymnastics',tier:2,alts:['Kipping Pull-Up','Ring Row','Strict Chest-to-bar Pull-up','Strict Pull-Up']},
   {name:'Burpee Box Jump Over',cat:'gymnastics',tier:2,alts:['Bar-Facing Burpee','Box Jump Over','Burpee','Box Jump']},
-  {name:'Sled Push',cat:'gymnastics',tier:2,unit:'carry',alts:['Farmers Carry','Bear Crawl','Sandbag Carry','Overhead Carry'],altOnly:true},
-  {name:'Sandbag Over Shoulder',cat:'gymnastics',tier:2,alts:['D-Ball Over Shoulder','Power Clean','DB Clean','KB Clean'],altOnly:true},
+  {name:'Sled Push',cat:'gymnastics',tier:2,unit:'carry',alts:['Farmers Carry','Bear Crawl','Sandbag Carry','Sled Pull'],altOnly:true},
+  {name:'Sled Pull',cat:'gymnastics',tier:2,unit:'carry',alts:['Sled Push','Farmers Carry','Suitcase Carry','Bear Crawl'],altOnly:true},
+  {name:'Sandbag Over Shoulder',cat:'gymnastics',tier:2,alts:['D-Ball Over Shoulder','Sandbag Clean','DB Clean','KB Clean'],altOnly:true},
   {name:'Bar Dip',cat:'gymnastics',tier:2,alts:['Ring Dip','Box Dip','Push-Up','Banded Dip']},
   {name:'Pike Push-Up',cat:'gymnastics',tier:2,alts:['Push-Up','DB Shoulder Press','Z-Press','Strict Handstand Push-Up'],altOnly:true},
   {name:'Ring Push-Up',cat:'gymnastics',tier:2,alts:['Push-Up','Ring Dip','Box Dip','Bar Dip']},
-  {name:'Bar-Facing Burpee',cat:'gymnastics',tier:2,alts:['Burpee','Burpee Box Jump Over','Box Jump Over','Burpee Box Jump']},
+  {name:'Bar-Facing Burpee',cat:'gymnastics',tier:2,alts:['Burpee','Burpee Box Jump Over','Box Jump Over','Burpee Pull-Up'],altOnly:true},
   {name:'Bulgarian Split Squat',cat:'gymnastics',tier:2,alts:['Reverse Lunge','Single-leg Squat (Pistol)','Box Step-Up','Walking Lunge']},
   {name:'Cossack Squat',cat:'gymnastics',tier:2,alts:['Air Squat','Single-leg Squat (Pistol)','Bulgarian Split Squat','Goblet Squat']},
-  {name:'Knees-to-Chest',cat:'gymnastics',tier:2,alts:['Toes-to-Bar','Hanging Knee Raise','V-Up','AbMat Sit-Up']},
+  {name:'Knees-to-Chest',cat:'gymnastics',tier:2,alts:['Toes-to-Bar','Hanging Knee Raise','V-Up','Toes-to-Rings']},
   {name:'Strict Pull-Up',cat:'gymnastics',tier:2,alts:['Kipping Pull-Up','Negative Pull-Up','Ring Row','Banded Pull-Up']},
   {name:'Jumping Muscle-Up',cat:'gymnastics',tier:2,alts:['Bar Muscle-Up','Chest-to-Bar Pull-Up','Kipping Pull-Up','Ring Row'],altOnly:true},
   {name:'Sandbag Carry',cat:'gymnastics',tier:2,unit:'carry',alts:['Farmers Carry','Bear Crawl','Sled Push','Overhead Carry']},
   {name:'Inchworm',cat:'gymnastics',tier:2,alts:['Bear Crawl','Pike Push-Up','Good Morning','Mountain Climber']},
   {name:'Burpee Box Jump',cat:'gymnastics',tier:2,alts:['Burpee','Box Jump','Burpee Box Jump Over','Bar-Facing Burpee'],altOnly:true},
+  {name:'GHD Sit-Up',cat:'gymnastics',tier:2,alts:['AbMat Sit-Up','Sit-Up','V-Up','Toes-to-Bar'],altOnly:true},
+  {name:'Back Extension (GHD)',cat:'gymnastics',tier:2,alts:['Good Morning','Superman Hold','Glute Bridge','Hip Thrust'],altOnly:true},
+  {name:'Burpee Pull-Up',cat:'gymnastics',tier:2,alts:['Bar-Facing Burpee','Burpee','Kipping Pull-Up','Chest-to-Bar Pull-Up'],altOnly:true},
+  {name:'Med Ball Clean',cat:'gymnastics',tier:2,alts:['DB Clean','KB Clean','Med Ball Sit-Up','Wall Ball'],altOnly:true},
+  {name:'Tuck Jump',cat:'gymnastics',tier:2,alts:['Jump Squat','Box Jump','Broad Jump','Burpee'],altOnly:true},
   {name:'Handstand Push-Up (Kipping)',cat:'gymnastics',tier:3,alts:['Strict Handstand Push-Up','Pike Push-Up','DB Shoulder Press','Z-Press']},
   {name:'Bar Muscle-Up',cat:'gymnastics',tier:3,alts:['Chest-to-Bar Pull-Up','Jumping Muscle-Up','Kipping Pull-Up','Strict Pull-Up']},
   {name:'Rope Climb',cat:'gymnastics',tier:3,alts:['Legless Rope Climb','Ring Row','Strict Pull-Up','Kipping Pull-Up']},
@@ -555,10 +565,13 @@ var STR=[
   {name:'D-Ball Over Shoulder',cat:'gymnastics',tier:3,alts:['Sandbag Over Shoulder','Power Clean','KB Clean','DB Clean'],altOnly:true},
   {name:'Tire Flip',cat:'gymnastics',tier:3,alts:['Deadlift','Power Clean','Sandbag Over Shoulder','D-Ball Over Shoulder'],altOnly:true},
   {name:'Skin the Cat',cat:'gymnastics',tier:3,alts:['Ring Muscle-Up','L-Sit','Ring Row','Strict Pull-Up'],altOnly:true},
-  {name:'Dragon Flag',cat:'gymnastics',tier:3,alts:['L-Sit','Toes-to-Bar','V-Up','Hollow Rock'],altOnly:true},
+  {name:'Dragon Flag',cat:'gymnastics',tier:3,alts:['L-Sit','Toes-to-Bar','Ab Wheel Rollout','Hollow Rock'],altOnly:true},
   {name:'Nordic Curl',cat:'gymnastics',tier:3,alts:['Romanian Deadlift','Good Morning','Glute Bridge','KB Good Morning'],altOnly:true},
   {name:'Strict Chest-to-bar Pull-up',cat:'gymnastics',tier:3,alts:['Chest-to-Bar Pull-Up','Butterfly Pull-Up','Kipping Pull-Up','Strict Pull-Up'],altOnly:true},
   {name:'Strict Toes-to-bar',cat:'gymnastics',tier:3,alts:['Toes-to-Bar','Hanging Knee Raise','Knees-to-Chest','Leg Raise'],altOnly:true},
+  {name:'Toes-to-Rings',cat:'gymnastics',tier:3,alts:['Toes-to-Bar','Knees-to-Chest','Hanging Knee Raise','Ring Row'],altOnly:true},
+  {name:'Ab Wheel Rollout',cat:'gymnastics',tier:3,alts:['Hollow Rock','Dragon Flag','V-Up','Plank Hold'],altOnly:true},
+  {name:'Sandbag Clean',cat:'gymnastics',tier:3,alts:['KB Clean','DB Clean','Sandbag Over Shoulder','Sandbag Carry'],altOnly:true},
   {name:'Ring Muscle-Up',cat:'gymnastics',tier:4,alts:['Bar Muscle-Up','Strict Ring Muscle-Up','Strict Bar Muscle-up','Jumping Muscle-Up']},
   {name:'Strict Handstand Push-Up',cat:'gymnastics',tier:4,alts:['Pike Push-Up','Shoulder Press','Z-Press','Handstand Push-Up (Kipping)']},
   {name:'Chest-to-wall Handstand Push-up',cat:'gymnastics',tier:4,alts:['Strict Handstand Push-Up','Handstand Push-Up (Kipping)','Pike Push-Up','Z-Press'],altOnly:true},
@@ -568,31 +581,32 @@ var STR=[
   {name:'Kipping Deficit HSPU',cat:'gymnastics',tier:4,alts:['Handstand Push-Up (Kipping)','Strict Handstand Push-Up','Chest-to-wall Handstand Push-up','Pike Push-Up'],altOnly:true},
   {name:'Strict Bar Muscle-up',cat:'gymnastics',tier:4,alts:['Bar Muscle-Up','Strict Ring Muscle-Up','Ring Muscle-Up','Chest-to-Bar Pull-Up'],altOnly:true},
   {name:'Strict Ring Muscle-Up',cat:'gymnastics',tier:4,alts:['Ring Muscle-Up','Bar Muscle-Up','Strict Bar Muscle-up','Chest-to-Bar Pull-Up'],altOnly:true},
-  {name:'KB Swing',cat:'kettlebell',tier:1,alts:['American KB Swing','KB High Pull','KB Clean','KB Snatch']},
+  {name:'Russian KB Swing',cat:'kettlebell',tier:1,alts:['American KB Swing','KB High Pull','KB Clean','KB Snatch']},
   {name:'Goblet Squat',cat:'kettlebell',tier:1,alts:['Air Squat','Front Squat','KB Front Squat','Zercher Squat']},
-  {name:'Farmers Carry',cat:'kettlebell',tier:1,unit:'carry',alts:['Suitcase Carry','Overhead Carry','Sandbag Carry','Sled Push']},
+  {name:'Farmers Carry',cat:'kettlebell',tier:1,unit:'carry',alts:['Suitcase Carry','Sled Pull','Sandbag Carry','Sled Push']},
   {name:'KB Deadlift',cat:'kettlebell',tier:1,alts:['Deadlift','DB Deadlift','Sumo KB Deadlift','KB Good Morning']},
   {name:'KB Good Morning',cat:'kettlebell',tier:1,alts:['Good Morning','Romanian Deadlift','DB Good Morning','KB Deadlift'],altOnly:true},
   {name:'KB Gorilla Row',cat:'kettlebell',tier:1,alts:['DB Row','Barbell Row','Ring Row','KB Row']},
   {name:'Sumo KB Deadlift',cat:'kettlebell',tier:1,alts:['KB Deadlift','Sumo Deadlift','DB Deadlift','Goblet Squat'],altOnly:true},
-  {name:'American KB Swing',cat:'kettlebell',tier:2,alts:['KB Swing','KB Snatch','KB Clean','KB High Pull']},
+  {name:'American KB Swing',cat:'kettlebell',tier:2,alts:['Russian KB Swing','KB Snatch','KB Clean','KB High Pull']},
   {name:'KB Snatch',cat:'kettlebell',tier:2,alts:['DB Snatch','American KB Swing','Power Snatch','KB Clean'],altOnly:true},
   {name:'Suitcase Carry',cat:'kettlebell',tier:2,unit:'carry',alts:['Farmers Carry','Overhead Carry','Sandbag Carry','Bear Crawl']},
   {name:'KB Front Squat',cat:'kettlebell',tier:2,alts:['Goblet Squat','Front Squat','DB Front Squat','Zercher Squat']},
   {name:'KB Thruster',cat:'kettlebell',tier:2,alts:['DB Thruster','Thruster','Wall Ball','KB Front Squat'],altOnly:true},
-  {name:'KB Clean',cat:'kettlebell',tier:2,alts:['KB Swing','DB Clean','Power Clean','Hang Power Clean']},
-  {name:'KB High Pull',cat:'kettlebell',tier:2,alts:['KB Swing','American KB Swing','Sumo Deadlift High Pull','KB Clean'],altOnly:true},
+  {name:'KB Clean',cat:'kettlebell',tier:2,alts:['Russian KB Swing','DB Clean','Sandbag Clean','Med Ball Clean']},
+  {name:'KB High Pull',cat:'kettlebell',tier:2,alts:['Russian KB Swing','American KB Swing','Sumo Deadlift High Pull','KB Clean'],altOnly:true},
   {name:'KB Push Press',cat:'kettlebell',tier:2,alts:['Push Press','KB Press','DB Push Press','KB Thruster'],altOnly:true},
   {name:'KB Row',cat:'kettlebell',tier:2,alts:['DB Row','Barbell Row','Ring Row','KB Gorilla Row']},
-  {name:'KB Front Rack Lunge',cat:'kettlebell',tier:2,alts:['DB Front Rack Lunge','Walking Lunge','Barbell Front-rack Lunge','Reverse Lunge'],altOnly:true},
+  {name:'KB Front Rack Lunge',cat:'kettlebell',tier:2,alts:['DB Front Rack Lunge','Walking Lunge','Lunge','Reverse Lunge'],altOnly:true},
   {name:'KB Single-Leg RDL',cat:'kettlebell',tier:2,alts:['Romanian Deadlift','KB Deadlift','DB Single-Leg RDL','Good Morning']},
   {name:'KB Press',cat:'kettlebell',tier:3,alts:['Shoulder Press','Push Press','DB Shoulder Press','Z-Press'],altOnly:true},
   {name:'Overhead Carry',cat:'kettlebell',tier:3,unit:'carry',alts:['Farmers Carry','Suitcase Carry','Sandbag Carry','Bear Crawl']},
-  {name:'KB Windmill',cat:'kettlebell',tier:3,alts:['Turkish Get-Up','KB Press','DB Windmill','Overhead Squat'],altOnly:true},
-  {name:'Turkish Get-Up',cat:'kettlebell',tier:3,unit:'side',alts:['KB Windmill','DB Turkish Get-up','Overhead Lunge','KB Press'],altOnly:true},
+  {name:'KB Windmill',cat:'kettlebell',tier:3,alts:['KB Turkish Get-Up','KB Press','DB Windmill','Overhead Squat'],altOnly:true},
+  {name:'KB Turkish Get-Up',cat:'kettlebell',tier:3,unit:'side',alts:['KB Windmill','DB Turkish Get-up','Overhead Lunge','KB Press'],altOnly:true},
+  {name:'KB Clean and Jerk',cat:'kettlebell',tier:3,alts:['KB Clean','Double KB Clean & Press','KB Press','Clean & Jerk'],altOnly:true},
   {name:'Double KB Front Squat',cat:'kettlebell',tier:4,alts:['Front Squat','KB Front Squat','Goblet Squat','DB Front Squat'],altOnly:true},
-  {name:'Double KB Clean & Press',cat:'kettlebell',tier:4,alts:['Clean & Jerk','KB Thruster','Double KB Front Squat','DB Shoulder-to-Overhead'],altOnly:true},
-  {name:'DB Box Step-Up',cat:'dumbbell',tier:1,alts:['Box Step-Up','Box Jump','Reverse Lunge','Walking Lunge']},
+  {name:'Double KB Clean & Press',cat:'kettlebell',tier:4,alts:['Clean & Jerk','KB Thruster','Double KB Front Squat','KB Clean and Jerk'],altOnly:true},
+  {name:'DB Box Step-Up',cat:'dumbbell',tier:1,alts:['Box Step-Up','Box Jump','Reverse Lunge','Med Ball Box Step-Up']},
   {name:'DB Lunge',cat:'dumbbell',tier:1,alts:['DB Overhead Lunge','DB Front Rack Lunge','Walking Lunge','Reverse Lunge']},
   {name:'DB Deadlift',cat:'dumbbell',tier:1,alts:['Deadlift','KB Deadlift','Romanian Deadlift','DB Romanian Deadlift']},
   {name:'DB Row',cat:'dumbbell',tier:1,alts:['Barbell Row','KB Row','Ring Row','Renegade Row']},
@@ -600,31 +614,37 @@ var STR=[
   {name:'DB Front Squat',cat:'dumbbell',tier:1,alts:['Goblet Squat','DB Thruster','Front Squat','Air Squat']},
   {name:'DB Shoulder Press',cat:'dumbbell',tier:1,alts:['Shoulder Press','KB Press','DB Push Press','Z-Press']},
   {name:'DB Bench Press',cat:'dumbbell',tier:1,alts:['Bench Press','Floor Press','DB Floor Press','Push-Up']},
+  {name:'DB Sit-Up',cat:'dumbbell',tier:1,alts:['AbMat Sit-Up','Med Ball Sit-Up','V-Up','Hollow Rock']},
   {name:'DB Floor Press',cat:'dumbbell',tier:1,alts:['DB Bench Press','Bench Press','Floor Press','Push-Up'],altOnly:true},
   {name:'DB Good Morning',cat:'dumbbell',tier:1,alts:['Good Morning','Romanian Deadlift','KB Good Morning','DB Romanian Deadlift'],altOnly:true},
   {name:'DB Walking Lunge',cat:'dumbbell',tier:1,alts:['DB Lunge','Walking Lunge','DB Front Rack Lunge','DB Overhead Lunge']},
   {name:'DB Hip Thrust',cat:'dumbbell',tier:1,alts:['Hip Thrust','Glute Bridge','Single-Leg Hip Thrust','DB Good Morning'],altOnly:true},
   {name:'DB Snatch',cat:'dumbbell',tier:2,alts:['KB Snatch','Power Snatch','DB High Pull','DB Hang Power Snatch']},
+  {name:'DB Power Snatch',cat:'dumbbell',tier:2,alts:['DB Snatch','DB Hang Power Snatch','Power Snatch','DB Hang Snatch']},
   {name:'DB Thruster',cat:'dumbbell',tier:2,alts:['Thruster','KB Thruster','Wall Ball','DB Push Press']},
   {name:'DB Shoulder-to-Overhead',cat:'dumbbell',tier:2,alts:['DB Push Press','DB Shoulder Press','KB Press','Shoulder-to-Overhead']},
   {name:'DB Overhead Lunge',cat:'dumbbell',tier:2,unit:'reps',alts:['DB Lunge','Overhead Lunge','DB Walking Lunge','DB Front Rack Lunge'],altOnly:true},
-  {name:'DB Clean',cat:'dumbbell',tier:2,alts:['Power Clean','Hang Power Clean','KB Clean','DB Hang Power Clean']},
-  {name:'DB Front Rack Lunge',cat:'dumbbell',tier:2,alts:['Walking Lunge','DB Overhead Lunge','KB Front Rack Lunge','Box Step-Up']},
+  {name:'DB Clean',cat:'dumbbell',tier:2,alts:['Power Clean','Hang Power Clean','KB Clean','Med Ball Clean']},
+  {name:'DB Power Clean',cat:'dumbbell',tier:2,alts:['DB Clean','Hang Power Clean','Power Clean','DB Hang Clean']},
+  {name:'DB Front Rack Lunge',cat:'dumbbell',tier:2,alts:['Walking Lunge','DB Overhead Lunge','KB Front Rack Lunge','Box Step-Up'],altOnly:true},
   {name:'Renegade Row',cat:'dumbbell',tier:2,alts:['DB Row','KB Row','Ring Row','Barbell Row']},
   {name:'DB Push Press',cat:'dumbbell',tier:2,alts:['Push Press','DB Shoulder Press','KB Push Press','DB Shoulder-to-Overhead']},
   {name:'DB Hang Power Clean',cat:'dumbbell',tier:2,alts:['DB Clean','Hang Power Clean','KB Clean','DB Snatch']},
   {name:'DB Hang Clean',cat:'dumbbell',tier:2,alts:['DB Clean','DB Hang Power Clean','Muscle Clean','Hang Power Clean']},
   {name:'DB Single-Leg RDL',cat:'dumbbell',tier:2,alts:['Romanian Deadlift','DB Romanian Deadlift','KB Single-Leg RDL','Good Morning']},
+  {name:'DB Bulgarian Split Squat',cat:'dumbbell',tier:2,alts:['Bulgarian Split Squat','DB Lunge','DB Single-Leg RDL','Walking Lunge']},
   {name:'DB High Pull',cat:'dumbbell',tier:2,alts:['Sumo Deadlift High Pull','Barbell High Pull','KB High Pull','DB Snatch'],altOnly:true},
   {name:'DB Push Jerk',cat:'dumbbell',tier:2,alts:['DB Push Press','DB Shoulder-to-Overhead','Push Jerk','DB Thruster'],altOnly:true},
   {name:'Devil\'s Press',cat:'dumbbell',tier:3,alts:['DB Snatch','DB Thruster','Man Maker','DB Clean and Press']},
   {name:'Man Maker',cat:'dumbbell',tier:3,alts:['Devil\'s Press','DB Thruster','DB Clean and Press','DB Turkish Get-up']},
   {name:'DB Clean and Press',cat:'dumbbell',tier:3,alts:['DB Clean','DB Thruster','DB Shoulder-to-Overhead','Power Clean'],altOnly:true},
-  {name:'DB Turkish Get-up',cat:'dumbbell',tier:3,unit:'side',alts:['Turkish Get-Up','Man Maker','DB Clean and Press','Renegade Row'],altOnly:true},
-  {name:'DB Hang Power Snatch',cat:'dumbbell',tier:3,alts:['DB Snatch','Power Snatch','KB Snatch','DB Clean'],altOnly:true},
+  {name:'DB Turkish Get-up',cat:'dumbbell',tier:3,unit:'side',alts:['KB Turkish Get-Up','Man Maker','DB Clean and Press','Renegade Row'],altOnly:true},
+  {name:'DB Hang Power Snatch',cat:'dumbbell',tier:3,alts:['DB Snatch','Power Snatch','KB Snatch','DB Clean']},
+  {name:'DB Hang Snatch',cat:'dumbbell',tier:3,alts:['DB Hang Power Snatch','DB Power Snatch','DB Squat Snatch','KB Snatch']},
   {name:'DB Overhead Squat',cat:'dumbbell',tier:3,alts:['Overhead Squat','DB Front Squat','Goblet Squat','Zercher Squat']},
-  {name:'DB Windmill',cat:'dumbbell',tier:3,alts:['KB Windmill','Turkish Get-Up','DB Overhead Squat','DB Shoulder Press'],altOnly:true},
-  {name:'DB Squat Clean',cat:'dumbbell',tier:4,alts:['DB Clean','Clean','DB Hang Power Clean','DB Thruster']},
+  {name:'DB Windmill',cat:'dumbbell',tier:3,alts:['KB Windmill','KB Turkish Get-Up','DB Overhead Squat','DB Shoulder Press'],altOnly:true},
+  {name:'DB Squat Clean',cat:'dumbbell',tier:4,alts:['DB Clean','Clean','DB Hang Power Clean','DB Thruster'],altOnly:true},
+  {name:'DB Squat Snatch',cat:'dumbbell',tier:4,alts:['DB Power Snatch','DB Hang Snatch','Snatch','DB Squat Clean'],altOnly:true},
   {name:'DB Clean & Jerk',cat:'dumbbell',tier:4,alts:['Clean & Jerk','DB Clean','DB Thruster','DB Shoulder-to-Overhead']}
 ];
 var CARDIO=[
@@ -647,7 +667,7 @@ var CARDIO=[
   {name:'Single-Unders',amount:30,   unit:'reps', altOnly:true, alts:['Double-Unders','Row','Assault Bike']},
   {name:'Single-Unders',amount:50,   unit:'reps', altOnly:true, alts:['Double-Unders','Row','Assault Bike']},
   {name:'Sprint',       amount:100,  unit:'m',    alts:['Run','Row']}];
-var TABATA_STR_NAMES=['Air Squat','Push-Up','Burpee','Mountain Climber','Box Jump','Box Step-Up','Slam Ball','Wall Ball','V-Up','Knees-to-Chest','Broad Jump','KB Swing','American KB Swing','KB Thruster','DB Thruster','DB Snatch','DB Lunge','DB Box Step-Up','DB Push Press','Walking Lunge','Lunge','Reverse Lunge'];
+var TABATA_STR_NAMES=['Air Squat','Push-Up','Burpee','Mountain Climber','Box Jump','Box Step-Up','Slam Ball','Wall Ball','V-Up','Knees-to-Chest','Broad Jump','Russian KB Swing','American KB Swing','KB Thruster','DB Thruster','DB Snatch','DB Lunge','DB Box Step-Up','DB Push Press','Walking Lunge','Lunge','Reverse Lunge'];
 var TABATA_CARDIO=[
   {name:'Run',          alts:['Row','Assault Bike','Ski Erg','Sprint']},
   {name:'Sprint',       alts:['Run','Row','Assault Bike']},
@@ -662,19 +682,19 @@ function _snapFlat(r){return r<24?Math.max(2,Math.round(r/2)*2):Math.max(10,Math
 function _snapTeam(r){return r<24?Math.max(2,Math.round(r/2)*2):Math.max(10,Math.round(r/10)*10);}
 var _sprMap={
   // Gymnastics T1
-  'Air Squat':1.20,'Push-Up':1.20,'AbMat Sit-Up':1.80,'Russian Twist':1.20,
+  'Air Squat':1.20,'Push-Up':1.20,'AbMat Sit-Up':1.4,'Russian Twist':1.20,
   'Glute Bridge':1.50,'Leg Raise':2.00,'V-Up':2.00,'Hollow Rock':1.50,
   'Hollow Hold':1.00,'Arch Hold':1.00,'Side Plank':1.00,'Plank Hold':1.00,
   'Superman Hold':1.00,'Mountain Climber':1.00,
   'Reverse Lunge':1.80,'Lunge':1.80,'Walking Lunge':1.80,'Box Step-Up':2.50,'Box Dip':1.80,
   'Ring Row':2.00,'Chin-Up':1.80,'Negative Pull-Up':3.50,'Hanging Knee Raise':1.20,'Broad Jump':2.50,'Bear Crawl':2.50,'Slam Ball':2.50,
   'Jump Squat':1.80,'Banded Pull-Up':1.50,'Banded Dip':1.50,'Jumping Pull-Up':1.20,'Hand-Release Push-Up':1.50,'Single-Leg Hip Thrust':2.00,'Single-Leg Glute Bridge':1.80,
-  'Burpee':2.40,'Box Jump':2.40,'Wall Ball':1.60,'Double Under':0.46,
+  'Burpee':2.40,'Box Jump':2.40,'Wall Ball':1.60,'Sit-Up':1.8,'Med Ball Sit-Up':2.50,'Med Ball Box Step-Up':3.00,
   // Gymnastics T2
   'Kipping Pull-Up':1.50,'Chest-to-Bar Pull-Up':2.00,'Toes-to-Bar':1.80,
   'Box Jump Over':2.50,'Burpee Box Jump Over':5.00,'Bar-Facing Burpee':3.00,
   'Ring Dip':1.50,'Bar Dip':1.80,  'Pike Push-Up':2.00,'Ring Push-Up':2.00,'Bulgarian Split Squat':2.50,
-  'Cossack Squat':2.50,'Knees-to-Chest':1.80,'Sled Push':3.00,
+  'Cossack Squat':2.50,'Knees-to-Chest':1.80,'Sled Push':3.00,'Sled Pull':3.20,'GHD Sit-Up':2.20,'Back Extension (GHD)':1.80,'Burpee Pull-Up':3.20,'Med Ball Clean':3.50,'Tuck Jump':2.00,
   'Sandbag Over Shoulder':6.00,
   'Strict Pull-Up':2.00,'Jumping Muscle-Up':2.50,'Sandbag Carry':3.00,'Inchworm':2.50,'Burpee Box Jump':5.50,
   // Gymnastics T3
@@ -682,9 +702,9 @@ var _sprMap={
   'Single-leg Squat (Pistol)':2.00,'Wall Walk':6.00,'Butterfly Pull-Up':1.00,
   'L-Sit':1.00,'D-Ball Over Shoulder':7.00,'Tire Flip':5.00,'Skin the Cat':5.00,
   'Dragon Flag':4.00,'Nordic Curl':5.00,'Strict Chest-to-bar Pull-up':2.50,
-  'Strict Toes-to-bar':3.00,
+  'Strict Toes-to-bar':3.00,'Toes-to-Rings':2.20,'Ab Wheel Rollout':2.80,'Sandbag Clean':3.80,
   // Gymnastics T4
-  'Ring Muscle-Up':5.00,'Strict Handstand Push-Up':5.00,'Chest-to-wall HSPU':6.00,'Chest-to-wall Handstand Push-up':5.50,
+  'Ring Muscle-Up':5.00,'Strict Handstand Push-Up':5.00,'Chest-to-wall Handstand Push-up':5.50,
   'Handstand Walk':1.10,
   'Freestanding HS Hold':1.00,'Legless Rope Climb':25.00,'Kipping Deficit HSPU':4.00,
   'Strict Bar Muscle-up':6.00,'Strict Ring Muscle-Up':7.00,
@@ -695,19 +715,18 @@ var _sprMap={
   'Push Press':2.50,'Thruster':2.00,'Front Squat':3.50,'Back Squat':3.50,
   'Romanian Deadlift':3.50,'Sumo Deadlift High Pull':2.50,'Shoulder-to-Overhead':2.50,
   'Barbell High Pull':2.50,'Power Clean':3.00,'Zercher Squat':4.00,'Box Squat':3.50,
-  'Pause Front Squat':4.00,'Clean Pull':2.50,'Barbell Front-rack Lunge':3.00,
-  'Z-Press':3.50,'Upright Row':2.50,'Paused Squat':4.00,
+  'Pause Front Squat':4.00,'Clean Pull':2.50,'Z-Press':3.50,'Upright Row':2.50,'Paused Squat':4.00,
   // Barbell T3
   'Hang Power Clean':3.00,'Power Snatch':2.50,'Ground to Overhead':4.00,
   'Push Jerk':2.50,'Overhead Squat':4.00,'Hang Clean':3.50,'Hang Power Snatch':3.00,
-  'High Hang Power Clean':3.00,'Muscle Snatch':3.50,'Snatch Pull':2.50,
-  'Overhead Lunge':3.50,'Hang Squat Clean':3.50,'Muscle Clean':3.50,
+  'High Hang Power Clean':3.00,'Muscle Snatch':2.6,'Snatch Pull':2.50,
+  'Overhead Lunge':3.50,'Hang Clean':3.50,'Muscle Clean':3.50,
   // Barbell T4
-  'Clean':4.00,'Clean & Jerk':5.83,'Split Jerk':4.00,'Snatch Balance':4.50,
-  'Squat Snatch':5.00,'Power Jerk':3.50,
-  'Drop Snatch':4.50,'Hang Squat Snatch':4.50,'Sotts Press':4.50,
+  'Clean':4.00,'Clean & Jerk':4.2,'Clean and Press':5.00,'Split Jerk':4.00,'Snatch Balance':3.4,
+  'Snatch':3.75,'Power Jerk':3.50,
+  'Drop Snatch':3.4,'Hang Snatch':3.4,'Sotts Press':4.50,
   // Kettlebell T1
-  'KB Swing':2.00,'KB Swing (Russian)':2.00,'Goblet Squat':2.50,'Farmers Carry':2.00,
+  'Russian KB Swing':2.00,'Goblet Squat':2.50,'Farmers Carry':2.00,
   'KB Deadlift':2.50,'KB Good Morning':3.00,'KB Gorilla Row':3.00,
   'Sumo KB Deadlift':2.50,
   // Kettlebell T2
@@ -715,24 +734,24 @@ var _sprMap={
   'KB Thruster':2.50,'KB Clean':3.00,'KB High Pull':2.50,'KB Push Press':2.50,'KB Row':3.00,
   'KB Front Rack Lunge':3.00,'KB Single-Leg RDL':3.50,
   // Kettlebell T3
-  'KB Press':3.50,'Overhead Carry':2.00,'KB Windmill':5.00,  'Turkish Get-Up':30.00,
+  'KB Press':3.50,'Overhead Carry':2.00,'KB Windmill':5.00,  'KB Turkish Get-Up':30.00,'KB Clean and Jerk':2.9,
   // Kettlebell T4
   'Double KB Front Squat':3.50,'Double KB Clean & Press':5.00,
   // Dumbbell T1
   'DB Box Step-Up':3.00,'DB Deadlift':2.50,'DB Row':3.00,'DB Romanian Deadlift':3.00,
-  'DB Shoulder Press':3.00,'DB Bench Press':3.00,'DB Front Squat':3.00,
+  'DB Shoulder Press':3.00,'DB Bench Press':3.00,'DB Sit-Up':2.50,'DB Front Squat':3.00,
   'DB Floor Press':3.00,'DB Good Morning':3.00,'DB Walking Lunge':3.00,'DB Lunge':3.00,'DB Hip Thrust':3.00,
   // Dumbbell T2
-  'DB Snatch':2.50,'DB Thruster':2.50,'DB Shoulder-to-Overhead':2.50,
-  'DB Overhead Lunge':3.00,'DB Clean':3.00,'DB Front Rack Lunge':3.00,
+  'DB Snatch':2.50,'DB Power Snatch':2.50,'DB Thruster':2.50,'DB Shoulder-to-Overhead':2.50,
+  'DB Overhead Lunge':3.00,'DB Clean':3.00,'DB Power Clean':3.00,'DB Front Rack Lunge':3.00,
   'Renegade Row':4.00,'DB Push Press':2.50,'DB Hang Power Clean':3.00,'DB Hang Clean':3.00,
-  'DB Single-Leg RDL':3.50,'DB High Pull':2.50,
+  'DB Single-Leg RDL':3.50,'DB Bulgarian Split Squat':3.50,'DB High Pull':2.50,
   // Dumbbell T3
   'Devil\'s Press':5.00,'Man Maker':8.00,'DB Clean and Press':4.00,
-  'DB Hang Power Snatch':3.00,'DB Overhead Squat':3.50,'DB Turkish Get-up':30.00,
+  'DB Hang Power Snatch':3.00,'DB Hang Snatch':3.00,'DB Overhead Squat':3.50,'DB Turkish Get-up':30.00,
   'DB Windmill':5.00,
   // Dumbbell T4
-  'DB Squat Clean':4.00,'DB Clean & Jerk':5.00,'DB Push Jerk':3.00
+  'DB Squat Clean':4.00,'DB Squat Snatch':3.75,'DB Clean & Jerk':3.6,'DB Push Jerk':3.00
 };
 function getSecondsPerRep(ex,lv,team,split){
   var _teamF=(team===2&&split)?({beginner:0.75,intermediate:0.80,advanced:0.85,elite:0.90}[lv||'intermediate']||0.80):1;
@@ -1196,7 +1215,7 @@ function mkAmrap(time,lv,team,cfg){
         var _amrUpPool=_amrUpK.length>1?_amrUpK.filter(function(k){return k!==_amrLastUpPick;}):_amrUpK;
         var _amrUpPick=pk(_amrUpPool);_amrLastUpPick=_amrUpPick;
         if(_amrUpPick==='reps'){_rArr=_rArr.map(function(r){return Math.min(_amrEffCap,r+_amrLS);});baseReps=_rArr[0]||_amrHardMin;}
-        else if(_amrUpPick==='add-cardio'){var _fcPick=pk(CARDIO);var _fcAmt=_cardioInitAmt(_fcPick.unit,_amrCL);if(_fcPick.unit==='Cal'&&team===2)_fcAmt=Math.max(20,_fcAmt);addCardio=true;_amrapEx=Object.assign({},_fcPick,{amount:_fcAmt});_amrapNItems++;}
+        else if(_amrUpPick==='add-cardio'){var _fcPick=pk(CARDIO.filter(function(c){return !c.altOnly;}));var _fcAmt=_cardioInitAmt(_fcPick.unit,_amrCL);if(_fcPick.unit==='Cal'&&team===2)_fcAmt=Math.max(20,_fcAmt);addCardio=true;_amrapEx=Object.assign({},_fcPick,{amount:_fcAmt});_amrapNItems++;}
         else if(_amrUpPick==='cardio'){_amrapEx=_cardioUp(_amrapEx,_amrCL);}
         else if(_amrUpPick==='exercise'){var _addPool=_amrPool.filter(function(e){return!chosen.some(function(c){return c.name===e.name;});});if(_addPool.length){chosen.push(pk(_addPool));strCount++;exCnt++;_amrapNItems++;if(_amrIsFlat){_rArr.push(_rArr[0]||_amrHardMin);}else{var _amrBase2=Math.max(_amrHardMin,Math.min.apply(null,_rArr));_amrBase2=Math.ceil(_amrBase2/_amrLS)*_amrLS;var _amrMB2=Math.floor((_amrEffCap-(chosen.length-1)*_amrLS)/_amrLS)*_amrLS;if(_amrMB2>=_amrHardMin)_amrBase2=Math.min(_amrBase2,_amrMB2);_amrBase2=Math.max(_amrHardMin,_amrBase2);_rArr=chosen.map(function(_,si){return Math.min(_amrEffCap,_amrBase2+(chosen.length-1-si)*_amrLS);});}}}
       }
@@ -1367,7 +1386,7 @@ function mkRFT(time,lv,team,cfg){
   var chosen=pkN(getPool(lv,null,team),strCount);
   var _rftLimsAll=_exLims(chosen,lv,team,cfg.noTeamSplit?false:true);
   var _rftCL=_cardioLimits(team,cfg.noTeamSplit?false:true,lv);
-  var _cExRaw=addCardio?pk(CARDIO):null;
+  var _cExRaw=addCardio?pk(CARDIO.filter(function(c){return !c.altOnly;})):null;
   var _cEx=_cExRaw?Object.assign({},_cExRaw,{amount:_cardioInitAmt(_cExRaw.unit,_rftCL)}):null;
   // تقريب الكارديو: Cal مضاعفات 10 / m مضاعفات 100
   if(_cEx){
@@ -1459,7 +1478,7 @@ function mkRFT(time,lv,team,cfg){
         if(_perExReps){_perExReps=_perExReps.map(function(r){return Math.min(_rftEffCap,r+_rftLS);});}
         reps=reps.map(function(r){return Math.min(_rftEffCap,r+_rftLS);});
         baseReps=(_perExReps&&_perExReps[0])||reps[0]||_rftMinR;
-      } else if(key==='add-cardio'){var _ac=pk(CARDIO);addCardio=true;_cEx=Object.assign({},_ac,{amount:_cardioInitAmt(_ac.unit,_rftCL)});_rftNItems++;
+      } else if(key==='add-cardio'){var _ac=pk(CARDIO.filter(function(c){return !c.altOnly;}));addCardio=true;_cEx=Object.assign({},_ac,{amount:_cardioInitAmt(_ac.unit,_rftCL)});_rftNItems++;
       } else if(key==='cardio'){_cEx=_cardioUp(_cEx,_rftCL);
       } else if(key==='exercise'){var _ap=getPool(lv,null,team).filter(function(e){return!chosen.some(function(c){return c.name===e.name;});});if(_ap.length){chosen.push(pk(_ap));strCount++;exCnt++;_rftNItems++;if(_perExReps){if(_rpType==='flat'){_perExReps.push(_perExReps[0]||_rftLimsAll.min);}else{var _rftBase2=Math.max(_rftLimsAll.min,Math.min.apply(null,_perExReps));_rftBase2=Math.ceil(_rftBase2/_rftLS)*_rftLS;var _rftMB2=Math.floor((_rftEffCap-(chosen.length-1)*_rftLS)/_rftLS)*_rftLS;if(_rftMB2>=_rftLimsAll.min)_rftBase2=Math.min(_rftBase2,_rftMB2);_rftBase2=Math.max(_rftLimsAll.min,_rftBase2);_perExReps=chosen.map(function(_,si){return Math.min(_rftEffCap,_rftBase2+(chosen.length-1-si)*_rftLS);});}}}
       } else if(key==='rounds'){rounds++;reps.push(baseReps);}
@@ -1574,9 +1593,9 @@ function mkEmom(time,lv,team,cfg){
   var cEx=null;
   if(addCardio){
     if(cfg.cardioAmt){
-      cEx=Object.assign({},pk(CARDIO),{amount:cfg.cardioAmt});
+      cEx=Object.assign({},pk(CARDIO.filter(function(c){return !c.altOnly;})),{amount:cfg.cardioAmt});
     } else {
-      var _cp=pk(CARDIO);
+      var _cp=pk(CARDIO.filter(function(c){return !c.altOnly;}));
       var _initAmt=_cp.unit==='Cal'?ri(_emCL.calMin,_emCL.calMax):_cp.unit==='m'?ri(_emCL.mtrMin/_emCL.mtrStep||1,_emCL.mtrMax/_emCL.mtrStep)*_emCL.mtrStep:ri(_emCL.duMin/10,_emCL.duMax/10)*10;
       cEx=Object.assign({},_cp,{amount:_initAmt});
     }
@@ -1755,7 +1774,7 @@ function mkChipper(time,lv,team,cfg){
   var strCount=exCnt;
   var chosen=pkN(getChipperPool(lv,team),strCount);
   var _clCLInit=_chipperCL(lv,team);
-  var cEx=addCardio?(function(){if(!CARDIO.length)return null;var _cp=pk(CARDIO);var _cu=_cp.unit;var _mn=_cu==='Cal'?_clCLInit.calMin:_cu==='m'?_clCLInit.mtrMin:_clCLInit.duMin;var _mx=_cu==='Cal'?_clCLInit.calMax:_cu==='m'?_clCLInit.mtrMax:_clCLInit.duMax;return Object.assign({},_cp,{amount:_cardioPickFlat(_cu,_mn,_mx,true).amount});})():null;
+  var cEx=addCardio?(function(){if(!CARDIO.length)return null;var _cp=pk(CARDIO.filter(function(c){return !c.altOnly;}));var _cu=_cp.unit;var _mn=_cu==='Cal'?_clCLInit.calMin:_cu==='m'?_clCLInit.mtrMin:_clCLInit.duMin;var _mx=_cu==='Cal'?_clCLInit.calMax:_cu==='m'?_clCLInit.mtrMax:_clCLInit.duMax;return Object.assign({},_cp,{amount:_cardioPickFlat(_cu,_mn,_mx,true).amount});})():null;
   var _clBudget=time*60;
   var _swapCardio=function(curCex,CL){var _alts=CARDIO.filter(function(c){return(!curCex||c.unit!==curCex.unit)&&!c.altOnly;});if(!_alts.length)return curCex;var _nc=pk(_alts);return Object.assign({},_nc,{amount:_cardioInitAmt(_nc.unit,CL)});};
   {
@@ -1837,7 +1856,7 @@ function mkChipper(time,lv,team,cfg){
         if(!_upK.length)break;
         var _upPick=pk(_upK);
         if(_upPick==='reps'){if(_isFlat){_snapBase=_flatUp2(_snapBase);repsArr=chosen.map(function(){return _snapBase;});}else if(_isAsc){_ascBot=Math.min(_clCap,_ascBot+_clStep);repsArr=_ascGen(_ascBot);}else{_dTop+=_clStep;repsArr=_descGen(_dTop);}}
-        else if(_upPick==='add-cardio'){var _sc2=pk(CARDIO);addCardio=true;var _cu2=_sc2.unit;var _mn2=_cu2==='Cal'?_clCL.calMin:_cu2==='m'?_clCL.mtrMin:_clCL.duMin;var _mx2=_cu2==='Cal'?_clCL.calMax:_cu2==='m'?_clCL.mtrMax:_clCL.duMax;cEx=Object.assign({},_sc2,{amount:_cardioPickFlat(_cu2,_mn2,_mx2,true).amount});}
+        else if(_upPick==='add-cardio'){var _sc2=pk(CARDIO.filter(function(c){return !c.altOnly;}));addCardio=true;var _cu2=_sc2.unit;var _mn2=_cu2==='Cal'?_clCL.calMin:_cu2==='m'?_clCL.mtrMin:_clCL.duMin;var _mx2=_cu2==='Cal'?_clCL.calMax:_cu2==='m'?_clCL.mtrMax:_clCL.duMax;cEx=Object.assign({},_sc2,{amount:_cardioPickFlat(_cu2,_mn2,_mx2,true).amount});}
         else if(_upPick==='cardio'){cEx=_cardioUp(cEx,_clCL,true);}
         else if(_upPick==='exercise'){var _clAP=getChipperPool(lv,team).filter(function(e){return!chosen.some(function(c){return c.name===e.name;});});if(_clAP.length){chosen.push(pk(_clAP));repsArr=_isFlat?repsArr.concat([_snapBase]):_isAsc?_ascGen(_ascBot):_descGen(_dTop);}}
       }
@@ -1973,7 +1992,7 @@ function buildLadderItems(scheme,chosen,cardioExs,lv,team){
   scheme.forEach(function(r,i){
     items.push({kind:'sep',label:'── Round '+(i+1)+' ──'});
     chosen.forEach(function(ex){var _cr=_clampRep(r,ex,lv,team,team===2);items.push({kind:'str',ex:ex,detail:getDetail(ex,_cr,null,lv,team),baseRep:_cr});});
-    if(i<scheme.length-1)items.push({kind:'cardio',ex:cardioExs[i]||pk(CARDIO)});
+    if(i<scheme.length-1)items.push({kind:'cardio',ex:cardioExs[i]||pk(CARDIO.filter(function(c){return !c.altOnly;}))});
   });
   return items;
 }
@@ -2112,7 +2131,7 @@ function mkLadder(time,lv,team,cfg){
       items.push({kind:'str',ex:ex,detail:ascLabel,noPencil:true});
     });
     if(_resolvedCardio){
-      var _cEx=pk(CARDIO);
+      var _cEx=pk(CARDIO.filter(function(c){return !c.altOnly;}));
       var _cULbl=(_cEx.unit==='Cal')?'Cal':(_cEx.unit==='m')?'m':'Reps';
       var _ascLblC=[ds0,ds0+dispStep,ds0+dispStep*2,ds0+dispStep*3].join(' - ')+' ... (+'+dispStep+' '+_cULbl+'/'+(CFG.lang==='ar'?'جولة':'Round')+')';
       items.push({kind:'cardio',ex:Object.assign({},_cEx,{amount:null}),detail:_ascLblC,noPencil:true});
