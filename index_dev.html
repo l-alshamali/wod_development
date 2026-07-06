@@ -500,7 +500,7 @@ var STR=[
   {name:'Box Jump',cat:'gymnastics',tier:1,alts:['Box Step-Up','Jump Squat','Box Jump Over','Tuck Jump']},
   {name:'Walking Lunge',cat:'gymnastics',tier:1,alts:['Overhead Lunge','Reverse Lunge','Box Step-Up','DB Lunge']},
   {name:'AbMat Sit-Up',cat:'gymnastics',tier:1,alts:['Sit-Up','V-Up','Hollow Rock','Toes-to-Bar']},
-  {name:'Sit-Up',cat:'gymnastics',tier:1,alts:['AbMat Sit-Up','V-Up','Hollow Rock','Toes-to-Bar']},
+  {name:'Sit-Up',cat:'gymnastics',tier:1,alts:['AbMat Sit-Up','V-Up','DB Sit-Up','Toes-to-Bar']},
   {name:'Box Step-Up',cat:'gymnastics',tier:1,alts:['Box Jump','Walking Lunge','DB Box Step-Up','Med Ball Box Step-Up']},
   {name:'Med Ball Box Step-Up',cat:'gymnastics',tier:1,alts:['DB Box Step-Up','Box Step-Up','Wall Ball','Slam Ball'],altOnly:true},
   {name:'V-Up',cat:'gymnastics',tier:1,alts:['Leg Raise','Toes-to-Bar','Hollow Rock','DB Sit-Up']},
@@ -948,6 +948,31 @@ function _repLimits(cat,lv,team,split){
   return{min:mn,max:mx};
 }
 function _clampRep(r,ex,lv,team,split){if(!ex||!r||ex.unit==='time'||ex.unit==='carry')return r;var l=_repLimits(ex.cat,lv,team,!!split);var c=Math.max(l.min,Math.min(l.max,r));if(team===2&&split)c=evenRep(c);return c;}
+function _stickyRep(sec,lv,team){
+  if(!sec||!sec.items)return null;
+  var edited=sec.items.filter(function(it){return it.kind==='str'&&it._userRep&&it.baseRep>0;});
+  if(!edited.length)return null;
+  var cnt={};edited.forEach(function(it){cnt[it.baseRep]=(cnt[it.baseRep]||0)+1;});
+  var sr=edited[0].baseRep;
+  Object.keys(cnt).forEach(function(k){if(cnt[k]>(cnt[sr]||0))sr=parseInt(k);});
+  var refEx=edited[0].ex;
+  if(!refEx||!refEx.cat)return sr;
+  var lims=_repLimits(refEx.cat,lv,team,team===2);
+  return(sr>=lims.min&&sr<=lims.max)?sr:null;
+}
+function _stickyCardio(sec){
+  if(!sec||!sec.items)return null;
+  for(var _i=0;_i<sec.items.length;_i++){var it=sec.items[_i];if(it.kind==='cardio'&&it._userCardio&&it.ex&&it.ex.amount)return{unit:it.ex.unit,amount:it.ex.amount};}
+  return null;
+}
+function _applyCardioSticky(sec,sticky,lv,team,isChipper){
+  if(!sticky||!sec||!sec.items)return;
+  var CL=isChipper?_chipperCL(lv,team):_cardioLimits(team,true,lv);
+  var mn=sticky.unit==='Cal'?CL.calMin:sticky.unit==='m'?CL.mtrMin:CL.duMin;
+  var mx=sticky.unit==='Cal'?CL.calMax:sticky.unit==='m'?CL.mtrMax:CL.duMax;
+  if(sticky.amount<mn||sticky.amount>mx)return;
+  sec.items.forEach(function(it){if(it.kind!=='cardio'||!it.ex||it.ex.unit!==sticky.unit)return;it.ex=Object.assign({},it.ex,{amount:sticky.amount});it.detail=sticky.amount+sticky.unit;});
+}
 function _clampEmomRep(r,ex,lv,team){if(!ex||!r||ex.unit==='time'||ex.unit==='carry')return r;var l=_emomRepLimits(ex.cat,lv,team);return Math.max(l.min,Math.min(l.max,r));}
 function _repSnap(v,mn,mx){
   var s=v<=24?Math.round(v/2)*2:Math.round(v/10)*10;
@@ -2229,7 +2254,7 @@ function mkBuyInOut(time,lv,team,cfg){
   }
   bIn=Object.assign({},bIn,{amount:buyInAmt});
   bOut=Object.assign({},bOut,{amount:cashOutAmt});
-  var _rftSec=mkRFT(time,lv,team,{rounds:cfg.rounds,exCnt:cfg.exCnt,withCardio:false})[0];
+  var _rftSec=mkRFT(time,lv,team,{rounds:cfg.rounds,exCnt:cfg.exCnt,withCardio:false,baseReps:cfg.baseReps})[0];
   var reps=_rftSec.scheme||[];
   var rounds=reps.length||3;
   var items=[];
@@ -3507,6 +3532,7 @@ function regenEx(si,ii,kind){
       // FIX #3: EMOM-aware clamp — يستخدم _emomCardioLimits بدل _cardioLimits
       var _rgClamp=function(unit,amt){
         if(_isEMOM){var _ec=_emomCardioLimits(S.level,_rgTeam);var _emn=unit==='Cal'?_ec.calMin:unit==='m'?_ec.mtrMin:_ec.duMin;var _emx=unit==='Cal'?_ec.calMax:unit==='m'?_ec.mtrMax:_ec.duMax;return _cardioNearestSer(unit,Math.max(_emn,Math.min(_emx,amt||_emn)),_emn,_emx);}
+        if(_rgIsChip){var _ccl=_chipperCL(S.level,_rgTeam);var _cmn=unit==='Cal'?_ccl.calMin:unit==='m'?_ccl.mtrMin:_ccl.duMin;var _cmx=unit==='Cal'?_ccl.calMax:unit==='m'?_ccl.mtrMax:_ccl.duMax;return _cardioNearestSer(unit,Math.max(_cmn,Math.min(_cmx,amt||_cmn)),_cmn,_cmx);}
         return _cardioClamp(unit,amt,S.level,_rgTeam,_rgIsChip);
       };
       // FIX #3: EMOM-aware amount generator
@@ -3530,8 +3556,8 @@ function regenEx(si,ii,kind){
         else{_newAmt=_rgAmtNew(_picked.unit);}
         newEx=Object.assign({},_picked,{amount:_newAmt});
       }
-      // FIX #2: 30% time-cap (EMOM already tight via _emomCardioLimits)
-      if(!_isEMOM){var _rgCL=_rgIsChip?_chipperCL(S.level,_rgTeam):_cardioLimits(_rgTeam,true,S.level);newEx=_cardioCapSec(newEx,S.time*60*0.30,_rgCL,S.level,_rgTeam,_rgTeam===2);}
+      // FIX #2: 30% time-cap (EMOM already tight via _emomCardioLimits; skip cap if user explicitly set the amount)
+      if(!_isEMOM&&!old._userCardio){var _rgCL=_rgIsChip?_chipperCL(S.level,_rgTeam):_cardioLimits(_rgTeam,true,S.level);newEx=_cardioCapSec(newEx,S.time*60*0.30,_rgCL,S.level,_rgTeam,_rgTeam===2);}
       var _newItem4=Object.assign({},old,{ex:newEx});if(old.cardioAmounts){if(sec.type==='Ladder'&&sec.scheme&&sec.scheme.length){_newItem4.cardioAmounts=sec.scheme.slice();}else{_newItem4.cardioAmounts=old.cardioAmounts.map(function(a){return _rgClamp(newEx.unit,a);});}}S.wod.sections[si].items[ii]=_newItem4;
     }
   }else{
@@ -3726,8 +3752,11 @@ function setChipperCardioCount(si,n){
 function regenChipper(si){
   var sec=S.wod.sections[si];
   var cfg=sec.chipperCfg||{};
+  var _sr=_stickyRep(sec,S.level,S.teamSize);if(_sr&&!cfg.baseReps)cfg=Object.assign({},cfg,{baseReps:_sr});
+  var _sc=_stickyCardio(sec);
   var newSecs=_regenBest(mkChipper,S.wod.cfg.time,S.level,S.teamSize,cfg);
   if(!newSecs)return;
+  if(_sc)_applyCardioSticky(newSecs[0],_sc,S.level,S.teamSize,true);
   newSecs[0].chipperCfg=cfg;S.wod.sections[si]=newSecs[0];
   var el=document.getElementById('sec-'+si);
   if(el)el.outerHTML=renderSec(S.wod.sections[si],si);
@@ -3823,8 +3852,11 @@ function regenAmrap(si){
   var sec=S.wod.sections[si];
   if(sec.type==='Group A'){regenGroupAb(si);return;}
   var cfg=sec.amrapCfg||{};
+  var _sr=_stickyRep(sec,S.level,S.teamSize);if(_sr&&!cfg.baseReps)cfg=Object.assign({},cfg,{baseReps:_sr});
+  var _sc=_stickyCardio(sec);
   var newSecs=_regenBest(mkAmrap,S.wod.cfg.time,S.level,S.teamSize,cfg);
   if(!newSecs)return;
+  if(_sc)_applyCardioSticky(newSecs[0],_sc,S.level,S.teamSize,false);
   newSecs[0].amrapCfg=cfg;S.wod.sections[si]=newSecs[0];
   var el=document.getElementById('sec-'+si);
   if(el)el.outerHTML=renderSec(S.wod.sections[si],si);
@@ -3933,8 +3965,11 @@ function toggleRftCardio(si){
 function regenRft(si){
   var sec=S.wod.sections[si];
   var cfg=sec.rftCfg||{};
+  var _sr=_stickyRep(sec,S.level,S.teamSize);if(_sr&&!cfg.baseReps&&!cfg.schemeKey&&!cfg.customReps)cfg=Object.assign({},cfg,{baseReps:_sr});
+  var _sc=_stickyCardio(sec);
   var newSecs=_regenBest(mkRFT,S.wod.cfg.time,S.level,S.teamSize,cfg);
   if(!newSecs)return;
+  if(_sc)_applyCardioSticky(newSecs[0],_sc,S.level,S.teamSize,false);
   newSecs[0].rftCfg=cfg;S.wod.sections[si]=newSecs[0];
   var el=document.getElementById('sec-'+si);
   if(el)el.outerHTML=renderSec(S.wod.sections[si],si);
@@ -4031,7 +4066,11 @@ function toggleEmomCardio(si){
 }
 function regenEmom(si){
   var sec=S.wod.sections[si];var cfg=sec.emomCfg||{};
-  var newSecs=_regenBest(mkEmom,S.wod.cfg.time,S.level,S.teamSize,cfg);if(!newSecs)return;newSecs[0].emomCfg=cfg;S.wod.sections[si]=newSecs[0];
+  var _sr=_stickyRep(sec,S.level,S.teamSize);if(_sr&&!cfg.baseReps)cfg=Object.assign({},cfg,{baseReps:_sr});
+  var _sc=_stickyCardio(sec);
+  var newSecs=_regenBest(mkEmom,S.wod.cfg.time,S.level,S.teamSize,cfg);if(!newSecs)return;
+  if(_sc)_applyCardioSticky(newSecs[0],_sc,S.level,S.teamSize,false);
+  newSecs[0].emomCfg=cfg;S.wod.sections[si]=newSecs[0];
   var el=document.getElementById('sec-'+si);if(el)el.outerHTML=renderSec(S.wod.sections[si],si);
 }
 function randomEmom(si){
@@ -4757,7 +4796,10 @@ function toggleLadderCardio(si){
 }
 function regenLadder(si){
   var sec=S.wod.sections[si];var cfg=sec.ladderCfg||{};
-  var newSecs=_regenBest(mkLadder,S.wod.cfg.time,S.level,S.teamSize,cfg);if(!newSecs)return;newSecs[0].ladderCfg=cfg;S.wod.sections[si]=newSecs[0];
+  var _sc=_stickyCardio(sec);
+  var newSecs=_regenBest(mkLadder,S.wod.cfg.time,S.level,S.teamSize,cfg);if(!newSecs)return;
+  if(_sc)_applyCardioSticky(newSecs[0],_sc,S.level,S.teamSize,false);
+  newSecs[0].ladderCfg=cfg;S.wod.sections[si]=newSecs[0];
   var el=document.getElementById('sec-'+si);if(el)el.outerHTML=renderSec(S.wod.sections[si],si);
 }
 function randomLadder(si){
@@ -4851,6 +4893,7 @@ function setBuyInManualReps(si,val){
 
 function regenBuyIn(si){
   var sec=S.wod.sections[si];var cfg=sec.buyInCfg||{};
+  var _sr=_stickyRep(sec,S.level,S.teamSize);if(_sr&&!cfg.baseReps)cfg=Object.assign({},cfg,{baseReps:_sr});
   var newSecs=_regenBest(mkBuyInOut,S.wod.cfg.time,S.level,S.teamSize,cfg);if(!newSecs)return;newSecs[0].buyInCfg=cfg;S.wod.sections[si]=newSecs[0];
   var el=document.getElementById('sec-'+si);if(el)el.outerHTML=renderSec(S.wod.sections[si],si);
 }
@@ -4914,8 +4957,11 @@ function regenYgig(si){
   var sec=S.wod.sections[si];var cfg=sec.ygigCfg||{};
   var fmt=_ygigActiveFmt(sec);var sk=fmt==='for-time'?'ft':'amrap';
   var _genCfg=Object.assign({format:fmt},cfg[sk]||{});
+  var _sr=_stickyRep(sec,S.level,S.teamSize);if(_sr&&!_genCfg.baseReps)_genCfg=Object.assign({},_genCfg,{baseReps:_sr});
+  var _sc=_stickyCardio(sec);
   var newSecs=_regenBest(mkYGIG,S.wod.cfg.time,S.level,S.teamSize,_genCfg);
   if(!newSecs)return;
+  if(_sc)_applyCardioSticky(newSecs[0],_sc,S.level,S.teamSize,false);
   newSecs[0].ygigCfg=cfg;
   S.wod.sections[si]=newSecs[0];
   var el=document.getElementById('sec-'+si);if(el)el.outerHTML=renderSec(S.wod.sections[si],si);
@@ -5106,6 +5152,9 @@ function renderGroupAbAmrapCfg(sec,si){
 }
 function regenGroupAb(si){
   var sec=S.wod.sections[si];var cfg=sec.amrapCfg||{};
+  var _secB2=S.wod.sections[si+1];
+  var _sr=_stickyRep(sec,S.level,S.teamSize)||(_secB2?_stickyRep(_secB2,S.level,S.teamSize):null);
+  if(_sr&&!cfg.baseReps)cfg=Object.assign({},cfg,{baseReps:_sr});
   var blockTime=Math.floor(S.wod.cfg.time/2);
   var _mkA=function(t,lv,tm,c){return mkAmrap(t,lv,1,c);};
   var secA=(_regenBest(_mkA,blockTime,S.level,1,cfg)||[mkAmrap(blockTime,S.level,1,cfg)[0]])[0];
@@ -5272,7 +5321,7 @@ function saveEditCardioNum(){
   var ed=editingDetail;
   var item=S.wod.sections[ed.si].items[ed.ii];
   if(ed.cardioName){
-    S.wod.sections[ed.si].items[ed.ii]=Object.assign({},item,{ex:Object.assign({},item.ex,{amount:val,unit:cardioEditUnit})});
+    S.wod.sections[ed.si].items[ed.ii]=Object.assign({},item,{ex:Object.assign({},item.ex,{amount:val,unit:cardioEditUnit}),_userCardio:true});
   } else {
     S.wod.sections[ed.si].items[ed.ii]=Object.assign({},item,{detail:val+cardioEditUnit,detailEdited:true});
   }
