@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>CrossFit WOD Generator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,7 +11,7 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;scrollbar-width:none;-ms-overflow-style:none}
 *::-webkit-scrollbar{display:none}
 :root{--or:#ff6600;--og:rgba(255,102,0,.12);--gr:#00c853;--re:#ff1744;--ye:#ffd600;--bl:#448aff;--ca:#00bcd4;--cag:rgba(0,188,212,.1);--bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#242424;--bdr:#333;--bdr2:#2a2a2a;--txt:#ffffff;--txt2:#aaaaaa;--txt3:#666}
-body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',sans-serif;min-height:100vh;font-size:15px}
+html,body{overflow-x:hidden;max-width:100%}body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',sans-serif;min-height:100vh;font-size:15px}
 body.timer-open{overflow:hidden;position:fixed;width:100%}
 .timer-ex-list{overflow-y:scroll;-webkit-overflow-scrolling:touch;max-height:50vh}
 .app{max-width:480px;margin:0 auto;padding:0 0 80px}
@@ -3496,7 +3496,7 @@ function swapCardio(si,ii,name){
     newAmount=_cardioClamp(newUnit,cur.amount,S.level,_swTeam,_swIsChip);
   }
   // 30% time-cap (EMOM معفي — حدوده أصلاً ضيقة)
-  if(!_swIsEMOM){var _swCL=_swIsChip?_chipperCL(S.level,_swTeam):_cardioLimits(_swTeam,true,S.level);var _swRounds=(sec.scheme&&sec.scheme.length>1)?sec.scheme.length:1;var _swCapped=_cardioCapSec({name:name,unit:newUnit,amount:newAmount},(S.time*60*0.30)/_swRounds,_swCL,S.level,_swTeam,_swTeam===2);newAmount=_swCapped.amount;}
+  if(!_swIsEMOM){var _swCL=_swIsChip?_chipperCL(S.level,_swTeam):_cardioLimits(_swTeam,true,S.level);var _swRounds=(sec.infoKey==='i_ygig_ft'&&sec.infoVars&&sec.infoVars.r)?sec.infoVars.r:((sec.scheme&&sec.scheme.length>1)?sec.scheme.length:1);var _swCapSec=(S.time*60*0.30)/_swRounds;var _swCapped=_cardioCapSec({name:name,unit:newUnit,amount:newAmount},_swCapSec,_swCL,S.level,_swTeam,_swTeam===2);newAmount=_swCapped.amount;}
   // rotate alts
   var newAlts=(cur.alts||[]).filter(function(a){return a!==name;});
   if(cur.name&&newAlts.indexOf(cur.name)<0)newAlts.unshift(cur.name);
@@ -3506,7 +3506,7 @@ function swapCardio(si,ii,name){
   // Ladder: preserve scheme amounts; others: clamp to unit limits
   if(old.cardioAmounts){
     if(sec.type==='Ladder'&&sec.scheme&&sec.scheme.length){newItem.cardioAmounts=sec.scheme.slice();}
-    else{newItem.cardioAmounts=old.cardioAmounts.map(function(a){return _cardioClamp(newUnit,a,S.level,_swTeam,_swIsChip);});}
+    else{newItem.cardioAmounts=old.cardioAmounts.map(function(){return newAmount;});}
   }
   sec.items[ii]=newItem;
   reRenderSec(si);toast('✅ Swapped!');
@@ -3557,8 +3557,8 @@ function regenEx(si,ii,kind){
         newEx=Object.assign({},_picked,{amount:_newAmt});
       }
       // FIX #2: 30% time-cap (EMOM already tight via _emomCardioLimits; skip cap if user explicitly set the amount)
-      if(!_isEMOM&&!old._userCardio){var _rgCL=_rgIsChip?_chipperCL(S.level,_rgTeam):_cardioLimits(_rgTeam,true,S.level);var _rgRounds=(sec.scheme&&sec.scheme.length>1)?sec.scheme.length:1;newEx=_cardioCapSec(newEx,(S.time*60*0.30)/_rgRounds,_rgCL,S.level,_rgTeam,_rgTeam===2);}
-      var _newItem4=Object.assign({},old,{ex:newEx});if(old.cardioAmounts){if(sec.type==='Ladder'&&sec.scheme&&sec.scheme.length){_newItem4.cardioAmounts=sec.scheme.slice();}else{_newItem4.cardioAmounts=old.cardioAmounts.map(function(a){return _rgClamp(newEx.unit,a);});}}S.wod.sections[si].items[ii]=_newItem4;
+      if(!_isEMOM&&!old._userCardio){var _rgCL=_rgIsChip?_chipperCL(S.level,_rgTeam):_cardioLimits(_rgTeam,true,S.level);var _rgRounds=(sec.infoKey==='i_ygig_ft'&&sec.infoVars&&sec.infoVars.r)?sec.infoVars.r:((sec.scheme&&sec.scheme.length>1)?sec.scheme.length:1);newEx=_cardioCapSec(newEx,(S.time*60*0.30)/_rgRounds,_rgCL,S.level,_rgTeam,_rgTeam===2);}
+      var _newItem4=Object.assign({},old,{ex:newEx});if(old.cardioAmounts){if(sec.type==='Ladder'&&sec.scheme&&sec.scheme.length){_newItem4.cardioAmounts=sec.scheme.slice();}else{_newItem4.cardioAmounts=old.cardioAmounts.map(function(){return newEx.amount;});}}S.wod.sections[si].items[ii]=_newItem4;
     }
   }else{
     var _basePool=(sec.type==='Ladder'||sec.type==='Chipper')?getChipperPool(S.level,S.teamSize):getPool(S.level,null,S.teamSize);
@@ -5304,19 +5304,35 @@ function saveEditCardioNum(){
 function manualSwapCardio(si,ii){
   var nEl=document.getElementById('cmn-'+si+'-'+ii);
   if(!nEl||!nEl.value.trim())return toast('Enter exercise name','#00bcd4');
-  var old=S.wod.sections[si].items[ii];
+  var sec=S.wod.sections[si];
+  var old=sec.items[ii];
+  var cur=old.ex;
   var name=nEl.value.trim();
   // lookup in CARDIO pool
   var found=null;for(var i=0;i<CARDIO.length;i++){if(CARDIO[i].name===name){found=CARDIO[i];break;}}
-  var newUnit=found?found.unit:old.ex.unit;
-  var newAmount=(found&&found.unit!==old.ex.unit)?found.amount:old.ex.amount;
-  var newEx=Object.assign({},old.ex,{name:name,unit:newUnit,amount:newAmount,alts:found?found.alts||[]:[]});
+  var newUnit=found?found.unit:cur.unit;
+  var newAmount;
+  if(found&&found.unit!==cur.unit){
+    // time-equivalent conversion
+    var _mswCurTime=_cardioSecEst(cur,S.level,1,false);
+    var _mswRatePerUnit=_cardioSecEst(Object.assign({},found,{amount:1}),S.level,1,false);
+    var _mswEquiv=(_mswRatePerUnit>0&&_mswCurTime>0)?Math.round(_mswCurTime/_mswRatePerUnit):0;
+    var _mswIsChip=sec.type==='Chipper';
+    var _mswIsYgig=sec.type==='YGIG / Partner WOD'||sec.type==='Group A'||sec.type==='Group B';
+    var _mswTm=_mswIsYgig?1:S.teamSize;
+    newAmount=_cardioClamp(newUnit,_mswEquiv||found.amount,S.level,_mswTm,_mswIsChip);
+    // 30% time cap
+    if(sec.type!=='EMOM'){var _mswCL=_mswIsChip?_chipperCL(S.level,_mswTm):_cardioLimits(_mswTm,true,S.level);var _mswRounds=(sec.infoKey==='i_ygig_ft'&&sec.infoVars&&sec.infoVars.r)?sec.infoVars.r:((sec.scheme&&sec.scheme.length>1)?sec.scheme.length:1);var _mswCp=_cardioCapSec({name:name,unit:newUnit,amount:newAmount},(S.time*60*0.30)/_mswRounds,_mswCL,S.level,_mswTm,_mswTm===2);newAmount=_mswCp.amount;}
+  }else{
+    newAmount=cur.amount;
+  }
+  var newEx=Object.assign({},cur,{name:name,unit:newUnit,amount:newAmount,alts:found?found.alts||[]:[]});
   var newItem=Object.assign({},old,{ex:newEx});
   // reset cardioAmounts if unit changed
-  if(found&&found.unit!==old.ex.unit&&old.cardioAmounts){
+  if(found&&found.unit!==cur.unit&&old.cardioAmounts){
     newItem.cardioAmounts=old.cardioAmounts.map(function(){return newAmount;});
   }
-  S.wod.sections[si].items[ii]=newItem;
+  sec.items[ii]=newItem;
   reRenderSec(si);toast('✅ Done!');
 }
 
