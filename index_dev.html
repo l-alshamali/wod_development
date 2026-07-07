@@ -186,7 +186,7 @@ body[dir=rtl] .wdi-close{right:auto;left:12px}
 var T={
   en:{s:'Settings',language:'Language',theme:'Theme',dark:'Dark',light:'Light',
     wod:'WOD',title:'Workout<br>Generator',sub:'v1.0',
-    gate_hint:'Enter your email & password',enter:'Enter →',buy:'Unlock Access ↗',tnc:'Terms & Conditions',
+    gate_hint:'Enter your email & password',enter:'Enter →',forgot:'Forgot password?',buy:'🔓 Unlock Access',tnc:'Terms & Conditions',
     step1:'Step 1 / 5',step1q:"What's your CrossFit level?",step1s:'Sets workout intensity',
     lv_b:'Beginner',lv_b_d:'New to CrossFit',lv_i:'Intermediate',lv_i_d:'Building consistency',
     lv_a:'Advanced',lv_a_d:'Well-conditioned athlete',lv_e:'Elite',lv_e_d:'Competitive-level fitness',start_timer:'Start Timer',team_chip:'Team',
@@ -255,7 +255,7 @@ var T={
     tm_halfA:'🔄 Simultaneous station swap: Partner 1 starts on Station A & Partner 2 starts on Station B, swap at half-time',tm_ygig:'Team of {n}: rotate in order'},
   ar:{s:'الإعدادات',language:'اللغة',theme:'الثيم',dark:'داكن',light:'فاتح',
     wod:'WOD',title:'مولّد<br>التمارين',sub:'v1.0',
-    gate_hint:'أدخل إيميلك وكلمة المرور',enter:'دخول ←',buy:'فعّل الوصول ↗',tnc:'الشروط والأحكام',
+    gate_hint:'أدخل إيميلك وكلمة المرور',enter:'دخول ←',forgot:'نسيت كلمة المرور؟',buy:'🔓 فعّل الوصول',tnc:'الشروط والأحكام',
     step1:'الخطوة 1 / 5',step1q:'ما مستواك في CrossFit؟',step1s:'يحدد شدة التمرين',
     lv_b:'مبتدئ',lv_b_d:'أقل من 6 أشهر',lv_i:'متوسط',lv_i_d:'6 أشهر – 2 سنوات',
     lv_a:'متقدم',lv_a_d:'2 – 5 سنوات',lv_e:'نخبة',lv_e_d:'5+ / تنافسي',start_timer:'ابدأ المؤقت',team_chip:'فريق',
@@ -399,7 +399,13 @@ function collapseDetail(d){if(!d)return d;var m=d.match(/^([\d\s\-]+)\s+(reps|Ca
 function fixArPlural(s){if(CFG.lang!=='ar'||!s)return s;return s.replace(/(\d+)\s*(دقيقة واحدة|دقيقتان|دقيقة|دقائق)/g,function(_,n){return n+' '+arMin(parseInt(n));});}
 function ti(k,v){var s=t(k);if(v)Object.keys(v).forEach(function(p){s=s.replace(new RegExp('{'+p+'}','g'),v[p]);});return s;}
 function openCfg(){document.getElementById('cfg-overlay').style.display='block';_swUpdateBadge();}
-function closeCfg(){document.getElementById('cfg-overlay').style.display='none';}
+function closeCfg(){
+  document.getElementById('cfg-overlay').style.display='none';
+  if(document.getElementById('tnc-overlay').style.display==='block'){renderTnC();return;}
+  if(document.getElementById('gate-email')||document.getElementById('gate-inp')){showGate();}
+  else if(S.step===4&&S.wod){renderWod();}
+  else{render();}
+}
 function setLang(l){
   CFG.lang=l;
   localStorage.setItem('wod_cfg',JSON.stringify(CFG));
@@ -411,11 +417,6 @@ function setLang(l){
   document.getElementById('btn-dark').textContent=(l==='ar'?'🌑 داكن':'🌑 Dark');
   document.getElementById('btn-light').textContent=(l==='ar'?'☀️ فاتح':'☀️ Light');
   document.body.dir=l==='ar'?'rtl':'ltr';
-  closeCfg();
-  if(document.getElementById('tnc-overlay').style.display==='block'){renderTnC();return;}
-  if(document.getElementById('gate-email')||document.getElementById('gate-inp')){showGate();}
-  else if(S.step===4&&S.wod){renderWod();}
-  else{render();}
 }
 function setTheme(th){
   CFG.theme=th;
@@ -1604,7 +1605,7 @@ function mkEmom(time,lv,team,cfg){
   var strCount=numMov;
   var chosen=pkN(getPool(lv,null,team),numMov);
   // ── 3. تكرارات عشوائية من جدول EMOM ──
-  var _emCL=_emomCardioLimits(lv,team);
+  var _emCL=_emomCardioLimits(lv,1); // EMOM: solo limits always, regardless of team size
   var _emBaseReps=function(cat){
     var lims=_emomRepLimits(cat,lv,team);
     return ri(lims.min,lims.max);
@@ -1625,7 +1626,9 @@ function mkEmom(time,lv,team,cfg){
       cEx=Object.assign({},pk(CARDIO.filter(function(c){return !c.altOnly;})),{amount:cfg.cardioAmt});
     } else {
       var _cp=pk(CARDIO.filter(function(c){return !c.altOnly;}));
-      var _initAmt=_cp.unit==='Cal'?ri(_emCL.calMin,_emCL.calMax):_cp.unit==='m'?ri(_emCL.mtrMin/_emCL.mtrStep||1,_emCL.mtrMax/_emCL.mtrStep)*_emCL.mtrStep:ri(_emCL.duMin/10,_emCL.duMax/10)*10;
+      var _emMn=_cp.unit==='Cal'?_emCL.calMin:_cp.unit==='m'?_emCL.mtrMin:_emCL.duMin;
+      var _emMx=_cp.unit==='Cal'?_emCL.calMax:_cp.unit==='m'?_emCL.mtrMax:_emCL.duMax;
+      var _initAmt=_cardioPickFlat(_cp.unit,_emMn,_emMx).amount;
       cEx=Object.assign({},_cp,{amount:_initAmt});
     }
   }
@@ -3495,8 +3498,10 @@ function swapCardio(si,ii,name){
     // نفس الوحدة — احتفظ بكمية اليوزر
     newAmount=_cardioClamp(newUnit,cur.amount,S.level,_swTeam,_swIsChip);
   }
-  // 30% time-cap (EMOM معفي — حدوده أصلاً ضيقة)
-  if(!_swIsEMOM){var _swCL=_swIsChip?_chipperCL(S.level,_swTeam):_cardioLimits(_swTeam,true,S.level);var _swRounds=(sec.infoKey==='i_ygig_ft'&&sec.infoVars&&sec.infoVars.r)?sec.infoVars.r:((sec.scheme&&sec.scheme.length>1)?sec.scheme.length:1);var _swCapSec=(S.time*60*0.30)/_swRounds;var _swCapped=_cardioCapSec({name:name,unit:newUnit,amount:newAmount},_swCapSec,_swCL,S.level,_swTeam,_swTeam===2);newAmount=_swCapped.amount;}
+  // EMOM: clamp strictly to EMOM table limits (always solo, no 30% cap)
+  if(_swIsEMOM){var _swEmCL=_emomCardioLimits(S.level,1);var _swEmMn=newUnit==='Cal'?_swEmCL.calMin:newUnit==='m'?_swEmCL.mtrMin:_swEmCL.duMin;var _swEmMx=newUnit==='Cal'?_swEmCL.calMax:newUnit==='m'?_swEmCL.mtrMax:_swEmCL.duMax;newAmount=_cardioNearestSer(newUnit,Math.max(_swEmMn,Math.min(_swEmMx,newAmount)),_swEmMn,_swEmMx);}
+  // non-EMOM: 30% time-cap
+  else{var _swCL=_swIsChip?_chipperCL(S.level,_swTeam):_cardioLimits(_swTeam,true,S.level);var _swRounds=(sec.infoKey==='i_ygig_ft'&&sec.infoVars&&sec.infoVars.r)?sec.infoVars.r:((sec.scheme&&sec.scheme.length>1)?sec.scheme.length:1);var _swCapSec=(S.time*60*0.30)/_swRounds;var _swCapped=_cardioCapSec({name:name,unit:newUnit,amount:newAmount},_swCapSec,_swCL,S.level,_swTeam,_swTeam===2);newAmount=_swCapped.amount;}
   // rotate alts
   var newAlts=(cur.alts||[]).filter(function(a){return a!==name;});
   if(cur.name&&newAlts.indexOf(cur.name)<0)newAlts.unshift(cur.name);
@@ -3531,13 +3536,13 @@ function regenEx(si,ii,kind){
       var _rgTeam=_rgIsYgig?1:S.teamSize;
       // FIX #3: EMOM-aware clamp — يستخدم _emomCardioLimits بدل _cardioLimits
       var _rgClamp=function(unit,amt){
-        if(_isEMOM){var _ec=_emomCardioLimits(S.level,_rgTeam);var _emn=unit==='Cal'?_ec.calMin:unit==='m'?_ec.mtrMin:_ec.duMin;var _emx=unit==='Cal'?_ec.calMax:unit==='m'?_ec.mtrMax:_ec.duMax;return _cardioNearestSer(unit,Math.max(_emn,Math.min(_emx,amt||_emn)),_emn,_emx);}
+        if(_isEMOM){var _ec=_emomCardioLimits(S.level,1);var _emn=unit==='Cal'?_ec.calMin:unit==='m'?_ec.mtrMin:_ec.duMin;var _emx=unit==='Cal'?_ec.calMax:unit==='m'?_ec.mtrMax:_ec.duMax;return _cardioNearestSer(unit,Math.max(_emn,Math.min(_emx,amt||_emn)),_emn,_emx);}
         if(_rgIsChip){var _ccl=_chipperCL(S.level,_rgTeam);var _cmn=unit==='Cal'?_ccl.calMin:unit==='m'?_ccl.mtrMin:_ccl.duMin;var _cmx=unit==='Cal'?_ccl.calMax:unit==='m'?_ccl.mtrMax:_ccl.duMax;return _cardioNearestSer(unit,Math.max(_cmn,Math.min(_cmx,amt||_cmn)),_cmn,_cmx);}
         return _cardioClamp(unit,amt,S.level,_rgTeam,_rgIsChip);
       };
       // FIX #3: EMOM-aware amount generator
       var _rgAmtNew=function(unit){
-        if(_isEMOM){var _ec2=_emomCardioLimits(S.level,_rgTeam);var _emn2=unit==='Cal'?_ec2.calMin:unit==='m'?_ec2.mtrMin:_ec2.duMin;var _emx2=unit==='Cal'?_ec2.calMax:unit==='m'?_ec2.mtrMax:_ec2.duMax;return _cardioPickFlat(unit,_emn2,_emx2).amount;}
+        if(_isEMOM){var _ec2=_emomCardioLimits(S.level,1);var _emn2=unit==='Cal'?_ec2.calMin:unit==='m'?_ec2.mtrMin:_ec2.duMin;var _emx2=unit==='Cal'?_ec2.calMax:unit==='m'?_ec2.mtrMax:_ec2.duMax;return _cardioPickFlat(unit,_emn2,_emx2).amount;}
         return _cardioAmtNew(unit,S.level,_rgTeam,_rgIsChip);
       };
       // حاول نفس الوحدة أولاً
@@ -5684,6 +5689,7 @@ function hideTnC(){document.getElementById('tnc-overlay').style.display='none';}
 var SUPABASE_URL='https://gjdqkitasyuwqatyitdj.supabase.co';
 var SUPABASE_KEY='sb_publishable_fEBMY_xuuK-SHDf1Yulxug_Y-sdutRG';
 var CHECKOUT_URL='https://wodgenerator.lemonsqueezy.com/checkout/buy/3c5cb710-a358-4e66-94f3-bb6c5aabbae3';
+var TRIAL_URL='https://wodgenerator.org/trial.html';
 var AUTH_KEY='wod_auth_v2';
 function checkAccess(){
   var saved=localStorage.getItem(AUTH_KEY);
@@ -5719,7 +5725,9 @@ function showGate(){
     +' style="width:100%;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:12px;padding:16px;font-size:18px;font-weight:800;color:var(--or);text-align:center;outline:none;letter-spacing:3px;margin-bottom:12px"'
     +' oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key===\'Enter\')tryCode()">'
     +'<button onclick="tryCode()" style="width:100%;background:var(--or);border:none;border-radius:12px;padding:15px;font-size:14px;font-weight:700;color:#000;cursor:pointer;margin-bottom:16px">'+t('enter')+'</button>'
-    +'<a href="'+CHECKOUT_URL+'" target="_blank" style="display:block;color:var(--txt2);font-size:15px;text-decoration:none;margin-bottom:10px">'+t('buy')+'</a>'
+    +'<a href="https://wodgenerator.org/success.html" target="_blank" style="display:block;color:var(--txt2);font-size:13px;font-weight:600;text-decoration:none;margin-bottom:14px;opacity:0.8">'+t('forgot')+'</a>'
+    +'<a href="'+CHECKOUT_URL+'" target="_blank" style="display:block;color:var(--or);font-size:16px;font-weight:700;text-decoration:none;margin-bottom:6px">'+t('buy')+'</a>'
+    +'<a href="'+TRIAL_URL+'" target="_blank" style="display:block;color:#fff;font-size:14px;font-weight:700;text-decoration:none;margin-bottom:10px">'+(CFG.lang==='ar'?'⚡ جرّب الآن':'⚡ Try Now')+'</a>'
     +'<button onclick="showTnC()" style="background:none;border:none;color:var(--txt3);font-size:11px;cursor:pointer;text-decoration:underline">'+t('tnc')+'</button>'
     +'</div></div>';
   setTimeout(function(){var i=document.getElementById('gate-email');if(i)i.focus();},100);
@@ -5877,4 +5885,4 @@ function showMyWODs(){
 
 </script>
 </body>
-</html>
+</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
