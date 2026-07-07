@@ -3641,6 +3641,7 @@ document.addEventListener('wheel',function(e){if(!document.body.classList.contai
 document.addEventListener('touchend',function(e){if(!_tClone){return;}var t=e.changedTouches[0];_tClone.remove();_tClone=null;var hit=document.elementFromPoint(t.clientX,t.clientY);var tEl=hit?hit.closest('.er'):null;if(tEl&&_tSi!==null){var id=tEl.id.split('-');var tIi=parseInt(id[2],10);if(!isNaN(tIi)&&tIi!==_tIi){var its=S.wod.sections[_tSi].items;var tmp=its[_tIi];its[_tIi]=its[tIi];its[tIi]=tmp;_fixEmomMin(_tSi);reRenderSec(_tSi);toast('↕ Reordered!','#ff6600');}}else{var orig=document.getElementById('ex-'+_tSi+'-'+_tIi);if(orig)orig.style.opacity='';}  _tSi=null;_tIi=null;});
 // ────────────────────────────────────────────────────────────
 function reRenderSec(si){
+  si=+si;// FIX: string→number (onclick passes string; si+1 must be numeric)
   var sec=S.wod.sections[si];var el=document.getElementById('sec-'+si);
   if(!el)return;var tmp=document.createElement('div');tmp.innerHTML=renderSec(sec,si);
   el.parentNode.replaceChild(tmp.firstElementChild,el);
@@ -3797,7 +3798,7 @@ function setAmrapVal(si,key,val,btn){
   Array.from(parent.children).forEach(function(b){b.style.background='var(--bg2)';b.style.borderColor='var(--bdr)';b.style.color='var(--txt2)';});
   if(sec.amrapCfg[key]===val){delete sec.amrapCfg[key];}else{sec.amrapCfg[key]=val;btn.style.background='var(--or)';btn.style.borderColor='var(--or)';btn.style.color='#000';}
   // Group A/B: re-generate immediately so bar + items reflect the new setting
-  if(sec.type==='Group A'){regenGroupAb(si);}
+  // Group A: cfg saved above, visuals updated inline — panel stays open; user presses regen/random to regenerate
 }
 function setAmrapScheme(si,key){
   var sec=S.wod.sections[si];if(!sec.amrapCfg)sec.amrapCfg={};
@@ -4586,39 +4587,11 @@ function setTabataMode(si,mode){
   var sec=S.wod.sections[si];if(!sec.tabataCfg)sec.tabataCfg={};
   var prevMode=sec.tabataCfg.mode;
   // ضغطة ثانية على نفس الموود تطفيه
-  if(prevMode===mode){sec.tabataCfg.mode=undefined;mode=undefined;}
+  if(prevMode===mode){sec.tabataCfg.mode=undefined;}
   else{sec.tabataCfg.mode=mode;}
-  var reRender=function(){
-    var el=document.getElementById('sec-'+si);if(el)el.outerHTML=renderSec(S.wod.sections[si],si);
-    var cfg2=document.getElementById('tabata-cfg-'+si);if(cfg2)cfg2.style.display='block';
-  };
-  // لو إطفاء أو تبديل من/إلى single: توليد جديد
-  if(!mode||mode==='single'||prevMode==='single'){
-    if(mode){
-      var newSecs=mkTabata(S.wod.cfg.time,S.level,S.teamSize,sec.tabataCfg);
-      S.wod.sections[si]=newSecs[0];
-    }
-    reRender();return;
-  }
-  // multi ↔ alternating: نحافظ على الحركات
-  var _isAlt=(mode==='alternating');
-  var exItems=sec.items.filter(function(it){return it.kind==='str'||it.kind==='cardio'||it.kind==='station-gate'||it.kind==='buyin';});
-  exItems=exItems.map(function(it){var n=Object.assign({},it);n.detail=_isAlt?'20s on / 10s off':'20s on / 10s off × 8';return n;});
-  var totalItems=exItems.length;
-  if(_isAlt){
-    var _altTot=totalItems*4;
-    sec.items=[{kind:'sep',label:'—— ALTERNATING — CYCLE × 8 ROUNDS ——'}].concat(exItems);
-    sec.title='Tabata — Alternating';
-    sec.infoKey='i_tabata_alt';sec.infoVars={n:totalItems,tot:_altTot};sec.scoreKey='sc_tabata_alt';
-  }else{
-    var _withRest=[{kind:'sep',label:'—— '+totalItems+' MOVEMENTS × 8 INTERVALS ——'}];
-    exItems.forEach(function(it,i){_withRest.push(it);if(i<exItems.length-1)_withRest.push({kind:'sep',label:'── 1 MIN REST ──'});});
-    var _tabTot=totalItems*4+(totalItems>1?totalItems-1:0);
-    sec.items=_withRest;
-    sec.title='Tabata — Multi';
-    sec.infoKey='i_tabata';sec.infoVars={tot:_tabTot};sec.scoreKey='sc_tabata';
-  }
-  reRender();
+  // فقط نعيد رسم البانل (تلوين الزر المختار) — لا توليد، البانل يضل مفتوح
+  var cfgEl=document.getElementById('tabata-cfg-'+si);
+  if(cfgEl){cfgEl.outerHTML=renderTabataCfg(sec,si);var _newCfg=document.getElementById('tabata-cfg-'+si);if(_newCfg)_newCfg.style.display='block';}
 }
 function renderTabataCfg(sec,si){
   var cfg=sec.tabataCfg||{};
@@ -4659,10 +4632,9 @@ function _dbDetail(sec){
 function setDeathByCat(si,cat,btn){
   var sec=S.wod.sections[si];if(!sec.deathByCfg)sec.deathByCfg={};
   sec.deathByCfg.cat=cat;
-  var newSecs=mkDeathBy(S.wod.cfg.time,S.level,S.teamSize,sec.deathByCfg);
-  S.wod.sections[si]=newSecs[0];
-  var el=document.getElementById('sec-'+si);if(el)el.outerHTML=renderSec(S.wod.sections[si],si);
-  var cfg2=document.getElementById('deathby-cfg-'+si);if(cfg2)cfg2.style.display='block';
+  // فقط نعيد رسم البانل (تلوين الفئة المختارة) — لا توليد، البانل يضل مفتوح
+  var cfgEl=document.getElementById('deathby-cfg-'+si);
+  if(cfgEl){cfgEl.outerHTML=renderDeathByCfg(sec,si);var _newCfg=document.getElementById('deathby-cfg-'+si);if(_newCfg)_newCfg.style.display='block';}
 }
 function setDeathByVal(si,key,val,btn){
   var sec=S.wod.sections[si];if(!sec.deathByCfg)sec.deathByCfg={};
