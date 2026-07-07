@@ -3496,7 +3496,7 @@ function swapCardio(si,ii,name){
     newAmount=_cardioClamp(newUnit,cur.amount,S.level,_swTeam,_swIsChip);
   }
   // 30% time-cap (EMOM معفي — حدوده أصلاً ضيقة)
-  if(!_swIsEMOM){var _swCL=_swIsChip?_chipperCL(S.level,_swTeam):_cardioLimits(_swTeam,true,S.level);var _swCapped=_cardioCapSec({name:name,unit:newUnit,amount:newAmount},S.time*60*0.30,_swCL,S.level,_swTeam,_swTeam===2);newAmount=_swCapped.amount;}
+  if(!_swIsEMOM){var _swCL=_swIsChip?_chipperCL(S.level,_swTeam):_cardioLimits(_swTeam,true,S.level);var _swRounds=(sec.scheme&&sec.scheme.length>1)?sec.scheme.length:1;var _swCapped=_cardioCapSec({name:name,unit:newUnit,amount:newAmount},(S.time*60*0.30)/_swRounds,_swCL,S.level,_swTeam,_swTeam===2);newAmount=_swCapped.amount;}
   // rotate alts
   var newAlts=(cur.alts||[]).filter(function(a){return a!==name;});
   if(cur.name&&newAlts.indexOf(cur.name)<0)newAlts.unshift(cur.name);
@@ -3557,7 +3557,7 @@ function regenEx(si,ii,kind){
         newEx=Object.assign({},_picked,{amount:_newAmt});
       }
       // FIX #2: 30% time-cap (EMOM already tight via _emomCardioLimits; skip cap if user explicitly set the amount)
-      if(!_isEMOM&&!old._userCardio){var _rgCL=_rgIsChip?_chipperCL(S.level,_rgTeam):_cardioLimits(_rgTeam,true,S.level);newEx=_cardioCapSec(newEx,S.time*60*0.30,_rgCL,S.level,_rgTeam,_rgTeam===2);}
+      if(!_isEMOM&&!old._userCardio){var _rgCL=_rgIsChip?_chipperCL(S.level,_rgTeam):_cardioLimits(_rgTeam,true,S.level);var _rgRounds=(sec.scheme&&sec.scheme.length>1)?sec.scheme.length:1;newEx=_cardioCapSec(newEx,(S.time*60*0.30)/_rgRounds,_rgCL,S.level,_rgTeam,_rgTeam===2);}
       var _newItem4=Object.assign({},old,{ex:newEx});if(old.cardioAmounts){if(sec.type==='Ladder'&&sec.scheme&&sec.scheme.length){_newItem4.cardioAmounts=sec.scheme.slice();}else{_newItem4.cardioAmounts=old.cardioAmounts.map(function(a){return _rgClamp(newEx.unit,a);});}}S.wod.sections[si].items[ii]=_newItem4;
     }
   }else{
