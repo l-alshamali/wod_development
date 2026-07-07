@@ -2637,8 +2637,8 @@ function renderWod(){
   var w=S.wod;
   app.innerHTML=dots(4)+'<div class="wh ani"><div class="wl">'+t('wod_day')+'</div><div class="wn"><bdi dir="ltr">'+S.wodName+'</bdi></div><div class="wm"><span class="wb o">'+(TL[w.type]||w.type)+'</span><span class="wb">'+({'beginner':t('lv_b'),'intermediate':t('lv_i'),'advanced':t('lv_a'),'elite':t('lv_e')}[S.level]||LL[S.level])+'</span><span class="wb"'+(CFG.lang==='ar'?' dir="ltr"':'')+'>'+S.time+' '+(CFG.lang==='ar'?arMin(S.time):'min')+'</span>'+(S.teamSize>1?'<span class="wb b">'+(CFG.lang==='ar'?t('team_chip'):'Team')+' '+S.teamSize+'</span>':'')+'</div></div>'
   +'<div id="secs">'+w.sections.map(function(s,i){return renderSec(s,i)}).join('')+'</div>'
-  +'<div class="ar"><button class="ab pri" onclick="regen()" style="flex:2;font-size:14px">'+t('new_wod')+'</button><button class="ab pri" onclick="_swDoSave()" style="font-size:12px">'+(CFG.lang==='ar'?(_SW_editId!==null?'💾 تحديث':'💾 حفظ'):(_SW_editId!==null?'💾 Update':'💾 Save'))+'</button><button class="ab pri" onclick="shareWod()" style="font-size:12px">'+t('share')+'</button></div>'
-  +'<button class="bk" style="margin:8px 4px 0" onclick="S.cfgStore={};S.step=3;_SW_editId=null;render()">'+t('back_ty')+'</button>'
+  +'<div style="padding:0 12px"><div class="ar" style="margin:16px 0 0"><button class="ab pri" onclick="regen()" style="flex:2;font-size:14px">'+t('new_wod')+'</button><button class="ab pri" onclick="_swDoSave()" style="font-size:12px">'+(CFG.lang==='ar'?(_SW_editId!==null?'💾 تحديث':'💾 حفظ'):(_SW_editId!==null?'💾 Update':'💾 Save'))+'</button><button class="ab pri" onclick="shareWod()" style="font-size:12px">'+t('share')+'</button></div>'
+  +'<button class="bk" style="margin:8px 0 0" onclick="S.cfgStore={};S.step=3;_SW_editId=null;render()">'+t('back_ty')+'</button></div>'
   +'<div style="text-align:center;padding:16px 0 8px"><button onclick="showTnC()" style="background:none;border:none;color:var(--txt3);font-size:11px;cursor:pointer;text-decoration:underline">'+t('tnc')+'</button></div>';
 }
 function renderChipperCfg(sec,si){
