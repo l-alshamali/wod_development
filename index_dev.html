@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>CrossFit WOD Generator</title>
+<title>WOD Generator</title>
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FF6B00">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="WOD Generator">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css?family=Almarai:400,700,800&subset=arabic&display=swap" rel="stylesheet">
@@ -186,7 +193,7 @@ body[dir=rtl] .wdi-close{right:auto;left:12px}
 var T={
   en:{s:'Settings',language:'Language',theme:'Theme',dark:'Dark',light:'Light',
     wod:'WOD',title:'Workout<br>Generator',sub:'v1.0',
-    gate_hint:'Enter your email & password',enter:'Enter →',forgot:'Forgot password?',buy:'🔓 Unlock Access',tnc:'Terms & Conditions',
+    gate_hint:'Enter your email & password',enter:'Enter →',forgot:'Forgot password?',buy:'🔓 Unlock Access',tnc:'Terms & Conditions',dyn_end:'End',
     step1:'Step 1 / 5',step1q:"What's your CrossFit level?",step1s:'Sets workout intensity',
     lv_b:'Beginner',lv_b_d:'New to CrossFit',lv_i:'Intermediate',lv_i_d:'Building consistency',
     lv_a:'Advanced',lv_a_d:'Well-conditioned athlete',lv_e:'Elite',lv_e_d:'Competitive-level fitness',start_timer:'Start Timer',team_chip:'Team',
@@ -284,7 +291,7 @@ var T={
     bi_rounds:'الجولات',bi_reps:'التكرارات الثابتة',bi_mov:'الحركات',bi_mode:'النوع',bi_both:'الاثنين',bi_buyin:'باي-إن فقط',bi_cashout:'كاش-أوت فقط',bi_exin:'تمرين البداية',bi_exout:'تمرين النهاية',gab_time:'وقت الفترة',
     yg_rounds:'الجولات',yg_mov:'الحركات',yg_reps:'التكرارات الثابتة',yg_cardio:'كارديو',yg_mode:'النوع',yg_alternate:'تبادل جولات',yg_split:'تقسيم جولة',yg_scheme:'نظام التكرارات',
     cp_dir:'النمط',cp_desc:'تنازلي',cp_asc:'تصاعدي',cp_pyr:'هرمي',cp_fix:'ثابت',
-    dyn_start:'رقم البداية',dyn_step_up:'مقدار الزيادة',dyn_step_dn:'مقدار النقصان',dyn_peak:'قمة الهرم',scheme_sel:'— اختر نظام —',lad_type:'نوع السلم',
+    dyn_start:'رقم البداية',dyn_end:'النهاية',dyn_step_up:'مقدار الزيادة',dyn_step_dn:'مقدار النقصان',dyn_peak:'قمة الهرم',scheme_sel:'— اختر نظام —',lad_type:'نوع السلم',
     tr_dir:'النمط',
     ga_repsa:'التكرارات الثابتة',ga_repsb:'التكرارات الثابتة',
     i_amrap:'أكبر عدد جولات ممكن | الحد الزمني: {t} دقيقة',i_amrap_m:'أكبر عدد جولات ممكن | الحد الزمني: {t} دقيقة',
@@ -696,15 +703,15 @@ var _sprMap={
   'Jump Squat':1.80,'Banded Pull-Up':1.50,'Banded Dip':1.50,'Jumping Pull-Up':1.20,'Hand-Release Push-Up':1.50,'Single-Leg Hip Thrust':2.00,'Single-Leg Glute Bridge':1.80,
   'Burpee':2.40,'Box Jump':2.40,'Wall Ball':1.60,'Sit-Up':1.8,'Med Ball Sit-Up':2.50,'Med Ball Box Step-Up':3.00,
   // Gymnastics T2
-  'Kipping Pull-Up':1.50,'Chest-to-Bar Pull-Up':2.00,'Toes-to-Bar':1.80,
+  'Kipping Pull-Up':1.50,'Chest-to-Bar Pull-Up':2.00,'Toes-to-Bar':2.30,
   'Box Jump Over':2.50,'Burpee Box Jump Over':5.00,'Bar-Facing Burpee':3.00,
-  'Ring Dip':1.50,'Bar Dip':1.80,  'Pike Push-Up':2.00,'Ring Push-Up':2.00,'Bulgarian Split Squat':2.50,
+  'Ring Dip':2.10,'Bar Dip':1.80,  'Pike Push-Up':2.00,'Ring Push-Up':2.00,'Bulgarian Split Squat':2.50,
   'Cossack Squat':2.50,'Knees-to-Chest':1.80,'Sled Push':3.00,'Sled Pull':3.20,'GHD Sit-Up':2.20,'Back Extension (GHD)':1.80,'Burpee Pull-Up':3.20,'Med Ball Clean':3.50,'Tuck Jump':2.00,
   'Sandbag Over Shoulder':6.00,
   'Strict Pull-Up':2.00,'Jumping Muscle-Up':2.50,'Sandbag Carry':3.00,'Inchworm':2.50,'Burpee Box Jump':5.50,
   // Gymnastics T3
   'Handstand Push-Up (Kipping)':3.50,'Handstand Push-Up (Kipping)':3.50,'Bar Muscle-Up':4.00,'Rope Climb':10.00,
-  'Single-leg Squat (Pistol)':2.00,'Wall Walk':6.00,'Butterfly Pull-Up':1.00,
+  'Single-leg Squat (Pistol)':2.60,'Wall Walk':6.00,'Butterfly Pull-Up':1.00,
   'L-Sit':1.00,'D-Ball Over Shoulder':7.00,'Tire Flip':5.00,'Skin the Cat':5.00,
   'Dragon Flag':4.00,'Nordic Curl':5.00,'Strict Chest-to-bar Pull-up':2.50,
   'Strict Toes-to-bar':3.00,'Toes-to-Rings':2.20,'Ab Wheel Rollout':2.80,'Sandbag Clean':3.80,
@@ -728,7 +735,7 @@ var _sprMap={
   'Overhead Lunge':3.50,'Hang Clean':3.50,'Muscle Clean':3.50,
   // Barbell T4
   'Clean':4.00,'Clean & Jerk':4.2,'Clean and Press':5.00,'Split Jerk':4.00,'Snatch Balance':3.4,
-  'Snatch':3.75,'Power Jerk':3.50,
+  'Snatch':3.75,'Power Jerk':2.60,
   'Drop Snatch':3.4,'Hang Snatch':3.4,'Sotts Press':4.50,
   // Kettlebell T1
   'Russian KB Swing':2.00,'Goblet Squat':2.50,'Farmers Carry':2.00,
@@ -2087,9 +2094,8 @@ function mkLadder(time,lv,team,cfg){
       for(var x=step;x<=ds;x+=step)reps.push(x);
       for(var x=ds-step;x>=step;x-=step)reps.push(x);
     }else{
-      // ascending: numRds based on time cap, not fixed level
-      var numRds=Math.max(4,Math.min(Math.ceil(time*0.35),14));
-      for(var i=0;i<numRds;i++)reps.push(ds+i*step);
+      // ascending: finite — from step up to ds (user-set End)
+      for(var x=step;x<=ds;x+=step)reps.push(x);
     }
   }else{
     var _timeBudget=time*60;
@@ -2159,8 +2165,8 @@ function mkLadder(time,lv,team,cfg){
     chosen.forEach(function(ex){
       var _u=ex.unit||'reps';
       var _uLbl=_u==='time'?'s':_u==='m'?'m':'Reps';
-      var ascLabel=[ds0,ds0+dispStep,ds0+dispStep*2,ds0+dispStep*3].join(' - ')+' ... (+'+dispStep+' '+_uLbl+'/Round)';
-      items.push({kind:'str',ex:ex,detail:ascLabel,noPencil:true});
+      var ascLabel=reps.join(' - ')+' '+(_u==='time'?'s':_u);
+      items.push({kind:'str',ex:ex,detail:ascLabel});
     });
     if(_resolvedCardio){
       var _cEx=pk(CARDIO.filter(function(c){return !c.altOnly;}));
@@ -2429,7 +2435,7 @@ function renderDynInputsHTML(dType,start,step,si,prefix){
   var l1,l2;
   if(dType==='open_desc'){l1=t('dyn_start');l2=t('dyn_step_dn');}
   else if(dType==='pyr_dyn'||dType==='pyramid'){l1=t('dyn_peak');l2=t('lad_step');}
-  else{l1=t('dyn_start');l2=t('dyn_step_up');}
+  else{l1=t('dyn_end');l2=t('dyn_step_up');}
   return'<div style="display:flex;gap:14px;direction:'+(CFG.lang==='ar'?'rtl':'ltr')+';flex-wrap:wrap;align-items:flex-end">'
     +'<div style="display:flex;flex-direction:column;align-items:center;gap:4px">'
     +'<span style="font-size:11px;color:var(--txt2)">'+l1+'</span>'
@@ -2459,7 +2465,8 @@ function updateLadderRounds(si){
   if(!el)return;
   var inner='';
   if(dir==='ascending'){
-    inner='<span style="color:var(--or);font-weight:700">♾️</span>';
+    var _ascN=ds?Math.max(1,Math.floor(ds/st)):null;
+    inner=_ascN?'<span style="color:var(--or);font-weight:700">'+_ascN+'</span>':'<span style="color:var(--or);font-weight:700">♾️</span>';
   }else if(ds){
     var n=dir==='pyramid'?Math.floor(ds/st)*2-1:Math.floor(ds/st);
     inner='<span style="color:var(--or);font-weight:700">'+Math.max(1,n)+'</span>';
@@ -4746,7 +4753,7 @@ function _ladderPreview(si){
   var dir=cfg.direction;var start=parseInt(cfg.dynStart);var step=parseInt(cfg.dynStep)||1;
   if(!dir||!start){prev.textContent='';return;}
   var txt='';
-  if(dir==='ascending'){var a=[];for(var i=0;i<6;i++)a.push(start+i*step);txt='→ '+a.join(' - ')+' - ...';}
+  if(dir==='ascending'){var a=[];for(var x=step;x<=start;x+=step)a.push(x);txt='→ '+a.join(' - ');}
   else if(dir==='pyramid'){var a=[];for(var x=step;x<=start;x+=step)a.push(x);for(var x=start-step;x>=step;x-=step)a.push(x);txt='→ '+a.join(' - ');}
   else{var a=[];for(var x=start;x>=step;x-=step)a.push(x);txt='→ '+a.join(' - ');}
   prev.textContent=txt;
@@ -4813,7 +4820,7 @@ function renderLadderCfg(sec,si){
   +'<div id="ladder-preview-'+si+'" style="font-size:12px;font-weight:600;color:var(--txt2);direction:ltr;padding-bottom:6px">'+(function(){
     if(!dir||!cfg.dynStart)return'';
     var start=parseInt(cfg.dynStart),step=parseInt(cfg.dynStep)||1;
-    if(dir==='ascending'){var a=[];for(var i=0;i<6;i++)a.push(start+i*step);return'→ '+a.join(' - ')+' - ...';}
+    if(dir==='ascending'){var a=[];for(var x=step;x<=start;x+=step)a.push(x);return'→ '+a.join(' - ');}
     else if(dir==='pyramid'){var a=[];for(var x=step;x<=start;x+=step)a.push(x);for(var x=start-step;x>=step;x-=step)a.push(x);return'→ '+a.join(' - ');}
     else{var a=[];for(var x=start;x>=step;x-=step)a.push(x);return'→ '+a.join(' - ');}
   }())+'</div>'
@@ -5885,4 +5892,4 @@ function showMyWODs(){
 
 </script>
 </body>
-</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
