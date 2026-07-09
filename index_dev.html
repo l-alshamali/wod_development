@@ -2645,7 +2645,7 @@ var LL={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',elit
 function renderWod(){
   window.scrollTo(0,0);
   var w=S.wod;
-  app.innerHTML=dots(4)+'<div class="wh ani"><div class="wl">'+t('wod_day')+'</div><div class="wn"><bdi dir="ltr">'+S.wodName+'</bdi></div><div class="wm"><span class="wb o">'+(TL[w.type]||w.type)+'</span><span class="wb">'+({'beginner':t('lv_b'),'intermediate':t('lv_i'),'advanced':t('lv_a'),'elite':t('lv_e')}[S.level]||LL[S.level])+'</span><span class="wb"'+(CFG.lang==='ar'?' dir="ltr"':'')+'>'+S.time+' '+(CFG.lang==='ar'?arMin(S.time):'min')+'</span>'+(S.teamSize>1?'<span class="wb b">'+(CFG.lang==='ar'?t('team_chip'):'Team')+' '+S.teamSize+'</span>':'')+'</div></div>'
+  app.innerHTML=dots(4)+'<div class="wh ani"><div class="wl">'+t('wod_day')+'</div><div class="wn"><bdi dir="ltr">'+S.wodName+'</bdi></div><div class="wm"><span class="wb o">'+(TL[w.type]||w.type)+'</span><span class="wb">'+({'beginner':t('lv_b'),'intermediate':t('lv_i'),'advanced':t('lv_a'),'elite':t('lv_e')}[S.level]||LL[S.level])+'</span>'+(CFG.lang==='ar'?'<span class="wb"><bdi dir="ltr">'+S.time+' '+arMin(S.time)+'</bdi></span>':'<span class="wb">'+S.time+' min</span>')+(S.teamSize>1?'<span class="wb b">'+(CFG.lang==='ar'?t('team_chip'):'Team')+' '+S.teamSize+'</span>':'')+'</div></div>'
   +'<div id="secs">'+w.sections.map(function(s,i){return renderSec(s,i)}).join('')+'</div>'
   +'<div style="padding:0 12px"><div class="ar" style="margin:16px 0 0"><button class="ab pri" onclick="regen()" style="flex:2;font-size:14px">'+t('new_wod')+'</button><button class="ab pri" onclick="_swDoSave()" style="font-size:12px">'+(CFG.lang==='ar'?(_SW_editId!==null?'💾 تحديث':'💾 حفظ'):(_SW_editId!==null?'💾 Update':'💾 Save'))+'</button><button class="ab pri" onclick="shareWod()" style="font-size:12px">'+t('share')+'</button></div>'
   +'<button class="bk" style="margin:8px 0 0" onclick="S.cfgStore={};S.step=3;_SW_editId=null;render()">'+t('back_ty')+'</button></div>'
@@ -5734,7 +5734,7 @@ function showGate(){
     +'<button onclick="tryCode()" style="width:100%;background:var(--or);border:none;border-radius:12px;padding:15px;font-size:14px;font-weight:700;color:#000;cursor:pointer;margin-bottom:16px">'+t('enter')+'</button>'
     +'<a href="https://wodgenerator.org/success.html" target="_blank" style="display:block;color:var(--txt2);font-size:13px;font-weight:600;text-decoration:none;margin-bottom:14px;opacity:0.8">'+t('forgot')+'</a>'
     +'<a href="'+CHECKOUT_URL+'" target="_blank" style="display:block;color:var(--or);font-size:16px;font-weight:700;text-decoration:none;margin-bottom:6px">'+t('buy')+'</a>'
-    +'<a href="'+TRIAL_URL+'" target="_blank" style="display:block;color:#fff;font-size:14px;font-weight:700;text-decoration:none;margin-bottom:10px">'+(CFG.lang==='ar'?'⚡ جرّب الآن':'⚡ Try Now')+'</a>'
+    +'<a href="'+TRIAL_URL+'" target="_blank" style="display:block;color:var(--txt2);font-size:14px;font-weight:700;text-decoration:none;margin-bottom:10px">'+(CFG.lang==='ar'?'⚡ جرّب الآن':'⚡ Try Now')+'</a>'
     +'<button onclick="showTnC()" style="background:none;border:none;color:var(--txt3);font-size:11px;cursor:pointer;text-decoration:underline">'+t('tnc')+'</button>'
     +'</div></div>';
   setTimeout(function(){var i=document.getElementById('gate-email');if(i)i.focus();},100);
@@ -5892,4 +5892,4 @@ function showMyWODs(){
 
 </script>
 </body>
-</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
