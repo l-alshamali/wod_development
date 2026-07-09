@@ -2561,7 +2561,7 @@ function generate(cfg){
   return{type:type,sections:_finalSecs,cfg:cfg};
 }
 function todayStr(){var d=new Date();var m=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];return d.getDate()+' '+m[d.getMonth()]+' '+d.getFullYear()}
-var S={step:0,level:null,time:20,teamSize:1,wodTypes:[],wod:null,wodName:''};
+var S={step:0,level:null,time:20,teamSize:null,wodTypes:[],wod:null,wodName:''};
 var app=document.getElementById('app');
 function toast(msg,color,dur){var t=document.getElementById('tst');t.innerHTML=msg;t.style.background=color||'#00c853';t.classList.add('show');setTimeout(function(){t.classList.remove('show')},dur||1800)}
 function dots(cur){
