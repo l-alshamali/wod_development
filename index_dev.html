@@ -4268,12 +4268,12 @@ function _renderTimerExList(si){
     var fsSub=Math.max(10,fs-2);
     var py=n<=4?10:n<=7?7:5;
     var rows=allItems.map(function(it){
-      if(it._sep)return'<div style="text-align:center;padding:10px 0 6px;font-size:11px;font-weight:700;letter-spacing:2px;color:#ff7800" dir="ltr">'+dispDetail(it.label)+'</div>';
+      if(it._sep)return'<div style="text-align:center;padding:10px 0 6px;font-size:12px;font-weight:700;letter-spacing:2px;color:#ff7800" dir="ltr">'+dispDetail(it.label)+'</div>';
       var nm=(it.ex&&it.ex.name)||'';
       var dt=_timerItemDetail(it);
       return'<div style="text-align:center;padding:'+py+'px 0;">'
+        +(dt?'<span style="color:#ff7800;font-size:'+fs+'px;font-weight:700">'+dt.replace(/\s*reps$/i,'').trim()+'</span>  ':'')
         +'<span style="color:rgba(255,255,255,0.92);font-size:'+fs+'px;font-weight:700">'+nm+'</span>'
-        +(dt?'<span style="color:#ff7800;font-size:'+fsSub+'px;font-weight:500">  '+dt+'</span>':'')
         +'</div>';
     }).join('');
     return'<div class="timer-ex-list" style="flex:1;min-height:0;overscroll-behavior:contain;background:rgba(0,0,0,0.35);border-top:1px solid rgba(255,255,255,0.1);overflow-y:scroll;-webkit-overflow-scrolling:touch;">'
@@ -4295,7 +4295,7 @@ function _renderTimerExList(si){
   if(!hasMultipleSeps){
     var onlySep=displayItems.filter(function(x){return x._sep;});
     var onlyEx=displayItems.filter(function(x){return !x._sep;});
-    var singleSepHtml=onlySep.length?'<div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#ff7800;text-align:center;margin-bottom:14px" dir="ltr">'+dispDetail(onlySep[0].label)+'</div>':'<div style="margin-bottom:12px"></div>';
+    var singleSepHtml=onlySep.length?'<div style="font-size:12px;font-weight:700;letter-spacing:2px;color:#ff7800;text-align:center;margin-bottom:14px" dir="ltr">'+dispDetail(onlySep[0].label)+'</div>':'<div style="margin-bottom:12px"></div>';
     displayItems=onlyEx;
     var n=displayItems.length;
     var twoCols=n>=13;
@@ -4312,9 +4312,9 @@ function _renderTimerExList(si){
       function _colCell(it,idx,py,fs){
         var nm=(it.ex&&it.ex.name)||'';
         var dt=_timerItemDetail(it);
-        return'<div style="padding:'+py+'px 6px;text-align:center;min-height:'+(py*2+fs*2+4)+'px;display:flex;flex-direction:column;justify-content:center;">'
+        return'<div style="padding:'+py+'px 4px;text-align:center;min-height:'+(py*2+fs+8)+'px;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:5px;flex-wrap:wrap;">'
+          +(dt?'<span style="color:#ff7800;font-size:'+fs+'px;font-weight:700">'+dt.replace(/\s*reps$/i,'').trim()+'</span>':'')
           +'<span style="color:rgba(255,255,255,0.92);font-size:'+fs+'px;font-weight:700">'+nm+'</span>'
-          +(dt?'<span style="color:#ff7800;font-size:'+(fs-1)+'px;font-weight:500">'+dt+'</span>':'')
           +'</div>';
       }
       rows='<div style="display:flex;gap:0">'
@@ -4328,8 +4328,8 @@ function _renderTimerExList(si){
         var minPfx=it.emomMin?'<span style="color:rgba(255,255,255,0.32);font-size:'+fsSub+'px;font-weight:700;margin-right:7px">'+it.emomMin+'</span>':'';
         return'<div style="text-align:center;padding:'+py+'px 0;">'
           +minPfx
+          +(dt?'<span style="color:#ff7800;font-size:'+fs+'px;font-weight:700">'+dt.replace(/\s*reps$/i,'').trim()+'</span>  ':'')
           +'<span style="color:rgba(255,255,255,0.92);font-size:'+fs+'px;font-weight:700">'+nm+'</span>'
-          +(dt?'<span style="color:#ff7800;font-size:'+fsSub+'px;font-weight:500">  '+dt+'</span>':'')
           +'</div>';
       }).join('');
     }
@@ -4348,7 +4348,7 @@ function _renderTimerExList(si){
   var exIdx=0;
   var rows=displayItems.map(function(it){
     if(it._sep){
-      return'<div style="text-align:center;padding:10px 0 6px;font-size:11px;font-weight:700;letter-spacing:2px;color:#ff7800" dir="ltr">'+dispDetail(it.label)+'</div>';
+      return'<div style="text-align:center;padding:10px 0 6px;font-size:12px;font-weight:700;letter-spacing:2px;color:#ff7800" dir="ltr">'+dispDetail(it.label)+'</div>';
     }
     var i=exIdx++;
     var nm=(it.ex&&it.ex.name)||'';
@@ -4356,8 +4356,8 @@ function _renderTimerExList(si){
     var minPfx=it.emomMin?'<span style="color:rgba(255,255,255,0.32);font-size:'+fsSub+'px;font-weight:700;margin-right:7px">'+it.emomMin+'</span>':'';
     return'<div style="text-align:center;padding:'+py+'px 0;">'
       +minPfx
+      +(dt?'<span style="color:#ff7800;font-size:'+fs+'px;font-weight:700">'+dt.replace(/\s*reps$/i,'').trim()+'</span>  ':'')
       +'<span style="color:rgba(255,255,255,0.92);font-size:'+fs+'px;font-weight:700">'+nm+'</span>'
-      +(dt?'<span style="color:#ff7800;font-size:'+fsSub+'px;font-weight:500">  '+dt+'</span>':'')
       +'</div>';
   }).join('');
   var listStyle='flex:1;min-height:0;overscroll-behavior:contain;background:rgba(0,0,0,0.35);border-top:1px solid rgba(255,255,255,0.1);overflow-y:auto;-webkit-overflow-scrolling:touch;';
