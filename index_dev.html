@@ -219,7 +219,7 @@ var T={
     tab_mov:'Movements',
     db_mode:'Mode',db_single:'Single',db_double:'Double',db_start:'Starting Reps',db_inc:'Increment',db_fixed:'Fixed Reps (2nd exercise)',db_fixed_ph:'e.g. 5',
     lad_dir:'Direction',lad_asc:'Ascending',lad_desc:'Descending',lad_pyr:'Pyramid',lad_mov:'Movements',lad_step:'Step',lad_cardio:'Cardio',lad_rounds_lbl:'Total Rounds',
-    bi_rounds:'Rounds',bi_reps:'Fixed Reps',bi_mov:'Movements',bi_mode:'Mode',bi_both:'Both',bi_buyin:'Buy-In Only',bi_cashout:'Cash-Out Only',bi_exin:'Buy-In Exercise',bi_exout:'Cash-Out Exercise',gab_time:'Block Time',
+    bi_rounds:'Rounds',bi_reps:'Fixed Reps',bi_mov:'Movements',bi_mode:'Mode',bi_both:'Both',bi_buyin:'Buy-In Only',bi_cashout:'Cash-Out Only',bi_wod_type:'WOD Type',bi_wod_rft:'Round FT',bi_wod_chipper:'For Time',bi_exin:'Buy-In Exercise',bi_exout:'Cash-Out Exercise',gab_time:'Block Time',
     yg_rounds:'Rounds',yg_mov:'Movements',yg_reps:'Fixed Reps',yg_cardio:'Cardio',yg_mode:'Mode',yg_alternate:'Alternate Rounds',yg_split:'Split Round',yg_scheme:'Rep Scheme',
     cp_dir:'Pattern',cp_desc:'Descending',cp_asc:'Ascending',cp_pyr:'Pyramid',cp_fix:'Fixed',
     dyn_start:'Start',dyn_step_up:'Step ↑',dyn_step_dn:'Step ↓',dyn_peak:'Peak',scheme_sel:'— Select Scheme —',lad_type:'Ladder Type',
@@ -288,7 +288,7 @@ var T={
     tab_mov:'الحركات',
     db_mode:'النوع',db_single:'منفرد',db_double:'مزدوج',db_start:'البداية',db_inc:'الزيادة',db_fixed:'تكرارات ثابتة (تمرين 2)',db_fixed_ph:'مثال: 5',
     lad_dir:'الاتجاه',lad_asc:'تصاعدي',lad_desc:'تنازلي',lad_pyr:'هرمي',lad_mov:'الحركات',lad_step:'الخطوة',lad_cardio:'كارديو',lad_rounds_lbl:'عدد الجولات',
-    bi_rounds:'الجولات',bi_reps:'التكرارات الثابتة',bi_mov:'الحركات',bi_mode:'النوع',bi_both:'الاثنين',bi_buyin:'باي-إن فقط',bi_cashout:'كاش-أوت فقط',bi_exin:'تمرين البداية',bi_exout:'تمرين النهاية',gab_time:'وقت الفترة',
+    bi_rounds:'الجولات',bi_reps:'التكرارات الثابتة',bi_mov:'الحركات',bi_mode:'النوع',bi_both:'الاثنين',bi_buyin:'باي-إن فقط',bi_cashout:'كاش-أوت فقط',bi_wod_type:'نوع التمرين',bi_wod_rft:'Round FT',bi_wod_chipper:'For Time',bi_exin:'تمرين البداية',bi_exout:'تمرين النهاية',gab_time:'وقت الفترة',
     yg_rounds:'الجولات',yg_mov:'الحركات',yg_reps:'التكرارات الثابتة',yg_cardio:'كارديو',yg_mode:'النوع',yg_alternate:'تبادل جولات',yg_split:'تقسيم جولة',yg_scheme:'نظام التكرارات',
     cp_dir:'النمط',cp_desc:'تنازلي',cp_asc:'تصاعدي',cp_pyr:'هرمي',cp_fix:'ثابت',
     dyn_start:'رقم البداية',dyn_end:'النهاية',dyn_step_up:'مقدار الزيادة',dyn_step_dn:'مقدار النقصان',dyn_peak:'قمة الهرم',scheme_sel:'— اختر نظام —',lad_type:'نوع السلم',
@@ -1365,7 +1365,7 @@ function mkAmrap(time,lv,team,cfg){
   var _amrapRndMin=Math.round(_amrapTarget/60);
   var _amrapManual=!!cfg.target;
   var _amrapRnds=Math.round(time/(_amrapTarget/60));
-  return[{type:'AMRAP',title:'AMRAP — '+time+' Min',infoKey:_amrapManual?'i_amrap_m':'i_amrap',infoVars:{t:time,rnd:_amrapRndMin,rnds:_amrapRnds,tgt:_amrapTarget},scoreKey:'sc_rounds',teamKey:team>1?'tm_one':null,teamVars:{n:team},items:items,amrapCfg:cfg,_patternLS:_amrLS,_patternFlat:_amrIsFlat,_patternType:_amrRpType}];
+  return[{type:'AMRAP',title:time+' Min AMRAP',infoKey:_amrapManual?'i_amrap_m':'i_amrap',infoVars:{t:time,rnd:_amrapRndMin,rnds:_amrapRnds,tgt:_amrapTarget},scoreKey:'sc_rounds',teamKey:team>1?'tm_one':null,teamVars:{n:team},items:items,amrapCfg:cfg,_patternLS:_amrLS,_patternFlat:_amrIsFlat,_patternType:_amrRpType}];
 }
 
 function mkRFT(time,lv,team,cfg){
@@ -1590,7 +1590,7 @@ function mkRFT(time,lv,team,cfg){
   if(addCardio&&_cEx){items.push({kind:'cardio',ex:_cEx});}
 
   // العنوان: سكيم متغير → "For Time (21-15-9)" | جولات ثابتة → "X Rounds For Time"
-  var _rftTitle=rounds+' Rounds — For Time';
+  var _rftTitle=rounds+' Rounds For Time';
   return[{type:'For Time / RFT',title:_rftTitle,infoKey:'i_rft',infoVars:{r:rounds,t:time},scoreKey:'sc_time',teamKey:team>1?'tm_partition':null,items:items,scheme:reps,chosen:chosen,rftCfg:cfg}];
 }
 
@@ -1652,7 +1652,7 @@ function mkEmom(time,lv,team,cfg){
     var _rLtr=String.fromCharCode(65+chosen.length+(addCardio?1:0));
     items.push({kind:'str',ex:{name:'🛑 REST',cat:'rest',unit:'reps'},emomMin:'Min '+_rLtr,detail:'Complete Rest — Breathe & Recover',noEdit:true,noPencil:true,isRest:true});
   }
-  var _emomActualTime=_emomCycle*sets;return[{type:'EMOM',title:'EMOM — '+_emomActualTime+' Min',infoKey:'i_emom',infoVars:{n:numMov,s:sets,t:time},scoreKey:'sc_rounds_comp',teamKey:team>1?'tm_own':null,items:items,emomCfg:cfg}];
+  var _emomActualTime=_emomCycle*sets;return[{type:'EMOM',title:_emomActualTime+' Min EMOM',infoKey:'i_emom',infoVars:{n:numMov,s:sets,t:time},scoreKey:'sc_rounds_comp',teamKey:team>1?'tm_own':null,items:items,emomCfg:cfg}];
 }
 
 var CHIPPER_SCHEMES={
@@ -2012,10 +2012,11 @@ function mkDeathBy(time,lv,team,cfg){
   var start=cfg.startVal||(team===2?2:1);
   var increment=cfg.increment||(team===2?2:1);
   cfg._genStart=start;cfg._genInc=increment;
-  var title='Death By';
+  var title='EMOM For as Long as Possible';
   var _dbIncR=increment===1?'rep':'reps';var _dbSR=start===1?'rep':'reps';
   var _dbInfo='Add '+increment+' '+_dbIncR+' each minute until failure | Time cap: '+time+' min | <span style="font-weight:800">Starting at '+start+' '+_dbSR+' in Min 1</span>';
   var items=[{kind:'str',ex:ex1,detail:start+' + '+increment+' '+_dbIncR+'/min',noPencil:true}];
+  if((cfg.exCnt||1)===2){var _pool2=pool.filter(function(e){return e.name!==ex1.name;});if(!_pool2.length)_pool2=pool;var ex2=pk(_pool2);var _fixMap={beginner:5,intermediate:8,advanced:10,elite:12};var _fixed=cfg.fixedReps||(_fixMap[lv]||8);var _ex2Style=cfg.ex2Style||'fixed';var _ex2Detail=_ex2Style==='plus1'?start+' + '+increment+' '+_dbIncR+'/min':_fixed+' reps';items.push({kind:'str',ex:ex2,detail:_ex2Detail,noPencil:_ex2Style==='plus1'});}
   return[{type:'Death By',title:title,info:_dbInfo,scoreKey:'sc_deathby',teamKey:team>1?'tm_both':null,items:items,deathByCfg:cfg}];
 }
 function buildRoundItems(scheme,chosen,lv,team){
@@ -2191,7 +2192,7 @@ function mkLadder(time,lv,team,cfg){
     }
   }
   var _ladderTimeSec=isAsc?null:_ldrEst(reps,chosen,_resolvedCardio);
-  return[{type:'Ladder',title:'Ladder — For Time',infoKey:infoK,infoVars:infoV,scoreKey:'sc_time',teamKey:team>1?'tm_ladder':null,items:items,scheme:reps,chosen:chosen,ladderCfg:cfg,_ladderTimeSec:_ladderTimeSec,_estDiv:_estDiv}];
+  return[{type:'Ladder',title:'For Time',infoKey:infoK,infoVars:infoV,scoreKey:'sc_time',teamKey:team>1?'tm_ladder':null,items:items,scheme:reps,chosen:chosen,ladderCfg:cfg,_ladderTimeSec:_ladderTimeSec,_estDiv:_estDiv}];
 }
 
 function buildSchemeForRounds(dir,rounds,lv){
@@ -2263,21 +2264,27 @@ function mkBuyInOut(time,lv,team,cfg){
   }
   bIn=Object.assign({},bIn,{amount:buyInAmt});
   bOut=Object.assign({},bOut,{amount:cashOutAmt});
-  var _rftSec=mkRFT(time,lv,team,{rounds:cfg.rounds,exCnt:cfg.exCnt,withCardio:false,baseReps:cfg.baseReps})[0];
-  var reps=_rftSec.scheme||[];
-  var rounds=reps.length||3;
+  var _biWodType=cfg.wodType||(Math.random()<0.5?'rft':'chipper');
+  var _midSec,reps,rounds;
+  if(_biWodType==='chipper'){
+    _midSec=mkChipper(time,lv,team,{withCardio:false,exCnt:cfg.exCnt,stationMode:'classic'})[0];
+    reps=[];rounds=1;
+  }else{
+    _midSec=mkRFT(time,lv,team,{rounds:cfg.rounds,exCnt:cfg.exCnt,withCardio:false,baseReps:cfg.baseReps})[0];
+    reps=_midSec.scheme||[];rounds=reps.length||3;
+  }
   var items=[];
   if(mode==='both'||mode==='buyin'){
     items.push({kind:'sep',label:'── BUY-IN ──'});
     items.push({kind:'buyin',label:'BUY-IN — '+bIn.name,which:'buyin',exName:bIn.name,ex:bIn,tag:'BUY-IN',detail:buyInAmt});
   }
-  _rftSec.items.forEach(function(it){items.push(it);});
+  _midSec.items.forEach(function(it){items.push(it);});
   if(mode==='both'||mode==='cashout'){
     items.push({kind:'sep',label:'── CASH-OUT ──'});
     items.push({kind:'buyin',label:'CASH-OUT — '+bOut.name,which:'cashout',exName:bOut.name,ex:bOut,tag:'CASH-OUT',detail:cashOutAmt});
   }
-  var _biTitle=mode==='buyin'?'Buy-In — WOD':mode==='cashout'?'WOD — Cash-Out':'Buy-In — WOD — Cash-Out';
-  return[{type:'Buy-In / Cash-Out',title:_biTitle,infoKey:'i_buyin',infoVars:{r:rounds,t:time},scoreKey:'sc_time',teamKey:team>1?'tm_buyin':null,items:items,buyInCfg:cfg,scheme:reps,noLongForm:true}];
+  var _biTitle=mode==='buyin'?'Buy-In + WOD':mode==='cashout'?'WOD + Cash-Out':'Buy-In + WOD + Cash-Out';
+  return[{type:'Buy-In / Cash-Out',title:_biTitle,infoKey:'i_buyin',infoVars:{r:rounds,t:time},scoreKey:'sc_time',teamKey:team>1?'tm_buyin':null,items:items,buyInCfg:cfg,scheme:reps,noLongForm:true,biWodType:_biWodType}];
 }
 function mkYGIG(time,lv,team,cfg){
   cfg=cfg||{};
@@ -2966,9 +2973,9 @@ function renderSec(sec,si){
       var _drN=Math.max(1,Math.round(_drTimeCap*60/(_drYgig?_drPW*2:_drPW)));
       if(!sec.infoVars)sec.infoVars={};
       sec.infoVars.r=_drN;sec.infoVars.rt=_drN*2;sec._drPW=_drPW;sec._drBudget=_drTimeCap*60;
-      if(sec.type==='For Time / RFT'){sec.title=_drN+' Rounds — For Time';var _drSep=sec.items.find(function(x){return x.kind==='sep';});if(_drSep)_drSep.label='── '+_drN+' ROUNDS ──';}
+      if(sec.type==='For Time / RFT'){sec.title=_drN+' Rounds For Time';var _drSep=sec.items.find(function(x){return x.kind==='sep';});if(_drSep)_drSep.label='── '+_drN+' ROUNDS ──';}
       else if(_drYgig){sec.title='YGIG — '+(_drN*2)+' Rounds For Time';var _drSepY=sec.items.find(function(x){return x.kind==='sep';});if(_drSepY)_drSepY.label='── '+(_drN*2)+' Rounds — ('+_drN+' each, alternating) ──';}
-      else if(sec.type==='Buy-In / Cash-Out'){var _drSepB=sec.items.find(function(x){return x.kind==='sep'&&x.label&&x.label.indexOf('ROUNDS')>=0;});if(_drSepB)_drSepB.label='── '+_drN+' ROUNDS ──';}
+      else if(sec.type==='Buy-In / Cash-Out'){var _biLkR=sec.buyInCfg&&sec.buyInCfg.rounds;if(_biLkR){_drN=_biLkR;sec.infoVars.r=_biLkR;}var _drSepB=sec.items.find(function(x){return x.kind==='sep'&&x.label&&x.label.indexOf('ROUNDS')>=0;});if(_drSepB)_drSepB.label='── '+_drN+' ROUNDS ──';}
     }
   }
   var infoTxt=sec.infoKey?ti(sec.infoKey,sec.infoVars||{}):sec.info;
@@ -3001,7 +3008,8 @@ function renderSec(sec,si){
   }
   var _chip=(sec.type==='Group A'||sec.type==='Group B')?'':_secChip(sec);
   var stRight=_chip+(hasDesc?'<button class="wdi-btn" onclick="showWodDesc(\''+sec.type+'\')" >ⓘ</button>':'');
-  return'<div class="ws ani" id="sec-'+si+'"><div class="st" style="display:flex;align-items:center;justify-content:space-between"><span>'+sec.type+'</span><span style="display:flex;align-items:center;gap:6px">'+stRight+'</span></div><div class="stt"'+(CFG.lang==='ar'?' dir="ltr"':'')+'>'+sec.title+'</div>'+roundsBadge
+  var _stLbl=sec.type,_sttLbl=sec.title;if(sec.type==='Chipper'){_sttLbl='For Time';}if(sec.type==='Buy-In / Cash-Out'){_stLbl=sec.title;var _biWt2=sec.biWodType||(sec.buyInCfg&&sec.buyInCfg.wodType)||'rft';var _biR2=(sec.infoVars&&sec.infoVars.r)||'';var _biHasIn=sec.items&&sec.items.some(function(x){return x.kind==='buyin'&&x.which==='buyin';});var _biHasOut=sec.items&&sec.items.some(function(x){return x.kind==='buyin'&&x.which==='cashout';});var _biModLbl=(_biHasIn&&_biHasOut)?'+ Buy-In & Cash-Out':(_biHasIn?'+ Buy-In':'+ Cash-Out');_sttLbl='For Time';}
+  return'<div class="ws ani" id="sec-'+si+'"><div class="st" style="display:flex;align-items:center;justify-content:space-between"><span>'+_stLbl+'</span><span style="display:flex;align-items:center;gap:6px">'+stRight+'</span></div><div class="stt"'+(CFG.lang==='ar'?' dir="ltr"':'')+'>'+_sttLbl+'</div>'+roundsBadge
   +renderSecInfo(sec,si,(sec.type==='AMRAP'||sec.type==='YGIG / Partner WOD')?undefined:infoTxt)
   +(teamTxt?'<div class="si team">👥 '+teamTxt+'</div>':'')
   +(scoreTxt?'<div class="si sc">🏆 '+scoreTxt+'</div>':'')
@@ -3681,11 +3689,24 @@ function regen(){_SW_editId=null;
 function _buildWodText(){
   var w=S.wod;var txt='🏋️ WOD: '+S.wodName+'\n'+LL[S.level]+' | '+S.time+' min'+(S.teamSize>1?' | Team of '+S.teamSize:'')+'\n\n';
   w.sections.forEach(function(s){
-    txt+='━━ '+dispDetail(s.title)+' ━━\n'+'\n'+(s.score?'🏆 '+s.score+'\n':'')+'\n';
+    var _sTitleDisp=(s.type==='Buy-In / Cash-Out'||s.type==='Chipper')?'For Time':dispDetail(s.title);
+    txt+='━━ '+_sTitleDisp+' ━━\n\n'+(s.score?'🏆 '+s.score+'\n':'')+'\n';
+    if(s.type==='Death By'){
+      var _dbCfg=s.deathByCfg||{};var _dbStart=_dbCfg._genStart||1;var _dbInc=_dbCfg._genInc||1;
+      var _dbEx1=s.items[0]&&s.items[0].ex?s.items[0].ex.name:'';
+      var _dbEx2=s.items[1]&&s.items[1].ex?s.items[1].ex.name:'';
+      var _dbEx2Style=_dbCfg.ex2Style||'fixed';
+      var _dbFixed=_dbEx2&&_dbEx2Style==='fixed'?parseInt(s.items[1].detail)||0:0;
+      for(var _m=1;_m<=3;_m++){var _r1=_dbStart+(_m-1)*_dbInc;var _r2=_dbEx2Style==='plus1'?_dbStart+(_m-1)*_dbInc:_dbFixed;txt+='Min '+_m+' : '+_r1+'  '+_dbEx1+(_dbEx2?' + '+_r2+'  '+_dbEx2:'')+'\n';}
+      txt+='.. and so on, until failure\n';
+      txt+='\n';
+      return;
+    }
     if(s.scheme&&s.scheme.length&&s.longForm){
-      s.scheme.forEach(function(_,r){txt+='── ROUND '+(r+1)+' ──\n';s.items.forEach(function(it){if(it.kind==='sep')return;if(it.kind==='cardio'){var _caA=it.cardioAmounts&&it.cardioAmounts.length>1;var _ca=_caA?(it.cardioAmounts.every(function(v){return v===it.cardioAmounts[0];})?it.cardioAmounts[0]+' '+(it.ex.unit||'Cal'):it.cardioAmounts.join(' - ')+' '+(it.ex.unit||'Cal')):(it.ex.amount!=null?fmtCa(it.ex):(it.detail||''));var _caC=_ca?_ca.replace(/\s*reps$/i,'').trim():'';txt+=(_caC?_caC+' — ':'')+it.ex.name+'\n';return;}if(it.kind==='str'){var _rd=getRoundRep(it.detail,r)||(it.baseRep?it.baseRep+' reps':'');var _rdC=_rd.replace(/\s*reps$/i,'').trim();txt+=(_rdC?_rdC+' — ':'')+it.ex.name+'\n';}});});
+      s.scheme.forEach(function(_,r){txt+='── ROUND '+(r+1)+' ──\n';s.items.forEach(function(it){if(it.kind==='sep')return;if(it.kind==='cardio'){var _caA=it.cardioAmounts&&it.cardioAmounts.length>1;var _ca=_caA?(it.cardioAmounts.every(function(v){return v===it.cardioAmounts[0];})?it.cardioAmounts[0]+' '+(it.ex.unit||'Cal'):it.cardioAmounts.join(' - ')+' '+(it.ex.unit||'Cal')):(it.ex.amount!=null?fmtCa(it.ex):(it.detail||''));var _caC=_ca?_ca.replace(/\s*reps$/i,'').trim():'';txt+=(_caC?_caC+'  ':'')+it.ex.name+'\n';return;}if(it.kind==='str'){var _rd=getRoundRep(it.detail,r)||(it.baseRep?it.baseRep+' reps':'');var _rdC=_rd.replace(/\s*reps$/i,'').trim();txt+=(_rdC?_rdC+'  ':'')+it.ex.name+'\n';}});});
     }else{
-      s.items.forEach(function(it){if(it.kind==='sep'||it.kind==='scheme-header'){txt+=it.label+'\n';return;}if(it.kind==='buyin'){var _biAmt=it.ex&&it.ex.amount!=null?fmtCa(it.ex):'';var _biName=it.ex?it.ex.name:it.label.replace(/^[^—]+— /,'');txt+=(_biAmt?_biAmt+' — ':'')+_biName+'\n';return;}if(it.kind==='station-header'){return;}if(it.kind==='station-gate'){var _sg=it.ex.amount!=null?fmtCa(it.ex):(it.detail||'');txt+=(_sg?_sg+' — ':'')+it.ex.name+'\n';return;}if(it.kind==='cardio'){var _caA=it.cardioAmounts&&it.cardioAmounts.length>1;var _ca=_caA?(it.cardioAmounts.every(function(v){return v===it.cardioAmounts[0];})?it.cardioAmounts[0]+' '+(it.ex.unit||'Cal'):it.cardioAmounts.join(' - ')+' '+(it.ex.unit||'Cal')):(it.ex.amount!=null?fmtCa(it.ex):(it.detail||''));var _caC=_ca?_ca.replace(/\s*reps$/i,'').trim():'';txt+=(_caC?_caC+' — ':'')+it.ex.name+'\n';return;}var _d=fmtDetail(it.detail)||(it.baseRep?it.baseRep+' reps':'');var _dc=_d.replace(/\s*reps$/i,'').trim();txt+=(_dc?_dc+' — ':'')+it.ex.name+'\n';});
+      var _isBICO=s.type==='Buy-In / Cash-Out';var _isTabataTxt=s.type==='Tabata';var _txSep=_isTabataTxt?' — ':'  ';
+      s.items.forEach(function(it){if(it.kind==='sep'||it.kind==='scheme-header'){if(_isBICO){var _sl=it.label||'';if(_sl.indexOf('CASH-OUT')>=0){txt+='\n';return;}if(_sl.indexOf('BUY-IN')>=0&&_sl.indexOf('ROUND')<0){return;}}txt+=it.label+'\n';return;}if(it.kind==='buyin'){var _biAmt=it.ex&&it.ex.amount!=null?fmtCa(it.ex):'';var _biName=it.ex?it.ex.name:it.label.replace(/^[^—]+— /,'');if(_isBICO){var _biPfx=it.which==='cashout'?'CASH-OUT':'BUY-IN';txt+=_biPfx+': '+(_biAmt?_biAmt+'  ':'')+_biName+'\n'+(it.which==='buyin'?'\n':'');}else{txt+=(_biAmt?_biAmt+'  ':'')+_biName+'\n';}return;}if(it.kind==='station-header'){return;}if(it.kind==='station-gate'){var _sg=it.ex.amount!=null?fmtCa(it.ex):(it.detail||'');txt+=(_sg?_sg+'  ':'')+it.ex.name+'\n';return;}if(it.kind==='cardio'){var _caA=it.cardioAmounts&&it.cardioAmounts.length>1;var _ca=_caA?(it.cardioAmounts.every(function(v){return v===it.cardioAmounts[0];})?it.cardioAmounts[0]+' '+(it.ex.unit||'Cal'):it.cardioAmounts.join(' - ')+' '+(it.ex.unit||'Cal')):(it.ex.amount!=null?fmtCa(it.ex):(it.detail||''));var _caC=_ca?_ca.replace(/\s*reps$/i,'').trim():'';txt+=(it.emomMin?it.emomMin+' : ':'')+(_caC?_caC+_txSep:'')+it.ex.name+'\n';return;}var _d=fmtDetail(it.detail)||(it.baseRep?it.baseRep+' reps':'');var _dc=_d.replace(/\s*reps$/i,'').trim();txt+=(it.emomMin?it.emomMin+' : ':'')+(_dc?_dc+_txSep:'')+it.ex.name+'\n';});
     }
     txt+='\n';
   });
@@ -4227,7 +4248,7 @@ function _lockBodyScroll(){_bodyScrollY=window.scrollY||window.pageYOffset||0;do
 function _unlockBodyScroll(){document.documentElement.style.overflow='';document.body.classList.remove('timer-open');window.scrollTo(0,_bodyScrollY);}
 function _timerItemDetail(it){
   // buyin/cashout: always show the cardio amount
-  if(it.kind==='buyin'&&it.ex&&it.ex.amount!=null)return fmtCa(it.ex);
+  if(it.kind==='buyin'&&it.ex&&it.ex.amount!=null)return (it.which==='cashout'?'CASH-OUT: ':'BUY-IN: ')+fmtCa(it.ex);
   // explicit detail string (Tabata, EMOM, ascending ladder)
   if(it.detail){
     // Collapse 'X - X - X ... unit' to 'X unit' when all values are equal
@@ -4272,7 +4293,7 @@ function _renderTimerExList(si){
       var nm=(it.ex&&it.ex.name)||'';
       var dt=_timerItemDetail(it);
       return'<div style="text-align:center;padding:'+py+'px 0;">'
-        +(dt?'<span style="color:#ff7800;font-size:'+fs+'px;font-weight:700">'+dt.replace(/\s*reps$/i,'').trim()+'</span>  ':'')
+        +(dt?'<span style="color:#ff7800;font-size:'+fs+'px;font-weight:700">'+dt.replace(/\s*reps$/i,'').trim()+'</span>'+_tmSep:'')
         +'<span style="color:rgba(255,255,255,0.92);font-size:'+fs+'px;font-weight:700">'+nm+'</span>'
         +'</div>';
     }).join('');
@@ -4283,12 +4304,38 @@ function _renderTimerExList(si){
   var exItems=sec.items.filter(function(it){return it.kind==='str'||it.kind==='cardio'||it.kind==='station-gate'||it.kind==='buyin';});
   if(!exItems.length)return'';
   // Title
-  var titleHtml=sec.title?'<div style="font-size:17px;font-weight:800;color:#fff;text-align:center;margin-bottom:8px;letter-spacing:0.2px" dir="ltr">'+dispDetail(sec.title)+'</div>':'';
+  var _timerTitleStr=(sec.type==='Buy-In / Cash-Out'||sec.type==='Chipper')?'For Time':sec.title;
+  var titleHtml=_timerTitleStr?'<div style="font-size:17px;font-weight:800;color:#fff;text-align:center;margin-bottom:8px;letter-spacing:0.2px" dir="ltr">'+dispDetail(_timerTitleStr)+' :'+'</div>':'';
+  // Special: Death By — progressive minute format
+  if(sec.type==='Death By'){
+    var _dbCfg=sec.deathByCfg||{};var _dbStart=_dbCfg._genStart||1;var _dbInc=_dbCfg._genInc||1;
+    var _dbEx1=sec.items[0]&&sec.items[0].ex?sec.items[0].ex.name:'';
+    var _dbEx2=sec.items[1]&&sec.items[1].ex?sec.items[1].ex.name:'';
+    var _dbEx2Style=_dbCfg.ex2Style||'fixed';
+    var _dbFixed=_dbEx2&&_dbEx2Style==='fixed'?parseInt(sec.items[1].detail)||0:0;
+    var _dbRows='';
+    for(var _m=1;_m<=3;_m++){var _r1=_dbStart+(_m-1)*_dbInc;var _r2=_dbEx2Style==='plus1'?_dbStart+(_m-1)*_dbInc:_dbFixed;
+      _dbRows+='<div style="text-align:center;padding:10px 0;">'
+        +'<span style="color:rgba(255,255,255,0.92);font-size:15px;font-weight:700">Min '+_m+' : </span>'
+        +'<span style="color:#ff7800;font-size:15px;font-weight:700">'+_r1+'</span>'
+        +'<span style="color:rgba(255,255,255,0.92);font-size:15px;font-weight:700">  '+_dbEx1+'</span>'
+        +(_dbEx2?'<span style="color:rgba(255,255,255,0.92);font-size:15px;font-weight:700"> + </span><span style="color:#ff7800;font-size:15px;font-weight:700">'+_r2+'</span><span style="color:rgba(255,255,255,0.92);font-size:15px;font-weight:700">  '+_dbEx2+'</span>':'')
+        +'</div>';}
+    _dbRows+='<div style="text-align:center;padding:10px 0;color:rgba(255,255,255,0.5);font-size:14px;font-weight:600">.. and so on, until failure</div>';
+    return'<div class="timer-ex-list" style="flex:1;min-height:0;overscroll-behavior:contain;background:rgba(0,0,0,0.35);border-top:1px solid rgba(255,255,255,0.1);overflow-y:hidden;">'
+      +'<div style="max-width:480px;margin:0 auto;padding:12px 24px 16px;text-align:center;width:100%;box-sizing:border-box">'
+      +titleHtml+_dbRows+'</div></div>';
+  }
   // Build display items: include sep labels inline + exercise items
+  var _isTbTimer=sec.type==='Tabata';var _tmSep=_isTbTimer?' — ':'  ';
   var hasMultipleSeps=sec.items.filter(function(it){return it.kind==='sep'&&it.label;}).length>1;
   var displayItems=[];
+  var _isBICOTimer=sec.type==='Buy-In / Cash-Out';
   sec.items.forEach(function(it){
-    if(it.kind==='sep'&&it.label){displayItems.push({_sep:true,label:it.label});}
+    if(it.kind==='sep'&&it.label){
+      if(_isBICOTimer&&(it.label.indexOf('BUY-IN')>=0||it.label.indexOf('CASH-OUT')>=0))return;
+      displayItems.push({_sep:true,label:it.label});
+    }
     else if(it.kind==='str'||it.kind==='cardio'||it.kind==='station-gate'||it.kind==='buyin'){displayItems.push(it);}
   });
   // If only one sep (simple WOD), keep it as header only
@@ -4325,10 +4372,10 @@ function _renderTimerExList(si){
       rows=displayItems.map(function(it,i){
         var nm=(it.ex&&it.ex.name)||'';
         var dt=_timerItemDetail(it);
-        var minPfx=it.emomMin?'<span style="color:rgba(255,255,255,0.32);font-size:'+fsSub+'px;font-weight:700;margin-right:7px">'+it.emomMin+'</span>':'';
+        var minPfx=it.emomMin?'<span style="color:rgba(255,255,255,0.92);font-size:'+fsSub+'px;font-weight:700;margin-right:7px">'+it.emomMin+' :</span>':'';
         return'<div style="text-align:center;padding:'+py+'px 0;">'
           +minPfx
-          +(dt?'<span style="color:#ff7800;font-size:'+fs+'px;font-weight:700">'+dt.replace(/\s*reps$/i,'').trim()+'</span>  ':'')
+          +(dt?'<span style="color:#ff7800;font-size:'+fs+'px;font-weight:700">'+dt.replace(/\s*reps$/i,'').trim()+'</span>'+_tmSep:'')
           +'<span style="color:rgba(255,255,255,0.92);font-size:'+fs+'px;font-weight:700">'+nm+'</span>'
           +'</div>';
       }).join('');
@@ -4352,11 +4399,20 @@ function _renderTimerExList(si){
     }
     var i=exIdx++;
     var nm=(it.ex&&it.ex.name)||'';
+    if(it.kind==='buyin'){
+      var _bpfx=it.which==='cashout'?'CASH-OUT: ':'BUY-IN: ';
+      var _bamt=it.ex&&it.ex.amount!=null?fmtCa(it.ex):'';
+      return'<div style="text-align:center;padding:'+py+'px 0;">'
+        +'<span style="color:rgba(255,255,255,0.92);font-size:'+fs+'px;font-weight:700">'+_bpfx+'</span>'
+        +(_bamt?'<span style="color:#ff7800;font-size:'+fs+'px;font-weight:700">'+_bamt+'</span>':'')
+        +'<span style="color:rgba(255,255,255,0.92);font-size:'+fs+'px;font-weight:700">'+(_bamt?' — ':'')+nm+'</span>'
+        +'</div>';
+    }
     var dt=_timerItemDetail(it);
-    var minPfx=it.emomMin?'<span style="color:rgba(255,255,255,0.32);font-size:'+fsSub+'px;font-weight:700;margin-right:7px">'+it.emomMin+'</span>':'';
+    var minPfx=it.emomMin?'<span style="color:rgba(255,255,255,0.92);font-size:'+fsSub+'px;font-weight:700;margin-right:7px">'+it.emomMin+' :</span>':'';
     return'<div style="text-align:center;padding:'+py+'px 0;">'
       +minPfx
-      +(dt?'<span style="color:#ff7800;font-size:'+fs+'px;font-weight:700">'+dt.replace(/\s*reps$/i,'').trim()+'</span>  ':'')
+      +(dt?'<span style="color:#ff7800;font-size:'+fs+'px;font-weight:700">'+dt.replace(/\s*reps$/i,'').trim()+'</span>'+_tmSep:'')
       +'<span style="color:rgba(255,255,255,0.92);font-size:'+fs+'px;font-weight:700">'+nm+'</span>'
       +'</div>';
   }).join('');
@@ -4461,8 +4517,17 @@ function showCapTimer(si){
   var _iv=sec.infoVars||{};
   var _isDB=sec.type==='Death By';
   var _lbl=_isDB?'DEATH BY':'LADDER';
+  var _dbCfg=_isDB?(sec.deathByCfg||{}):{};
+  var _dbStart=_isDB?(_dbCfg._genStart||1):(_iv.s||1);
+  var _dbInc=_isDB?(_dbCfg._genInc||1):(_iv.inc||1);
+  var _dbExCnt=_isDB?(_dbCfg.exCnt||1):1;
+  var _dbEx2Style=_dbCfg.ex2Style||'fixed';
+  var _dbEx1Name=_isDB&&sec.items[0]&&sec.items[0].ex?sec.items[0].ex.name:'';
+  var _dbEx2Name=_isDB&&_dbExCnt===2&&sec.items[1]&&sec.items[1].ex?sec.items[1].ex.name:'';
+  var _dbFixed=_isDB&&_dbExCnt===2&&_dbEx2Style==='fixed'?parseInt((sec.items[1]&&sec.items[1].detail)||'0')||0:0;
   _wodTimer={iv:null,paused:false,elapsed:0,totalSec:capSec,type:'cap',curMin:0,totalMin:0,minSec:0,movs:[],finished:false,label:_lbl,
-    isDB:_isDB,dbStart:_iv.s||1,dbInc:_iv.inc||1,dbLastMin:-1,flash:false,si:si};
+    isDB:_isDB,dbStart:_dbStart,dbInc:_dbInc,dbLastMin:-1,flash:false,si:si,
+    dbExCnt:_dbExCnt,dbEx2Style:_dbEx2Style,dbEx1Name:_dbEx1Name,dbEx2Name:_dbEx2Name,dbFixed:_dbFixed};
   _unlockAudio();_wodBeepStart();
   var ov=document.createElement('div');ov.id='wod-timer-ov';ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;font-family:inherit;overflow:hidden;';
   document.body.appendChild(ov);_lockBodyScroll();_wodTimerRender();
@@ -4526,7 +4591,12 @@ function _wodTimerRender(){
     if(wt.isDB&&!finished){
       var _dbMin=Math.floor(wt.elapsed/60)+1;
       var _dbReps=wt.dbStart+((_dbMin-1)*wt.dbInc);
-      movName='MIN '+_dbMin+' — Do '+_dbReps+' reps';
+      if(wt.dbExCnt===2){
+        var _dbReps2=wt.dbEx2Style==='plus1'?wt.dbStart+((_dbMin-1)*wt.dbInc):wt.dbFixed;
+        movName='MIN '+_dbMin+' — Do '+_dbReps+' + '+_dbReps2+' reps';
+      }else{
+        movName='MIN '+_dbMin+' — Do '+_dbReps+' reps';
+      }
     }
     subLabel=_fmtMS(wt.totalSec)+' TIME CAP';progressPct=wt.totalSec>0?Math.round((rem/wt.totalSec)*100):0;
   }else{
@@ -4703,20 +4773,40 @@ function randomDeathBy(si){
   delete cfg._userStart;delete cfg._userInc;delete cfg.startVal;delete cfg.increment;
   var el=document.getElementById('sec-'+si);if(el)el.outerHTML=renderSec(S.wod.sections[si],si);
 }
+function setDeathByExCnt(si,val,btn){
+  var sec=S.wod.sections[si];if(!sec.deathByCfg)sec.deathByCfg={};
+  sec.deathByCfg.exCnt=val;
+  var cfgEl=document.getElementById('deathby-cfg-'+si);
+  if(cfgEl){cfgEl.outerHTML=renderDeathByCfg(sec,si);var _newCfg=document.getElementById('deathby-cfg-'+si);if(_newCfg)_newCfg.style.display='block';}
+}
+function setDeathByEx2Style(si,val,btn){
+  var sec=S.wod.sections[si];if(!sec.deathByCfg)sec.deathByCfg={};
+  sec.deathByCfg.ex2Style=val;
+  var cfgEl=document.getElementById('deathby-cfg-'+si);
+  if(cfgEl){cfgEl.outerHTML=renderDeathByCfg(sec,si);var _newCfg=document.getElementById('deathby-cfg-'+si);if(_newCfg)_newCfg.style.display='block';}
+}
 function renderDeathByCfg(sec,si){
   var cfg=sec.deathByCfg||{};
   var S_btn='background:var(--bg2);border:0.5px solid var(--bdr);border-radius:7px;padding:5px 10px;font-size:13px;color:var(--txt2);cursor:pointer;font-weight:600;font-family:inherit;min-height:30px';
   var S_sel='background:var(--or);border:0.5px solid var(--or);border-radius:7px;padding:5px 10px;font-size:13px;color:#000;cursor:pointer;font-weight:600;font-family:inherit;min-height:30px';
   var cats=[['barbell',CFG.lang==='ar'?'باربل':'Barbell'],['gymnastics',CFG.lang==='ar'?'جمناستك':'Gymnastics'],['kettlebell',CFG.lang==='ar'?'كيتل بل':'Kettlebell'],['dumbbell',CFG.lang==='ar'?'دمبل':'Dumbbell']];
-  var curCat=cfg.cat||'all';
+  var curCat=cfg.cat;
+  var exCnt=cfg.exCnt;
+  var ex2Style=cfg.ex2Style;
   var catBtns=cats.map(function(arr){return'<button onclick="setDeathByCat('+si+',\''+arr[0]+'\',this)" style="'+(curCat===arr[0]?S_sel:S_btn)+'">'+arr[1]+'</button>';}).join('');
   var incBtns=[1,2,3].map(function(n){return'<button onclick="setDeathByVal('+si+',\'increment\','+n+',this)" style="'+(cfg._userInc===n?S_sel:S_btn)+'">+'+n+'</button>';}).join('');
   var startBtns=[1,2,3].map(function(n){return'<button onclick="setDeathByStart('+si+','+n+',this)" style="'+(cfg._userStart===n?S_sel:S_btn)+'">'+n+'</button>';}).join('');
+  var movBtns=[1,2].map(function(n){return'<button onclick="setDeathByExCnt('+si+','+n+',this)" style="'+(exCnt===n?S_sel:S_btn)+'">'+n+'</button>';}).join('');
+  var ex2Html=exCnt===2?'<div style="font-size:13px;font-weight:600;color:var(--txt2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px">'+(CFG.lang==='ar'?'تمرين 2':'Exercise 2')+'</div>'
+    +'<div style="display:flex;gap:6px;margin-bottom:14px;direction:ltr">'
+    +'<button onclick="setDeathByEx2Style('+si+',\'fixed\',this)" style="'+(ex2Style==='fixed'?S_sel:S_btn)+'">'+(CFG.lang==='ar'?'ثابت':'Fixed')+'</button>'
+    +'<button onclick="setDeathByEx2Style('+si+',\'plus1\',this)" style="'+(ex2Style==='plus1'?S_sel:S_btn)+'">'+(CFG.lang==='ar'?'+'+(S.teamSize===2?2:1)+' رب/دقيقة':'+'+(S.teamSize===2?2:1)+' rep/min')+'</button>'
+    +'</div>':'';
   return'<div id="deathby-cfg-'+si+'" style="display:none;background:var(--bg3);border:0.5px solid var(--bdr);border-radius:10px;padding:12px;margin-top:6px">'
   +'<div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button onclick="randomDeathBy('+si+')" style="background:rgba(99,102,241,0.12);border:0.5px solid #6366f1;border-radius:20px;padding:4px 12px;font-size:11px;color:#6366f1;cursor:pointer;font-weight:600">'+t('random')+'</button></div>'
-  +'<div style="font-size:13px;font-weight:600;color:var(--txt2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px">'+(CFG.lang==='ar'?'الفئة':'Category')+'</div>'
-  +'<div style="display:flex;gap:6px;margin-bottom:6px;direction:'+(CFG.lang==='ar'?'rtl':'ltr')+'"><button onclick="setDeathByCat('+si+',\'all\',this)" style="'+(curCat==='all'?S_sel:S_btn)+'">'+(CFG.lang==='ar'?'الكل':'All')+'</button></div>'
-  +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;direction:'+(CFG.lang==='ar'?'rtl':'ltr')+'">'+catBtns+'</div>'
+  +'<div style="font-size:13px;font-weight:600;color:var(--txt2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px">'+(CFG.lang==='ar'?'الحركات':'Movements')+'</div>'
+  +'<div style="display:flex;gap:6px;margin-bottom:14px;direction:ltr">'+movBtns+'</div>'
+  +ex2Html
   +'<button onclick="regenDeathBy('+si+')" style="width:100%;background:var(--or);color:#000;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;min-height:42px">↺ '+t('chip_regen')+'</button>'
   +'</div>';
 }
@@ -4877,8 +4967,19 @@ function setBuyInManualReps(si,val){
 
 function regenBuyIn(si){
   var sec=S.wod.sections[si];var cfg=sec.buyInCfg||{};
-  var _sr=_stickyRep(sec,S.level,S.teamSize);if(_sr&&!cfg.baseReps)cfg=Object.assign({},cfg,{baseReps:_sr});
-  var newSecs=_regenBest(mkBuyInOut,S.wod.cfg.time,S.level,S.teamSize,cfg);if(!newSecs)return;newSecs[0].buyInCfg=cfg;S.wod.sections[si]=newSecs[0];
+  // لا تضيف stickyRep لو المستخدم قفّل rounds (يعطّل _rftAuto ويكسر حساب الجولات)
+  var _sr=_stickyRep(sec,S.level,S.teamSize);
+  if(_sr&&!cfg.baseReps&&!cfg.rounds)cfg=Object.assign({},cfg,{baseReps:_sr});
+  var newSecs=_regenBest(mkBuyInOut,S.wod.cfg.time,S.level,S.teamSize,cfg);if(!newSecs)return;
+  // Hard-lock: فرض عدد الجولات لو المستخدم حدده
+  if(cfg.rounds&&newSecs[0]){
+    var _s0=newSecs[0];
+    if(_s0.scheme){var _lr=_s0.scheme[_s0.scheme.length-1]||10;while(_s0.scheme.length<cfg.rounds)_s0.scheme.push(_lr);if(_s0.scheme.length>cfg.rounds)_s0.scheme=_s0.scheme.slice(0,cfg.rounds);}
+    if(_s0.infoVars)_s0.infoVars.r=cfg.rounds;
+    var _sepIt=_s0.items&&_s0.items.find(function(x){return x.kind==='sep'&&x.label&&x.label.indexOf('ROUNDS')>=0;});
+    if(_sepIt)_sepIt.label='── '+cfg.rounds+' ROUNDS ──';
+  }
+  newSecs[0].buyInCfg=cfg;S.wod.sections[si]=newSecs[0];
   var el=document.getElementById('sec-'+si);if(el)el.outerHTML=renderSec(S.wod.sections[si],si);
 }
 function randomBuyIn(si){
@@ -4886,22 +4987,36 @@ function randomBuyIn(si){
   var newSecs=mkBuyInOut(S.wod.cfg.time,S.level,S.teamSize,{});S.wod.sections[si]=newSecs[0];
   var el=document.getElementById('sec-'+si);if(el)el.outerHTML=renderSec(S.wod.sections[si],si);
 }
+function setBuyInWodType(si,val){
+  var sec=S.wod.sections[si];if(!sec.buyInCfg)sec.buyInCfg={};
+  sec.buyInCfg.wodType=val;
+  if(val==='chipper'){delete sec.buyInCfg.rounds;delete sec.buyInCfg.baseReps;}
+  var _cfgEl=document.getElementById('buyin-cfg-'+si);
+  if(_cfgEl){var _tmp=document.createElement('div');_tmp.innerHTML=renderBuyInCfg(sec,si);var _newCfg=_tmp.firstChild;if(_newCfg){_newCfg.style.display='block';_cfgEl.replaceWith(_newCfg);}}
+}
 function renderBuyInCfg(sec,si){
   var cfg=sec.buyInCfg||{};
   var S_btn='background:var(--bg2);border:0.5px solid var(--bdr);border-radius:7px;padding:5px 10px;font-size:13px;color:var(--txt2);cursor:pointer;font-weight:600;font-family:inherit;min-height:30px';
   var S_sel='background:var(--or);border:0.5px solid var(--or);border-radius:7px;padding:5px 10px;font-size:13px;color:#000;cursor:pointer;font-weight:600;font-family:inherit;min-height:30px';
+  var _wt=cfg.wodType||null;
   var roundBtns=[1,2,3,4,5,6,7,8].map(function(n){return'<button onclick="setBuyInVal('+si+',\'rounds\','+n+',this)" style="'+(cfg.rounds===n?S_sel:S_btn)+'">'+n+'</button>';}).join('');
   var movBtns=[1,2,3,4,5,6,7,8].map(function(n){return'<button onclick="setBuyInVal('+si+',\'exCnt\','+n+',this)" style="'+(cfg.exCnt===n?S_sel:S_btn)+'">'+n+'</button>';}).join('');
+  var _wtSettings=_wt?('<div style="font-size:13px;font-weight:600;color:var(--txt2);text-transform:uppercase;margin-bottom:6px">'+(_wt==='rft'?t('bi_rounds'):'')+'</div>'
+  +(_wt==='rft'?'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;direction:'+(CFG.lang==='ar'?'rtl':'ltr')+'">'+roundBtns+'</div>':'')
+  +'<div style="font-size:13px;font-weight:600;color:var(--txt2);text-transform:uppercase;margin-bottom:6px">'+t('bi_mov')+'</div>'
+  +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;direction:'+(CFG.lang==='ar'?'rtl':'ltr')+'">'+movBtns+'</div>'):
+  '';
   return'<div id="buyin-cfg-'+si+'" style="display:none;background:var(--bg3);border:0.5px solid var(--bdr);border-radius:10px;padding:12px;margin-top:6px">'
   +'<div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button onclick="randomBuyIn('+si+')" style="background:rgba(99,102,241,0.12);border:0.5px solid #6366f1;border-radius:20px;padding:4px 12px;font-size:11px;color:#6366f1;cursor:pointer;font-weight:600">'+t('random')+'</button></div>'
   +'<div style="font-size:13px;font-weight:600;color:var(--txt2);text-transform:uppercase;margin-bottom:6px">'+t('bi_mode')+'</div>'
   +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;direction:'+(CFG.lang==='ar'?'rtl':'ltr')+'">'
   +['buyin','cashout','both'].map(function(m){var lbl=m==='buyin'?t('bi_buyin'):m==='cashout'?t('bi_cashout'):t('bi_both');return'<button onclick="setBuyInVal('+si+',\'mode\',\''+m+'\',this)" style="'+(cfg.mode===m?S_sel:S_btn)+'">'+lbl+'</button>';}).join('')
   +'</div>'
-  +'<div style="font-size:13px;font-weight:600;color:var(--txt2);text-transform:uppercase;margin-bottom:6px">'+t('bi_rounds')+'</div>'
-  +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;direction:'+(CFG.lang==='ar'?'rtl':'ltr')+'">'+roundBtns+'</div>'
-  +'<div style="font-size:13px;font-weight:600;color:var(--txt2);text-transform:uppercase;margin-bottom:6px">'+t('bi_mov')+'</div>'
-  +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;direction:'+(CFG.lang==='ar'?'rtl':'ltr')+'">'+movBtns+'</div>'
+  +'<div style="font-size:13px;font-weight:600;color:var(--txt2);text-transform:uppercase;margin-bottom:6px">'+t('bi_wod_type')+'</div>'
+  +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;direction:ltr">'
+  +['rft','chipper'].map(function(wt){var lbl=wt==='rft'?t('bi_wod_rft'):t('bi_wod_chipper');return'<button onclick="setBuyInWodType('+si+',\''+wt+'\')" style="'+(_wt===wt?S_sel:S_btn)+'">'+lbl+'</button>';}).join('')
+  +'</div>'
+  +_wtSettings
   +'<button onclick="regenBuyIn('+si+')" style="width:100%;background:var(--or);color:#000;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;min-height:42px">↺ '+t('chip_regen')+'</button>'
   +'</div>';
 }
