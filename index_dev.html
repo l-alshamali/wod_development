@@ -1365,7 +1365,7 @@ function mkAmrap(time,lv,team,cfg){
   var _amrapRndMin=Math.round(_amrapTarget/60);
   var _amrapManual=!!cfg.target;
   var _amrapRnds=Math.round(time/(_amrapTarget/60));
-  return[{type:'AMRAP',title:time+' Min AMRAP',infoKey:_amrapManual?'i_amrap_m':'i_amrap',infoVars:{t:time,rnd:_amrapRndMin,rnds:_amrapRnds,tgt:_amrapTarget},scoreKey:'sc_rounds',teamKey:team>1?'tm_one':null,teamVars:{n:team},items:items,amrapCfg:cfg,_patternLS:_amrLS,_patternFlat:_amrIsFlat,_patternType:_amrRpType}];
+  return[{type:'AMRAP',title:time+' MIN AMRAP',infoKey:_amrapManual?'i_amrap_m':'i_amrap',infoVars:{t:time,rnd:_amrapRndMin,rnds:_amrapRnds,tgt:_amrapTarget},scoreKey:'sc_rounds',teamKey:team>1?'tm_one':null,teamVars:{n:team},items:items,amrapCfg:cfg,_patternLS:_amrLS,_patternFlat:_amrIsFlat,_patternType:_amrRpType}];
 }
 
 function mkRFT(time,lv,team,cfg){
@@ -1652,7 +1652,7 @@ function mkEmom(time,lv,team,cfg){
     var _rLtr=String.fromCharCode(65+chosen.length+(addCardio?1:0));
     items.push({kind:'str',ex:{name:'🛑 REST',cat:'rest',unit:'reps'},emomMin:'Min '+_rLtr,detail:'Complete Rest — Breathe & Recover',noEdit:true,noPencil:true,isRest:true});
   }
-  var _emomActualTime=_emomCycle*sets;return[{type:'EMOM',title:_emomActualTime+' Min EMOM',infoKey:'i_emom',infoVars:{n:numMov,s:sets,t:time},scoreKey:'sc_rounds_comp',teamKey:team>1?'tm_own':null,items:items,emomCfg:cfg}];
+  var _emomActualTime=_emomCycle*sets;return[{type:'EMOM',title:_emomActualTime+' MIN EMOM',infoKey:'i_emom',infoVars:{n:numMov,s:sets,t:time},scoreKey:'sc_rounds_comp',teamKey:team>1?'tm_own':null,items:items,emomCfg:cfg}];
 }
 
 var CHIPPER_SCHEMES={
@@ -2651,7 +2651,8 @@ var LL={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',elit
 function renderWod(){
   window.scrollTo(0,0);
   var w=S.wod;
-  app.innerHTML=dots(4)+'<div class="wh ani"><div class="wl">'+t('wod_day')+'</div><div class="wn"><bdi dir="ltr">'+S.wodName+'</bdi></div><div class="wm"><span class="wb o">'+(TL[w.type]||w.type)+'</span><span class="wb">'+({'beginner':t('lv_b'),'intermediate':t('lv_i'),'advanced':t('lv_a'),'elite':t('lv_e')}[S.level]||LL[S.level])+'</span>'+(CFG.lang==='ar'?'<span class="wb"><bdi dir="ltr">'+S.time+' '+arMin(S.time)+'</bdi></span>':'<span class="wb">'+S.time+' min</span>')+(S.teamSize>1?'<span class="wb b">'+(CFG.lang==='ar'?t('team_chip'):'Team')+' '+S.teamSize+'</span>':'')+'</div></div>'
+  var _chipTime=(function(){if(w.type==='group-ab')return Math.floor(S.time/2)*2;if(w.type==='emom'&&w.sections&&w.sections[0]){var _es=w.sections[0];var _ec=(_es.items||[]).filter(function(x){return x.kind!=='sep';}).length;var _esets=(_es.infoVars&&_es.infoVars.s)||0;var _eact=_ec*_esets;if(_eact>0)return _eact;}return S.time;})();
+  app.innerHTML=dots(4)+'<div class="wh ani"><div class="wl">'+t('wod_day')+'</div><div class="wn"><bdi dir="ltr">'+S.wodName+'</bdi></div><div class="wm"><span class="wb o">'+(TL[w.type]||w.type)+'</span><span class="wb">'+({'beginner':t('lv_b'),'intermediate':t('lv_i'),'advanced':t('lv_a'),'elite':t('lv_e')}[S.level]||LL[S.level])+'</span>'+(w.type==='tabata'?'':(CFG.lang==='ar'?'<span class="wb"><bdi dir="ltr">'+_chipTime+' '+arMin(_chipTime)+'</bdi></span>':'<span class="wb">'+_chipTime+' min</span>'))+(S.teamSize>1?'<span class="wb b">'+(CFG.lang==='ar'?t('team_chip'):'Team')+' '+S.teamSize+'</span>':'')+'</div></div>'
   +'<div id="secs">'+w.sections.map(function(s,i){return renderSec(s,i)}).join('')+'</div>'
   +'<div style="padding:0 12px"><div class="ar" style="margin:16px 0 0"><button class="ab pri" onclick="regen()" style="flex:2;font-size:14px">'+t('new_wod')+'</button><button class="ab pri" onclick="_swDoSave()" style="font-size:12px">'+(CFG.lang==='ar'?(_SW_editId!==null?'💾 تحديث':'💾 حفظ'):(_SW_editId!==null?'💾 Update':'💾 Save'))+'</button><button class="ab pri" onclick="shareWod()" style="font-size:12px">'+t('share')+'</button></div>'
   +'<button class="bk" style="margin:8px 0 0" onclick="S.cfgStore={};S.step=3;_SW_editId=null;render()">'+t('back_ty')+'</button></div>'
@@ -2791,7 +2792,7 @@ function cfgGearRow(infoTxt,toggleFn,si,timeEst,preTime){
 }
 function renderSecInfo(sec,si,infoTxt){
   var _amrBoldTime='';if((sec.type==='AMRAP'||sec.type==='YGIG / Partner WOD')&&infoTxt===undefined&&sec.infoKey){var _riv=sec.infoVars||{};var _rlv=S.level||'intermediate';var _isYgigSec=sec.type==='YGIG / Partner WOD'&&!(_riv.r);var _rtm=_isYgigSec?1:(S.teamSize||1);var _rSplit=_isYgigSec?false:true;var _rtT=_rtm===2?18:({beginner:22,intermediate:16,advanced:10,elite:6}[_rlv]||16);var _rpw=0;var _rstrI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _rcardI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});_rstrI.forEach(function(it){_rpw+=it.baseRep*getSecondsPerRep(it.ex,_rlv,_rtm,_rSplit);});_rcardI.forEach(function(cx){_rpw+=_cardioSecEst(cx.ex,_rlv,_rtm,_rSplit);});_rpw+=(_rstrI.length+_rcardI.length-1)*_rtT;if(_rpw>0){var _rwSec=(_riv.t||S.time)*60;var _rdynRnds=Math.max(1,Math.floor(_rwSec/_rpw));var _rndSnap=Math.round(_rpw/10)*10;var _rndTime=Math.floor(_rndSnap/60)+':'+((_rndSnap%60)<10?'0':'')+(_rndSnap%60);var _amrTotSec=Math.round(_rdynRnds*_rpw);var _amrTotTime=Math.floor(_amrTotSec/60)+':'+( (_amrTotSec%60)<10?'0':'')+(_amrTotSec%60);_amrBoldTime=_rdynRnds?(CFG.lang==='ar'?(_rdynRnds+' جولات ~'+_rndTime+'/جولة ~'+_amrTotTime):(_rdynRnds+' rounds · ~'+_rndTime+'/round ~'+_amrTotTime)):_amrTotTime;infoTxt=ti(sec.infoKey,Object.assign({},_riv,{rnds:_rdynRnds,rndTime:_rndTime}));if(_rdynRnds){if(CFG.lang==='ar'){infoTxt='أكمل أكبر عدد جولات ممكن | الحد الزمني: <bdi>'+(_riv.t||S.time)+'</bdi> دقيقة | الوقت التقريبي لإتمام ~<bdi>'+_rdynRnds+'</bdi> جولات · ~<bdi>'+_rndTime+'</bdi>/جولة = ~<bdi>'+_amrTotTime+'</bdi> دقيقة';_amrBoldTime='';}else{infoTxt='Complete as many rounds as possible | Time cap: <bdi>'+(_riv.t||S.time)+'</bdi> min | Estimated time to complete ~<bdi>'+_rdynRnds+'</bdi> rounds · ~<bdi>'+_rndTime+'</bdi>/round = ~<bdi>'+_amrTotTime+'</bdi> min';_amrBoldTime='';}}}}  
-  if(sec.type==='Group A'&&infoTxt===undefined){var _gabT=S.wod&&S.wod.cfg&&S.wod.cfg.time||S.time;var _gabDesc=ti('i_groupA',{cap:_gabT});var _grlv=S.level||'intermediate';var _grtT=({beginner:22,intermediate:16,advanced:10,elite:6}[_grlv]||16);var _gabCalc=function(s){if(!s||!s.items)return null;var _si=s.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _ci=s.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _pw=0;_si.forEach(function(it){_pw+=it.baseRep*getSecondsPerRep(it.ex,_grlv,1,false);});_ci.forEach(function(cx){_pw+=_cardioSecEst(cx.ex,_grlv,1,false);});_pw+=(_si.length+_ci.length-1)*_grtT;if(_pw<=0)return null;var _t=(s.infoVars&&s.infoVars.t)||S.time;var _rnds=Math.max(1,Math.floor(_t*60/_pw));var _snap=Math.round(_pw/10)*10;var _tm=Math.floor(_snap/60)+':'+((_snap%60)<10?'0':'')+(_snap%60);return{rnds:_rnds,rndTime:_tm,t:_t,totSec:Math.round(_rnds*_pw)};};var _secB=S.wod&&S.wod.sections&&S.wod.sections[si+1];var _iA=_gabCalc(sec);var _iB=_gabCalc(_secB);var _gabTotSec=(_iA?_iA.totSec:0)+(_iB?_iB.totSec:0);var _gabBoldTime=_gabTotSec>0?Math.floor(_gabTotSec/60)+':'+( (_gabTotSec%60)<10?'0':'')+(_gabTotSec%60):'';var _restMins=_gabT<=15?1:_gabT>=30?3:2;var _restWord=_restMins===1?'one-minute':_restMins===2?'two-minute':'three-minute';var _iATotFmt=_iA?Math.floor(_iA.totSec/60)+':'+(_iA.totSec%60<10?'0':'')+(_iA.totSec%60):'';var _iBTotFmt=_iB?Math.floor(_iB.totSec/60)+':'+(_iB.totSec%60<10?'0':'')+(_iB.totSec%60):'';var _halfT=Math.floor(_gabT/2);if(CFG.lang==='ar'){infoTxt='أكمل كل <bdi>'+_halfT+'</bdi> دقيقة AMRAP قبل الانتقال للتالي. استرح '+(_restMins===1?'دقيقة واحدة':_restMins===2?'دقيقتين':'3 دقائق')+' بين كل AMRAP | الحد الزمني: <bdi>'+_gabT+'</bdi> دقيقة'+(_iA?' | الفترة الأولى: الوقت التقريبي لإتمام ~<bdi>'+_iA.rnds+'</bdi> جولات · ~<bdi>'+_iA.rndTime+'</bdi>/جولة = <span style="font-weight:900">~<bdi>'+_iATotFmt+'</bdi> دقيقة</span>':'')+(_iB?' | الفترة الثانية: الوقت التقريبي لإتمام ~<bdi>'+_iB.rnds+'</bdi> جولات · ~<bdi>'+_iB.rndTime+'</bdi>/جولة = <span style="font-weight:900">~<bdi>'+_iBTotFmt+'</bdi> دقيقة</span>':'');_gabBoldTime='';}else{infoTxt='Complete each <bdi>'+_halfT+'</bdi> minute AMRAP before moving on to the next. Take a '+_restWord+' rest between each AMRAP | Time cap: <bdi>'+_gabT+'</bdi> min'+(_iA?' | First Interval: Estimated time to complete ~<bdi>'+_iA.rnds+'</bdi> rounds · ~<bdi>'+_iA.rndTime+'</bdi>/round = <span style="font-weight:900">~<bdi>'+_iATotFmt+'</bdi> min</span>':'')+(_iB?' | Second Interval: Estimated time to complete ~<bdi>'+_iB.rnds+'</bdi> rounds · ~<bdi>'+_iB.rndTime+'</bdi>/round = <span style="font-weight:900">~<bdi>'+_iBTotFmt+'</bdi> min</span>':'');_gabBoldTime='';}}
+  if(sec.type==='Group A'&&infoTxt===undefined){var _gabT=S.wod&&S.wod.cfg&&S.wod.cfg.time||S.time;var _gabDesc=ti('i_groupA',{cap:_gabT});var _grlv=S.level||'intermediate';var _grtT=({beginner:22,intermediate:16,advanced:10,elite:6}[_grlv]||16);var _gabCalc=function(s){if(!s||!s.items)return null;var _si=s.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _ci=s.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _pw=0;_si.forEach(function(it){_pw+=it.baseRep*getSecondsPerRep(it.ex,_grlv,1,false);});_ci.forEach(function(cx){_pw+=_cardioSecEst(cx.ex,_grlv,1,false);});_pw+=(_si.length+_ci.length-1)*_grtT;if(_pw<=0)return null;var _t=(s.infoVars&&s.infoVars.t)||S.time;var _rnds=Math.max(1,Math.floor(_t*60/_pw));var _snap=Math.round(_pw/10)*10;var _tm=Math.floor(_snap/60)+':'+((_snap%60)<10?'0':'')+(_snap%60);return{rnds:_rnds,rndTime:_tm,t:_t,totSec:Math.round(_rnds*_pw)};};var _secB=S.wod&&S.wod.sections&&S.wod.sections[si+1];var _iA=_gabCalc(sec);var _iB=_gabCalc(_secB);var _gabTotSec=(_iA?_iA.totSec:0)+(_iB?_iB.totSec:0);var _gabBoldTime=_gabTotSec>0?Math.floor(_gabTotSec/60)+':'+( (_gabTotSec%60)<10?'0':'')+(_gabTotSec%60):'';var _restMins=_gabT<=15?1:_gabT>=30?3:2;var _restWord=_restMins===1?'one-minute':_restMins===2?'two-minute':'three-minute';var _iATotFmt=_iA?Math.floor(_iA.totSec/60)+':'+(_iA.totSec%60<10?'0':'')+(_iA.totSec%60):'';var _iBTotFmt=_iB?Math.floor(_iB.totSec/60)+':'+(_iB.totSec%60<10?'0':'')+(_iB.totSec%60):'';var _halfT=Math.floor(_gabT/2);if(CFG.lang==='ar'){infoTxt='أكمل كل <bdi>'+_halfT+'</bdi> دقيقة AMRAP قبل الانتقال للتالي. استرح '+(_restMins===1?'دقيقة واحدة':_restMins===2?'دقيقتين':'3 دقائق')+' بين كل AMRAP | الحد الزمني: <bdi>'+_halfT+'</bdi> دقيقة'+(_iA?' | الفترة الأولى: الوقت التقريبي لإتمام ~<bdi>'+_iA.rnds+'</bdi> جولات · ~<bdi>'+_iA.rndTime+'</bdi>/جولة = <span style="font-weight:900">~<bdi>'+_iATotFmt+'</bdi> دقيقة</span>':'')+(_iB?' | الفترة الثانية: الوقت التقريبي لإتمام ~<bdi>'+_iB.rnds+'</bdi> جولات · ~<bdi>'+_iB.rndTime+'</bdi>/جولة = <span style="font-weight:900">~<bdi>'+_iBTotFmt+'</bdi> دقيقة</span>':'');_gabBoldTime='';}else{infoTxt='Complete each <bdi>'+_halfT+'</bdi> minute AMRAP before moving on to the next. Take a '+_restWord+' rest between each AMRAP | Time cap: <bdi>'+_halfT+'</bdi> min'+(_iA?' | First Interval: Estimated time to complete ~<bdi>'+_iA.rnds+'</bdi> rounds · ~<bdi>'+_iA.rndTime+'</bdi>/round = <span style="font-weight:900">~<bdi>'+_iATotFmt+'</bdi> min</span>':'')+(_iB?' | Second Interval: Estimated time to complete ~<bdi>'+_iB.rnds+'</bdi> rounds · ~<bdi>'+_iB.rndTime+'</bdi>/round = <span style="font-weight:900">~<bdi>'+_iBTotFmt+'</bdi> min</span>':'');_gabBoldTime='';}}
   infoTxt=infoTxt!==undefined?infoTxt:(sec.infoKey?ti(sec.infoKey,sec.infoVars||{}):sec.info);
   if(sec.type==='Chipper'){var _cE='';var _cL=S.level||'intermediate';var _cTm=S.teamSize||1;var _cTr=_cTm===2?18:({beginner:22,intermediate:16,advanced:10,elite:6}[_cL]||16);var _cSI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _cCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _cPW=0;_cSI.forEach(function(it){_cPW+=it.baseRep*getSecondsPerRep(it.ex,_cL,_cTm,_cTm===2);});_cCI.forEach(function(cx){_cPW+=_cardioSecEst(cx.ex,_cL,_cTm,_cTm===2);});_cPW+=(_cSI.length+_cCI.length>1?(_cSI.length+_cCI.length-1)*_cTr:0);if(_cPW>0){var _cs=Math.round(_cPW);_cE=Math.floor(_cs/60)+':'+(_cs%60<10?'0':'')+(_cs%60);}if(CFG.lang==='ar'){infoTxt='أكمل تكرارات كل حركة قبل الانتقال للتالية | الحد الزمني: <bdi>'+(S.time)+'</bdi> دقيقة'+(_cE?' | الوقت التقريبي للإتمام ~<bdi>'+_cE+'</bdi> دقيقة':'');_cE='';}else{infoTxt='Complete all reps of each movement before moving on | Time cap: <bdi>'+(S.time)+'</bdi> min'+(_cE?' | Estimated time to complete ~<bdi>'+_cE+'</bdi> min':'');_cE='';}return cfgGearRow(infoTxt,'toggleChipperCfg',si,_cE)+renderChipperCfg(sec,si);}
   if(sec.type==='AMRAP')return cfgGearRow(infoTxt,'toggleAmrapCfg',si,_amrBoldTime)+renderAmrapCfg(sec,si);
@@ -2991,7 +2992,7 @@ function renderSec(sec,si){
       +'<span style="display:flex;align-items:center;gap:4px">'+_gabBadges+(hasDesc?'<button class="wdi-btn" onclick="showWodDesc(\'Group A\')">ⓘ</button>':'')+'</span>';
     return'<div class="ws ani" id="sec-'+si+'" style="border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:0">'
       +'<div class="st" style="display:flex;align-items:center;justify-content:space-between">'+gabInner+'</div>'
-      +'<div class="stt">'+S.time+' Min AMRAP</div>'
+      +'<div class="stt">'+(Math.floor(S.time/2)*2)+' MIN AMRAP</div>'
       +renderSecInfo(sec,si,undefined)
       +(teamTxt?'<div class="si team">👥 '+teamTxt+'</div>':'')
       +(scoreTxt?'<div class="si sc">🏆 '+scoreTxt+'</div>':'')
@@ -4384,6 +4385,17 @@ function _renderTimerExList(si){
     }else{
       rows=displayItems.map(function(it,i){
         var nm=(it.ex&&it.ex.name)||'';
+        if(it.kind==='buyin'){
+          var _bpfx=it.which==='cashout'?'CASH-OUT: ':'BUY-IN: ';
+          var _bamt=it.ex&&it.ex.amount!=null?fmtCa(it.ex):'';
+          var _biMt=it.which==='cashout'?'margin-top:18px;':'';
+          var _biMb=it.which==='buyin'?'margin-bottom:18px;':'';
+          return'<div style="text-align:center;padding:'+py+'px 0;'+_biMt+_biMb+'">'
+            +'<span style="color:rgba(255,255,255,0.92);font-size:'+fs+'px;font-weight:700">'+_bpfx+'</span>'
+            +(_bamt?'<span style="color:#ff7800;font-size:'+fs+'px;font-weight:700">'+_bamt+'</span>':'')
+            +'<span style="color:rgba(255,255,255,0.92);font-size:'+fs+'px;font-weight:700">'+(_bamt?'  ':'')+nm+'</span>'
+            +'</div>';
+        }
         var dt=_timerItemDetail(it);
         var minPfx=it.emomMin?'<span style="color:rgba(255,255,255,0.92);font-size:'+fsSub+'px;font-weight:700;margin-right:7px">'+it.emomMin+' :</span>':'';
         return'<div style="text-align:center;padding:'+py+'px 0;">'
@@ -4493,9 +4505,11 @@ function _fmtMS(sec){var m=Math.floor(sec/60),s=sec%60;return(m<10?'0':'')+m+':'
 
 function showAmrapTimer(si){
   var sec=S.wod.sections[si];
-  var totalMin=(S.wod.cfg.time||20);
+  var _rawMin=(S.wod.cfg.time||20);
+  var totalMin=(sec.type==='Group A')?Math.floor(_rawMin/2)*2:_rawMin;
   var label=(sec.type==='Group A'?'Interval AMRAP':sec.type==='YGIG / Partner WOD'?'YGIG AMRAP':'AMRAP');
-  _wodTimer={iv:null,paused:false,elapsed:0,totalSec:totalMin*60,type:'amrap',curMin:0,totalMin:totalMin,minSec:0,movs:[],finished:false,label:label,si:si};
+  var _gabRestSec=(sec.type==='Group A')?(_rawMin<=15?1:_rawMin>=30?3:2)*60:0;
+  _wodTimer={iv:null,paused:false,elapsed:0,totalSec:totalMin*60,type:'amrap',curMin:0,totalMin:totalMin,minSec:0,movs:[],finished:false,label:label,si:si,gabRestSec:_gabRestSec,restIv:null,restRemSec:0,restDone:false};
   _unlockAudio();_wodBeepStart();
   var ov=document.createElement('div');ov.id='wod-timer-ov';ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;font-family:inherit;overflow:hidden;';
   document.body.appendChild(ov);_lockBodyScroll();_wodTimerRender();
@@ -4504,6 +4518,16 @@ function showAmrapTimer(si){
     _wodTimer.elapsed++;
     var rem=_wodTimer.totalSec-_wodTimer.elapsed;
     if(rem<=0){_wodBeepDone();_wodTimer.finished=true;_wodTimerRender();clearInterval(_wodTimer.iv);_wodTimer.iv=null;return;}
+    if(_wodTimer.label==='Interval AMRAP'&&_wodTimer.elapsed===Math.floor(_wodTimer.totalSec/2)&&!_wodTimer.halfDone){
+      _wodBeep(880,0.15);setTimeout(function(){_wodBeep(880,0.15);},200);setTimeout(function(){_wodBeep(1100,0.4);},400);
+      _wodTimer.paused=true;_wodTimer.halfAlert=true;_wodTimer.restRemSec=_wodTimer.gabRestSec;_wodTimer.restDone=false;
+      _wodTimer.restIv=setInterval(function(){
+        _wodTimer.restRemSec--;
+        if(_wodTimer.restRemSec<=3&&_wodTimer.restRemSec>0)_wodBeepCountdown();
+        if(_wodTimer.restRemSec<=0){clearInterval(_wodTimer.restIv);_wodTimer.restIv=null;_wodTimer.restDone=true;_wodTimer.halfAlert=false;_wodTimer.halfDone=true;_wodTimer.paused=false;_wodBeepStart();}
+        _wodTimerRender();
+      },1000);
+    }
     if(rem<=10)_wodBeepCountdown();
     _wodTimerRender();
   },1000);
@@ -4565,7 +4589,9 @@ function showCapTimer(si){
 
 function showEmomTimer(si){
   var sec=S.wod.sections[si];
-  var totalMin=S.wod.cfg.time||20;
+  var _emCyc=(sec.items||[]).filter(function(it){return it.kind!=='sep';}).length;
+  var _emSets=(sec.infoVars&&sec.infoVars.s)||0;
+  var totalMin=(_emCyc*_emSets)||S.wod.cfg.time||20;
   var movs=sec.items.filter(function(it){return it.kind==='str'||it.kind==='cardio';});
   _wodTimer={iv:null,paused:false,elapsed:0,totalSec:totalMin*60,type:'emom',curMin:1,totalMin:totalMin,minSec:60,movs:movs,finished:false,si:si};
   _unlockAudio();_wodBeepStart();
@@ -4590,9 +4616,13 @@ function _wodTimerRender(){
   var accent,bg,mainLabel,bigNum,subLabel,progressPct,movName='';
   if(type==='amrap'){
     var rem=Math.max(0,wt.totalSec-wt.elapsed);
-    accent=finished?'#22c55e':'#6366f1';bg=finished?'#0a1a0a':'#08080f';
-    mainLabel=finished?'TIME\'S UP!':(wt.label||'AMRAP');bigNum=_fmtMS(rem);
-    subLabel=wt.totalMin+' MIN';progressPct=wt.totalSec>0?Math.round((rem/wt.totalSec)*100):0;
+    var _isHalf=wt.halfAlert&&wt.paused&&!finished;
+    var _isRest=_isHalf&&!wt.restDone;
+    accent=finished?'#22c55e':(_isHalf?'#ff7800':'#6366f1');bg=finished?'#0a1a0a':(_isHalf?'#1a0900':'#08080f');
+    mainLabel=finished?'TIME\'S UP!':(_isRest?'REST':_isHalf?'🔄 SWITCH!':wt.label||'AMRAP');
+    bigNum=_isRest?_fmtMS(wt.restRemSec):_fmtMS(rem);
+    subLabel=_isRest?'REST BETWEEN INTERVALS':(_isHalf?'START INTERVAL 2':wt.totalMin+' MIN');
+    progressPct=wt.totalSec>0?Math.round((rem/wt.totalSec)*100):0;
   }else if(type==='rft'){
     accent=finished?'#22c55e':'#10b981';bg=finished?'#0a1a0a':'#04140a';
     mainLabel=finished?'DONE!':(wt.label||'FOR TIME');bigNum=_fmtMS(wt.elapsed);
@@ -4641,8 +4671,8 @@ function _wodTimerRender(){
    +'</div></div>'
    +_renderTimerExList(wt.si);
 }
-function _wodTimerToggle(){_wodTimer.paused=!_wodTimer.paused;_wodTimerRender();}
-function _wodTimerStop(){if(_wodTimer.iv)clearInterval(_wodTimer.iv);_wodTimer.iv=null;var ov=document.getElementById('wod-timer-ov');if(ov)ov.remove();_unlockBodyScroll();}
+function _wodTimerToggle(){_wodTimer.paused=!_wodTimer.paused;if(!_wodTimer.paused&&_wodTimer.halfAlert){if(_wodTimer.restIv){clearInterval(_wodTimer.restIv);_wodTimer.restIv=null;}_wodTimer.halfAlert=false;_wodTimer.restDone=false;_wodTimer.halfDone=true;}_wodTimerRender();}
+function _wodTimerStop(){if(_wodTimer.iv)clearInterval(_wodTimer.iv);_wodTimer.iv=null;if(_wodTimer.restIv)clearInterval(_wodTimer.restIv);_wodTimer.restIv=null;var ov=document.getElementById('wod-timer-ov');if(ov)ov.remove();_unlockBodyScroll();}
 
 // ─────────────────────────────────────────────────────────────────────────────
 function setTabataVal(si,key,val,btn){
