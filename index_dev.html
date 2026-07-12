@@ -2213,25 +2213,17 @@ function buildSchemeForRounds(dir,rounds,lv){
 }
 
 var _BUYIN_CARDIO_TABLE={
-  beginner:    {calMin:20,calMax:20,mMin:400, mMax:400},
-  intermediate:{calMin:20,calMax:30,mMin:400, mMax:800},
-  advanced:    {calMin:30,calMax:50,mMin:800, mMax:1200},
-  elite:       {calMin:50,calMax:60,mMin:1200,mMax:1500}
+  beginner:    {calMin:20,calMax:20, mMin:400,  mMax:400},
+  intermediate:{calMin:30,calMax:40, mMin:400,  mMax:800},
+  advanced:    {calMin:40,calMax:50, mMin:800,  mMax:1200},
+  elite:       {calMin:50,calMax:60, mMin:1200, mMax:1500}
 };
 function _buyinRandAmt(unit,lv,team,split){
   var bc=_BUYIN_CARDIO_TABLE[lv]||_BUYIN_CARDIO_TABLE.intermediate;
   var mult=(team===2&&split)?2:1;
-  if(unit==='Cal'){
-    var mn=Math.round(bc.calMin*mult/10)*10,mx=Math.round(bc.calMax*mult/10)*10;
-    var steps=[];for(var c=mn;c<=mx;c+=10)steps.push(c);
-    return steps[Math.floor(Math.random()*steps.length)]||mn;
-  }
-  if(unit==='m'){
-    var mn=Math.round(bc.mMin*mult/100)*100,mx=Math.round(bc.mMax*mult/100)*100;
-    var steps=[];for(var m=mn;m<=mx;m+=100)steps.push(m);
-    return steps[Math.floor(Math.random()*steps.length)]||mn;
-  }
-  return Math.round(bc.mMin*mult/100)*100;
+  if(unit==='Cal')return _cardioPickFlat('Cal',bc.calMin*mult,bc.calMax*mult).amount;
+  if(unit==='m')return _cardioPickFlat('m',bc.mMin*mult,bc.mMax*mult).amount;
+  return bc.mMin*mult;
 }
 function mkBuyInOut(time,lv,team,cfg){
   cfg=cfg||{};
@@ -2264,13 +2256,17 @@ function mkBuyInOut(time,lv,team,cfg){
   }
   bIn=Object.assign({},bIn,{amount:buyInAmt});
   bOut=Object.assign({},bOut,{amount:cashOutAmt});
+  // Subtract buy-in / cash-out estimated time from WOD budget
+  var _biSec=(mode==='both'||mode==='buyin')?_cardioSecEst(bIn,lv,team,true):0;
+  var _boSec=(mode==='both'||mode==='cashout')?_cardioSecEst(bOut,lv,team,true):0;
+  var _biWodTime=Math.max(5,time-Math.ceil((_biSec+_boSec)/60));
   var _biWodType=cfg.wodType||(Math.random()<0.5?'rft':'chipper');
   var _midSec,reps,rounds;
   if(_biWodType==='chipper'){
-    _midSec=mkChipper(time,lv,team,{withCardio:false,exCnt:cfg.exCnt,stationMode:'classic'})[0];
+    _midSec=mkChipper(_biWodTime,lv,team,{withCardio:false,exCnt:cfg.exCnt,stationMode:'classic'})[0];
     reps=[];rounds=1;
   }else{
-    _midSec=mkRFT(time,lv,team,{rounds:cfg.rounds,exCnt:cfg.exCnt,withCardio:false,baseReps:cfg.baseReps})[0];
+    _midSec=mkRFT(_biWodTime,lv,team,{rounds:cfg.rounds,exCnt:cfg.exCnt,withCardio:false,baseReps:cfg.baseReps})[0];
     reps=_midSec.scheme||[];rounds=reps.length||3;
   }
   var items=[];
@@ -2801,7 +2797,7 @@ function renderSecInfo(sec,si,infoTxt){
   if(sec.type==='Tabata'){var _tIV=sec.infoVars||{};var _tTot=_tIV.tot||4;var _tTxt;if(CFG.lang==='ar'){if(sec.infoKey==='i_tabata_classic'){_tTxt='حركة واحدة، تتكرر عبر الفترات | 20 ثانية عمل / 10 ثانية راحة × 8 فترات | الوقت الكلي: 4 دقائق';}else if(sec.infoKey==='i_tabata_alt'){_tTxt='تناوب بين كل الحركات في كل فترة | 20 ثانية عمل / 10 ثانية راحة × 8 جولات | الوقت الكلي: <bdi>'+_tTot+'</bdi> دقيقة';}else{_tTxt='أكمل 8 فترات لكل حركة قبل الانتقال للتالية | 20 ثانية عمل / 10 ثانية راحة × 8 فترات لكل حركة | الوقت الكلي: <bdi>'+_tTot+'</bdi> دقيقة';}}else{_tTxt=infoTxt?infoTxt.replace(/Total time: ([\d]+) min/,'Total time: <span style="font-weight:900"><bdi>$1</bdi> min</span>'):infoTxt;}return cfgGearRow(_tTxt,'toggleTabataCfg',si)+renderTabataCfg(sec,si);}
   if(sec.type==='Death By'){var _dbIV=sec.infoVars||{};var _dbInc=_dbIV.inc||(S.teamSize===2?2:1);var _dbS=_dbIV.s||(S.teamSize===2?2:1);if(CFG.lang==='ar'){infoTxt='أضف <bdi>'+_dbInc+'</bdi> تكرار كل دقيقة حتى الفشل | الحد الزمني: <bdi>'+(_dbIV.t||S.time)+'</bdi> دقيقة';}else{infoTxt='Add <bdi>'+_dbInc+'</bdi> rep'+(S.teamSize===2?'s':'')+(S.teamSize===2?' (split)':'')+' each minute until failure | Time cap: <bdi>'+(_dbIV.t||S.time)+'</bdi> min';}return cfgGearRow(infoTxt,'toggleDeathByCfg',si)+renderDeathByCfg(sec,si);}
   if(sec.type==='YGIG / Partner WOD'){var _yE='';var _yLv=S.level||'intermediate';var _yTr={beginner:22,intermediate:16,advanced:10,elite:6}[_yLv]||16;var _ySI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _yCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _yIV=sec.infoVars||{};if(sec.infoKey==='i_ygig_ft'){var _yRnds=(_yIV.r||1)*2;var _yPW=0;_ySI.forEach(function(it){_yPW+=it.baseRep*getSecondsPerRep(it.ex,_yLv,1,false);});_yCI.forEach(function(cx){_yPW+=_cardioSecEst(cx.ex,_yLv,1,false);});_yPW+=(_ySI.length+_yCI.length>1?(_ySI.length+_yCI.length-1)*_yTr:0);var _yEst=_yPW*_yRnds;if(_yEst>0){var _ys=Math.round(_yEst);var _yRndSec=Math.round(_yPW);var _yRndTm=Math.floor(_yRndSec/60)+':'+(_yRndSec%60<10?'0':'')+(_yRndSec%60);_yE=_yRndTm+'/round ~'+Math.floor(_ys/60)+':'+(_ys%60<10?'0':'')+(_ys%60);}}else{var _yRndsA=_yIV.rnds||0;var _yTgtA=_yIV.tgt||0;if(_yRndsA>0&&_yTgtA>0){var _yEstA=Math.round(_yRndsA*_yTgtA);_yE=Math.floor(_yEstA/60)+':'+(_yEstA%60<10?'0':'')+(_yEstA%60);}}if(sec.infoKey==='i_ygig_ft'&&_yEst>0){var _yTotFmt=Math.floor(_ys/60)+':'+(_ys%60<10?'0':'')+(_ys%60);if(CFG.lang==='ar'){infoTxt='أكمل <bdi>'+_yRnds+'</bdi> جولات بأسرع وقت ممكن | الحد الزمني: <bdi>'+(_yIV.cap||S.time)+'</bdi> دقيقة | الوقت التقريبي لإتمام ~<bdi>'+_yRnds+'</bdi> جولات · ~<bdi>'+_yRndTm+'</bdi>/جولة = ~<bdi>'+_yTotFmt+'</bdi> دقيقة';_yE='';}else{infoTxt='Complete <bdi>'+_yRnds+'</bdi> rounds as fast as possible | Time cap: <bdi>'+(_yIV.cap||S.time)+'</bdi> min | Estimated time to complete <bdi>'+_yRnds+'</bdi> rounds · ~<bdi>'+_yRndTm+'</bdi>/round = ~<bdi>'+_yTotFmt+'</bdi> min';_yE='';}}return cfgGearRow(infoTxt,'toggleYgigCfg',si,sec.infoKey==='i_ygig_ft'?(_yE?((_yIV.r||1)*2)+' rounds ~'+_yE:''):_amrBoldTime)+renderYgigCfg(sec,si);}
-  if(sec.type==='Buy-In / Cash-Out'){var _bE='';var _bL=S.level||'intermediate';var _bTm=S.teamSize||1;var _bTr=_bTm===2?18:({beginner:22,intermediate:16,advanced:10,elite:6}[_bL]||16);var _bIV=sec.infoVars||{};var _bRnds=_bIV.r||1;var _biItems=sec.items.filter(function(x){return x.kind==='buyin'&&x.ex&&x.ex.amount;});var _bSI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _bCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _bPW=0;var _bRndPW=0;_bSI.forEach(function(it){_bRndPW+=it.baseRep*getSecondsPerRep(it.ex,_bL,_bTm,_bTm===2);});_bCI.forEach(function(cx){_bRndPW+=_cardioSecEst(cx.ex,_bL,_bTm,_bTm===2);});if(_bSI.length+_bCI.length>1)_bRndPW+=(_bSI.length+_bCI.length-1)*_bTr;_bPW+=_bRndPW*_bRnds;if(_bPW>0){var _bRndSec=Math.round(_bRndPW);var _bRndTm=Math.floor(_bRndSec/60)+':'+(_bRndSec%60<10?'0':'')+(_bRndSec%60);var _bs=Math.round(_bPW);_bE=_bRnds+' rounds ~'+_bRndTm+'/round ~'+Math.floor(_bs/60)+':'+(_bs%60<10?'0':'')+(_bs%60);}var _hasBuyIn=_biItems.some(function(x){return x.which==='buyin';});var _hasCashOut=_biItems.some(function(x){return x.which==='cashout';});var _bTotFmt=(_bs!==undefined)?Math.floor(_bs/60)+':'+(_bs%60<10?'0':'')+(_bs%60):'';var _bDescEN=(_hasBuyIn&&_hasCashOut)?'Complete buy-in, then WOD, then cash-out':(_hasBuyIn?'Complete buy-in, then WOD':(_hasCashOut?'Complete WOD, then cash-out':'Complete WOD'));var _bDescAR=(_hasBuyIn&&_hasCashOut)?'أكمل البداية، ثم التمرين، ثم النهاية':(_hasBuyIn?'أكمل البداية، ثم التمرين':(_hasCashOut?'أكمل التمرين، ثم النهاية':'أكمل التمرين'));if(CFG.lang==='ar'){infoTxt=_bDescAR+' | الحد الزمني: <bdi>'+(_bIV.t||S.time||0)+'</bdi> دقيقة'+(_bRndTm?' | الوقت التقريبي لإتمام '+(_bRnds>1?'~<bdi>'+_bRnds+'</bdi> جولات · ~<bdi>'+_bRndTm+'</bdi>/جولة = ':'')+' ~<bdi>'+_bTotFmt+'</bdi> دقيقة':'');_bE='';}else{infoTxt=_bDescEN+' | Time cap: <bdi>'+(_bIV.t||S.time||0)+'</bdi> min'+(_bRndTm?' | Estimated time to complete '+(_bRnds>1?'~<bdi>'+_bRnds+'</bdi> rounds · ~<bdi>'+_bRndTm+'</bdi>/round = ':'')+' ~<bdi>'+_bTotFmt+'</bdi> min':'');_bE='';}return cfgGearRow(infoTxt,'toggleBuyInCfg',si,_bE)+renderBuyInCfg(sec,si);}
+  if(sec.type==='Buy-In / Cash-Out'){var _bE='';var _bL=S.level||'intermediate';var _bTm=S.teamSize||1;var _bTr=_bTm===2?18:({beginner:22,intermediate:16,advanced:10,elite:6}[_bL]||16);var _bIV=sec.infoVars||{};var _bRnds=_bIV.r||1;var _biItems=sec.items.filter(function(x){return x.kind==='buyin'&&x.ex&&x.ex.amount;});var _bSI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _bCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _bPW=0;var _bRndPW=0;_bSI.forEach(function(it){_bRndPW+=it.baseRep*getSecondsPerRep(it.ex,_bL,_bTm,_bTm===2);});_bCI.forEach(function(cx){_bRndPW+=_cardioSecEst(cx.ex,_bL,_bTm,_bTm===2);});if(_bSI.length+_bCI.length>1)_bRndPW+=(_bSI.length+_bCI.length-1)*_bTr;_bPW+=_bRndPW*_bRnds;var _bBiPW=0;_biItems.forEach(function(it){if(it.ex&&it.ex.amount)_bBiPW+=_cardioSecEst(it.ex,_bL,_bTm,_bTm===2);});if(_bPW>0||_bBiPW>0){var _bRndSec=Math.round(_bRndPW);var _bRndTm=Math.floor(_bRndSec/60)+':'+(_bRndSec%60<10?'0':'')+(_bRndSec%60);var _bs=Math.round(_bPW+_bBiPW);_bE=_bRnds+' rounds ~'+_bRndTm+'/round ~'+Math.floor(_bs/60)+':'+(_bs%60<10?'0':'')+(_bs%60);}var _hasBuyIn=_biItems.some(function(x){return x.which==='buyin';});var _hasCashOut=_biItems.some(function(x){return x.which==='cashout';});var _bTotFmt=(_bs!==undefined)?Math.floor(_bs/60)+':'+(_bs%60<10?'0':'')+(_bs%60):'';var _bDescEN=(_hasBuyIn&&_hasCashOut)?'Complete buy-in, then WOD, then cash-out':(_hasBuyIn?'Complete buy-in, then WOD':(_hasCashOut?'Complete WOD, then cash-out':'Complete WOD'));var _bDescAR=(_hasBuyIn&&_hasCashOut)?'أكمل البداية، ثم التمرين، ثم النهاية':(_hasBuyIn?'أكمل البداية، ثم التمرين':(_hasCashOut?'أكمل التمرين، ثم النهاية':'أكمل التمرين'));if(CFG.lang==='ar'){infoTxt=_bDescAR+' | الحد الزمني: <bdi>'+(_bIV.t||S.time||0)+'</bdi> دقيقة'+(_bRndTm?' | الوقت التقريبي لإتمام '+(_bRnds>1?'~<bdi>'+_bRnds+'</bdi> جولات · ~<bdi>'+_bRndTm+'</bdi>/جولة = ':'')+' ~<bdi>'+_bTotFmt+'</bdi> دقيقة':'');_bE='';}else{infoTxt=_bDescEN+' | Time cap: <bdi>'+(_bIV.t||S.time||0)+'</bdi> min'+(_bRndTm?' | Estimated time to complete '+(_bRnds>1?'~<bdi>'+_bRnds+'</bdi> rounds · ~<bdi>'+_bRndTm+'</bdi>/round = ':'')+' ~<bdi>'+_bTotFmt+'</bdi> min':'');_bE='';}return cfgGearRow(infoTxt,'toggleBuyInCfg',si,_bE)+renderBuyInCfg(sec,si);}
   if(sec.type==='Ladder'){var _ldE='';var _ldSch=sec.scheme;if(_ldSch&&_ldSch.length){var _ldLv=S.level||'intermediate';var _ldTm=S.teamSize||1;var _ldEstDiv=sec._estDiv||1;var _ldEstTeam=_ldEstDiv>1?1:_ldTm;var _ldTT=_ldEstTeam===2?18:({beginner:22,intermediate:16,advanced:10,elite:6}[_ldLv]||16);var _ldSI=sec.items.filter(function(x){return x.kind==='str'&&!x.isRest;});var _ldCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _ldEst=0;_ldSI.forEach(function(it){var _rpr=it.repsPerRound;var _sch=(_rpr&&_rpr.length>1)?_rpr:_ldSch;_sch.forEach(function(r){_ldEst+=(r/_ldEstDiv)*getSecondsPerRep(it.ex,_ldLv,_ldEstTeam,true);});});_ldCI.forEach(function(cx){var _ca=cx.cardioAmounts;if(_ca&&_ca.length>1){_ca.forEach(function(a){_ldEst+=_cardioSecEst(Object.assign({},cx.ex,{amount:a/_ldEstDiv}),_ldLv,_ldEstTeam,true);});}else if(cx.ex&&cx.ex.amount){_ldEst+=_cardioSecEst(Object.assign({},cx.ex,{amount:cx.ex.amount/_ldEstDiv}),_ldLv,_ldEstTeam,true)*_ldSch.length;}});_ldEst+=(_ldSI.length+_ldCI.length)*_ldSch.length>0?((_ldSI.length+_ldCI.length)*_ldSch.length-1)*_ldTT:0;if(_ldEst>0){var _ls=Math.round(_ldEst);_ldE=Math.floor(_ls/60)+':'+(_ls%60<10?'0':'')+(_ls%60);}}if(CFG.lang==='ar'){infoTxt='سلم تكرارات، العدد يتغير كل جولة | الحد الزمني: <bdi>'+(S.time)+'</bdi> دقيقة'+(_ldE?' | الوقت التقريبي للإتمام ~<bdi>'+_ldE+'</bdi> دقيقة':'');_ldE='';}else{infoTxt='Ladder scheme, changing reps each round | Time cap: <bdi>'+(S.time)+'</bdi> min'+(_ldE?' | Estimated time to complete ~<bdi>'+_ldE+'</bdi> min':'');_ldE='';}return cfgGearRow(infoTxt||'','toggleLadderCfg',si,_ldE)+renderLadderCfg(sec,si);}
   if(sec.type==='Group A')return cfgGearRow(infoTxt,'toggleAmrapCfg',si,_gabBoldTime||'')+renderGroupAbAmrapCfg(sec,si);
   if(sec.type==='Group B')return '';
@@ -2881,7 +2877,11 @@ function _secFill(sec){
   if(_isYgigFT2&&iv.r){
     if(sec._drPW&&sec._drBudget)return(sec._drPW*iv.r*2)/sec._drBudget;
     est=est*iv.r*2; // كلا الشريكين يكملان iv.r جولات بالتناوب
-  }else if((sec.type==='For Time / RFT'||sec.type==='Buy-In / Cash-Out')&&iv.r){
+  }else if(sec.type==='Buy-In / Cash-Out'&&sec._drPW){
+    var _biFillCrd=sec.items.filter(function(x){return x.kind==='buyin'&&x.ex&&x.ex.amount;});
+    var _biFillT=0;_biFillCrd.forEach(function(it){_biFillT+=_cardioSecEst(it.ex,lvl,team,team===2);});
+    return(sec._drPW*(iv.r||1)+_biFillT)/budget;
+  }else if(sec.type==='For Time / RFT'&&iv.r){
     if(sec._drPW&&sec._drBudget)return(sec._drPW*iv.r)/sec._drBudget;
     var _hasCustomRounds=strItems.some(function(it){return it.repsPerRound&&it.repsPerRound.length>1;})||gateItems.some(function(it){return it.cardioAmounts&&it.cardioAmounts.length>1;});
     if(_hasCustomRounds){
@@ -2972,10 +2972,10 @@ function renderSec(sec,si){
       var _drTimeCap=(sec.infoVars&&sec.infoVars.t)||S.time||30;
       var _drN=Math.max(1,Math.round(_drTimeCap*60/(_drYgig?_drPW*2:_drPW)));
       if(!sec.infoVars)sec.infoVars={};
-      sec.infoVars.r=_drN;sec.infoVars.rt=_drN*2;sec._drPW=_drPW;sec._drBudget=_drTimeCap*60;
+      if(sec.type!=='Buy-In / Cash-Out'){sec.infoVars.r=_drN;sec.infoVars.rt=_drN*2;}sec._drPW=_drPW;sec._drBudget=_drTimeCap*60;
       if(sec.type==='For Time / RFT'){sec.title=_drN+' Rounds For Time';var _drSep=sec.items.find(function(x){return x.kind==='sep';});if(_drSep)_drSep.label='── '+_drN+' ROUNDS ──';}
       else if(_drYgig){sec.title='YGIG - '+(_drN*2)+' Rounds For Time';var _drSepY=sec.items.find(function(x){return x.kind==='sep';});if(_drSepY)_drSepY.label='── '+(_drN*2)+' Rounds ──';}
-      else if(sec.type==='Buy-In / Cash-Out'){var _biLkR=sec.buyInCfg&&sec.buyInCfg.rounds;if(_biLkR){_drN=_biLkR;sec.infoVars.r=_biLkR;}var _drSepB=sec.items.find(function(x){return x.kind==='sep'&&x.label&&x.label.indexOf('ROUNDS')>=0;});if(_drSepB)_drSepB.label='── '+_drN+' ROUNDS ──';}
+      else if(sec.type==='Buy-In / Cash-Out'){var _biLkR=sec.buyInCfg&&sec.buyInCfg.rounds;if(_biLkR){sec.infoVars.r=_biLkR;}else{sec.infoVars.r=sec.biWodType==='chipper'?1:(sec.scheme&&sec.scheme.length>0?sec.scheme.length:1);}var _drSepB=sec.items.find(function(x){return x.kind==='sep'&&x.label&&x.label.indexOf('ROUNDS')>=0;});if(_drSepB)_drSepB.label='── '+sec.infoVars.r+' ROUNDS ──';}
     }
   }
   var infoTxt=sec.infoKey?ti(sec.infoKey,sec.infoVars||{}):sec.info;
@@ -3515,6 +3515,8 @@ function swapCardio(si,ii,name){
   }
   // EMOM: clamp strictly to EMOM table limits (always solo, no 30% cap)
   if(_swIsEMOM){var _swEmCL=_emomCardioLimits(S.level,1);var _swEmMn=newUnit==='Cal'?_swEmCL.calMin:newUnit==='m'?_swEmCL.mtrMin:_swEmCL.duMin;var _swEmMx=newUnit==='Cal'?_swEmCL.calMax:newUnit==='m'?_swEmCL.mtrMax:_swEmCL.duMax;newAmount=_cardioNearestSer(newUnit,Math.max(_swEmMn,Math.min(_swEmMx,newAmount)),_swEmMn,_swEmMx);}
+  // BUY-IN / CASH-OUT: clamp to _BUYIN_CARDIO_TABLE limits (no 30% cap)
+  else if(old.kind==='buyin'){var _sbc=_BUYIN_CARDIO_TABLE[S.level]||_BUYIN_CARDIO_TABLE.intermediate;var _smn=newUnit==='Cal'?_sbc.calMin:_sbc.mMin;var _smx=newUnit==='Cal'?_sbc.calMax:_sbc.mMax;newAmount=_cardioNearestSer(newUnit,Math.max(_smn,Math.min(_smx,newAmount)),_smn,_smx);}
   // non-EMOM: 30% time-cap
   else{var _swCL=_swIsChip?_chipperCL(S.level,_swTeam):_cardioLimits(_swTeam,true,S.level);var _swRounds=(sec.infoKey==='i_ygig_ft'&&sec.infoVars&&sec.infoVars.r)?sec.infoVars.r:((sec.scheme&&sec.scheme.length>1)?sec.scheme.length:1);var _swCapSec=(S.time*60*0.30)/_swRounds;var _swCapped=_cardioCapSec({name:name,unit:newUnit,amount:newAmount},_swCapSec,_swCL,S.level,_swTeam,_swTeam===2);newAmount=_swCapped.amount;}
   // rotate alts
@@ -3576,8 +3578,10 @@ function regenEx(si,ii,kind){
         else{_newAmt=_rgAmtNew(_picked.unit);}
         newEx=Object.assign({},_picked,{amount:_newAmt});
       }
+      // BUY-IN / CASH-OUT: clamp to _BUYIN_CARDIO_TABLE limits (no 30% cap)
+      if(old.kind==='buyin'){newEx=Object.assign({},newEx,{amount:_buyinRandAmt(newEx.unit,S.level,S.teamSize,true)});}
       // FIX #2: 30% time-cap (EMOM already tight via _emomCardioLimits; skip cap if user explicitly set the amount)
-      if(!_isEMOM&&!old._userCardio){var _rgCL=_rgIsChip?_chipperCL(S.level,_rgTeam):_cardioLimits(_rgTeam,true,S.level);var _rgRounds=(sec.infoKey==='i_ygig_ft'&&sec.infoVars&&sec.infoVars.r)?sec.infoVars.r:((sec.scheme&&sec.scheme.length>1)?sec.scheme.length:1);newEx=_cardioCapSec(newEx,(S.time*60*0.30)/_rgRounds,_rgCL,S.level,_rgTeam,_rgTeam===2);}
+      else if(!_isEMOM&&!old._userCardio){var _rgCL=_rgIsChip?_chipperCL(S.level,_rgTeam):_cardioLimits(_rgTeam,true,S.level);var _rgRounds=(sec.infoKey==='i_ygig_ft'&&sec.infoVars&&sec.infoVars.r)?sec.infoVars.r:((sec.scheme&&sec.scheme.length>1)?sec.scheme.length:1);newEx=_cardioCapSec(newEx,(S.time*60*0.30)/_rgRounds,_rgCL,S.level,_rgTeam,_rgTeam===2);}
       var _newItem4=Object.assign({},old,{ex:newEx});if(old.cardioAmounts){if(sec.type==='Ladder'&&sec.scheme&&sec.scheme.length){_newItem4.cardioAmounts=sec.scheme.slice();}else{_newItem4.cardioAmounts=old.cardioAmounts.map(function(){return newEx.amount;});}}S.wod.sections[si].items[ii]=_newItem4;
     }
   }else{
@@ -5034,8 +5038,8 @@ function randomBuyIn(si){
 }
 function setBuyInWodType(si,val){
   var sec=S.wod.sections[si];if(!sec.buyInCfg)sec.buyInCfg={};
-  sec.buyInCfg.wodType=val;
-  if(val==='chipper'){delete sec.buyInCfg.rounds;delete sec.buyInCfg.baseReps;}
+  if(sec.buyInCfg.wodType===val){delete sec.buyInCfg.wodType;}
+  else{sec.buyInCfg.wodType=val;if(val==='chipper'){delete sec.buyInCfg.rounds;delete sec.buyInCfg.baseReps;}}
   var _cfgEl=document.getElementById('buyin-cfg-'+si);
   if(_cfgEl){var _tmp=document.createElement('div');_tmp.innerHTML=renderBuyInCfg(sec,si);var _newCfg=_tmp.firstChild;if(_newCfg){_newCfg.style.display='block';_cfgEl.replaceWith(_newCfg);}}
 }
