@@ -3527,8 +3527,8 @@ function swapCardio(si,ii,name){
   if(_swIsEMOM){var _swEmCL=_emomCardioLimits(S.level,1);var _swEmMn=newUnit==='Cal'?_swEmCL.calMin:newUnit==='m'?_swEmCL.mtrMin:_swEmCL.duMin;var _swEmMx=newUnit==='Cal'?_swEmCL.calMax:newUnit==='m'?_swEmCL.mtrMax:_swEmCL.duMax;newAmount=_cardioNearestSer(newUnit,Math.max(_swEmMn,Math.min(_swEmMx,newAmount)),_swEmMn,_swEmMx);}
   // BUY-IN / CASH-OUT: clamp to _BUYIN_CARDIO_TABLE limits (no 30% cap)
   else if(old.kind==='buyin'){var _sbc=_BUYIN_CARDIO_TABLE[S.level]||_BUYIN_CARDIO_TABLE.intermediate;var _smn=newUnit==='Cal'?_sbc.calMin:_sbc.mMin;var _smx=newUnit==='Cal'?_sbc.calMax:_sbc.mMax;newAmount=_cardioNearestSer(newUnit,Math.max(_smn,Math.min(_smx,newAmount)),_smn,_smx);}
-  // non-EMOM: 30% time-cap
-  else{var _swCL=_swIsChip?_chipperCL(S.level,_swTeam):_cardioLimits(_swTeam,true,S.level);var _swRounds=(sec.infoKey==='i_ygig_ft'&&sec.infoVars&&sec.infoVars.r)?sec.infoVars.r:((sec.scheme&&sec.scheme.length>1)?sec.scheme.length:1);var _swCapSec=(S.time*60*0.30)/_swRounds;var _swCapped=_cardioCapSec({name:name,unit:newUnit,amount:newAmount},_swCapSec,_swCL,S.level,_swTeam,_swTeam===2);newAmount=_swCapped.amount;}
+  // non-EMOM: 30% time-cap — skip if user manually set the amount
+  else if(!old._userCardio){var _swCL=_swIsChip?_chipperCL(S.level,_swTeam):_cardioLimits(_swTeam,true,S.level);var _swRounds=(sec.infoKey==='i_ygig_ft'&&sec.infoVars&&sec.infoVars.r)?sec.infoVars.r:((sec.scheme&&sec.scheme.length>1)?sec.scheme.length:1);var _swCapSec=(S.time*60*0.30)/_swRounds;var _swCapped=_cardioCapSec({name:name,unit:newUnit,amount:newAmount},_swCapSec,_swCL,S.level,_swTeam,_swTeam===2);newAmount=_swCapped.amount;}
   // rotate alts
   var newAlts=(cur.alts||[]).filter(function(a){return a!==name;});
   if(cur.name&&newAlts.indexOf(cur.name)<0)newAlts.unshift(cur.name);
