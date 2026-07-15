@@ -402,7 +402,6 @@ function dispDetail(d){
   if(!d) return d;
   return d.replace(/تكرار/g,'reps').replace(/سعرة/g,'Cal').replace(/ متر/g,' m').replace(/متر/g,'m').replace(/جولات/g,'Rounds').replace(/جولة/g,'Round').replace(/دقيقة/g,'Min').replace(/المحطة/g,'Station');
 }
-function collapseDetail(d){if(!d)return d;var m=d.match(/^([\d\s\-]+)\s+(reps|Cal|m|kg|lb|s)$/);if(!m)return d;var nums=m[1].split('-').map(function(x){return x.trim();}).filter(function(x){return x!=='';});if(nums.length>1&&nums.every(function(x){return x===nums[0];}))return nums[0]+' '+m[2];return d;}
 function fixArPlural(s){if(CFG.lang!=='ar'||!s)return s;return s.replace(/(\d+)\s*(دقيقة واحدة|دقيقتان|دقيقة|دقائق)/g,function(_,n){return n+' '+arMin(parseInt(n));});}
 function ti(k,v){var s=t(k);if(v)Object.keys(v).forEach(function(p){s=s.replace(new RegExp('{'+p+'}','g'),v[p]);});return s;}
 function openCfg(){document.getElementById('cfg-overlay').style.display='block';_swUpdateBadge();}
@@ -450,11 +449,11 @@ function loadCfg(){
   document.getElementById('btn-light').textContent=(CFG.lang==='ar'?'☀️ فاتح':'☀️ Light');
 }
 var STR=[
-  {name:'Deadlift',cat:'barbell',tier:1,alts:['Romanian Deadlift','Sumo Deadlift','DB Deadlift','KB Gorilla Row']},
-  {name:'Shoulder Press',cat:'barbell',tier:1,alts:['Push Press','DB Shoulder Press','Chin-Up','Z-Press']},
+  {name:'Deadlift',cat:'barbell',tier:1,alts:['Romanian Deadlift','Sumo Deadlift','DB Deadlift','KB Deadlift']},
+  {name:'Shoulder Press',cat:'barbell',tier:1,alts:['Push Press','DB Shoulder Press','Pike Push-Up','Z-Press']},
   {name:'Bench Press',cat:'barbell',tier:1,alts:['DB Bench Press','Floor Press','Push-Up','Box Dip']},
-  {name:'Barbell Row',cat:'barbell',tier:1,alts:['DB Row','KB Row','Ring Row','Push-Up']},
-  {name:'Good Morning',cat:'barbell',tier:1,alts:['Romanian Deadlift','Hang Power Clean','Back Squat','KB Good Morning'],altOnly:true},
+  {name:'Barbell Row',cat:'barbell',tier:1,alts:['DB Row','KB Row','Ring Row','KB Gorilla Row']},
+  {name:'Good Morning',cat:'barbell',tier:1,alts:['Romanian Deadlift','Nordic Curl','Back Extension (GHD)','KB Good Morning'],altOnly:true},
   {name:'Sumo Deadlift',cat:'barbell',tier:1,alts:['Deadlift','KB Deadlift','DB Deadlift','Romanian Deadlift']},
   {name:'Floor Press',cat:'barbell',tier:1,alts:['Bench Press','DB Floor Press','Push-Up','DB Bench Press'],altOnly:true},
   {name:'Hip Thrust',cat:'barbell',tier:1,alts:['Glute Bridge','Single-Leg Hip Thrust','DB Hip Thrust','Single-Leg Glute Bridge']},
@@ -472,7 +471,7 @@ var STR=[
   {name:'Box Squat',cat:'barbell',tier:2,alts:['Back Squat','Front Squat','Paused Squat','Goblet Squat'],altOnly:true},
   {name:'Pause Front Squat',cat:'barbell',tier:2,alts:['Front Squat','Zercher Squat','Goblet Squat','Back Squat'],altOnly:true},
   {name:'Clean Pull',cat:'barbell',tier:2,alts:['Power Clean','Hang Power Clean','Deadlift','Snatch Pull'],altOnly:true},
-  {name:'Z-Press',cat:'barbell',tier:2,alts:['Shoulder Press','DB Shoulder Press','Push Press','Overhead Squat'],altOnly:true},
+  {name:'Z-Press',cat:'barbell',tier:2,alts:['Shoulder Press','DB Shoulder Press','Push Press','Sotts Press'],altOnly:true},
   {name:'Upright Row',cat:'barbell',tier:2,alts:['Sumo Deadlift High Pull','Barbell High Pull','KB High Pull','Power Clean'],altOnly:true},
   {name:'Paused Squat',cat:'barbell',tier:2,alts:['Back Squat','Front Squat','Goblet Squat','Box Squat'],altOnly:true},
   {name:'Hang Power Clean',cat:'barbell',tier:3,alts:['Power Clean','High Hang Power Clean','Clean','DB Hang Clean']},
@@ -485,7 +484,7 @@ var STR=[
   {name:'High Hang Power Clean',cat:'barbell',tier:3,alts:['Hang Power Clean','Power Clean','Muscle Clean','DB Hang Clean'],altOnly:true},
   {name:'Muscle Snatch',cat:'barbell',tier:3,alts:['Power Snatch','Hang Power Snatch','DB Snatch','Overhead Squat'],altOnly:true},
   {name:'Snatch Pull',cat:'barbell',tier:3,alts:['Power Snatch','Clean Pull','Deadlift','Hang Power Snatch'],altOnly:true},
-  {name:'Overhead Lunge',cat:'barbell',tier:3,alts:['Front Squat','DB Overhead Lunge','Walking Lunge','Reverse Lunge']},
+  {name:'Overhead Lunge',cat:'barbell',tier:3,alts:['KB Front Rack Lunge','DB Overhead Lunge','Walking Lunge','Reverse Lunge']},
   
   {name:'Muscle Clean',cat:'barbell',tier:3,alts:['Power Clean','Hang Power Clean','High Hang Power Clean','Clean'],altOnly:true},
   {name:'Clean',cat:'barbell',tier:4,alts:['Power Clean','Hang Clean','DB Squat Clean','DB Clean']},
@@ -498,12 +497,12 @@ var STR=[
   {name:'Drop Snatch',cat:'barbell',tier:4,alts:['Snatch Balance','Overhead Squat','Hang Power Snatch','Power Snatch'],altOnly:true},
   {name:'Hang Snatch',cat:'barbell',tier:4,alts:['Hang Power Snatch','Power Snatch','Snatch','Overhead Squat']},
   {name:'Sotts Press',cat:'barbell',tier:4,alts:['Overhead Squat','Snatch Balance','Z-Press','Strict Handstand Push-Up'],altOnly:true},
-  {name:'Air Squat',cat:'gymnastics',tier:1,alts:['Goblet Squat','Jump Squat','Russian KB Swing','Mountain Climber']},
-  {name:'Push-Up',cat:'gymnastics',tier:1,alts:['Ring Dip','Hand-Release Push-Up','Wall Walk','Strict Handstand Push-Up']},
+  {name:'Air Squat',cat:'gymnastics',tier:1,alts:['Goblet Squat','Jump Squat','Cossack Squat','Lunge']},
+  {name:'Push-Up',cat:'gymnastics',tier:1,alts:['Ring Dip','Hand-Release Push-Up','Ring Push-Up','Strict Handstand Push-Up']},
   {name:'Chin-Up',cat:'gymnastics',tier:2,alts:['Jumping Pull-Up','Banded Pull-Up','Banded Chin-Up','Strict Pull-Up']},
   {name:'Negative Pull-Up',cat:'gymnastics',tier:1,alts:['Jumping Pull-Up','Ring Row','Banded Pull-Up','Strict Pull-Up'],altOnly:true},
   {name:'Hanging Knee Raise',cat:'gymnastics',tier:1,alts:['AbMat Sit-Up','V-Up','Toes-to-Bar','Leg Raise']},
-  {name:'Wall Ball',cat:'gymnastics',tier:1,alts:['DB Thruster','Russian KB Swing','Med Ball Sit-Up','Thruster']},
+  {name:'Wall Ball',cat:'gymnastics',tier:1,alts:['DB Thruster','Russian KB Swing','KB Thruster','Thruster']},
   {name:'Burpee',cat:'gymnastics',tier:1,alts:['Mountain Climber','Jump Squat','Broad Jump','Box Jump']},
   {name:'Box Jump',cat:'gymnastics',tier:1,alts:['Box Step-Up','Jump Squat','Box Jump Over','Tuck Jump']},
   {name:'Walking Lunge',cat:'gymnastics',tier:1,alts:['Overhead Lunge','Reverse Lunge','DB Walking Lunge','DB Lunge']},
@@ -517,16 +516,16 @@ var STR=[
   {name:'Arch Hold',cat:'gymnastics',tier:1,unit:'time',alts:['Hollow Hold','Superman Hold','Plank Hold','Side Plank']},
   {name:'Plank Hold',cat:'gymnastics',tier:1,unit:'time',alts:['Hollow Hold','Side Plank','L-Sit','Superman Hold']},
   {name:'Ring Support Hold',cat:'gymnastics',tier:1,unit:'time',alts:['Ring Dip','L-Sit','Plank Hold','Arch Hold'],altOnly:true},
-  {name:'Mountain Climber',cat:'gymnastics',tier:1,alts:['Burpee','Bear Crawl','AbMat Sit-Up','Inchworm'],altOnly:true},
+  {name:'Mountain Climber',cat:'gymnastics',tier:1,alts:['Burpee','Bear Crawl','Plank Hold','Inchworm'],altOnly:true},
   {name:'Bear Crawl',cat:'gymnastics',tier:1,unit:'carry',alts:['Handstand Walk','Inchworm','Mountain Climber','Sled Push']},
   {name:'Box Dip',cat:'gymnastics',tier:1,alts:['Ring Dip','Bar Dip','Push-Up','Banded Dip']},
-  {name:'Slam Ball',cat:'gymnastics',tier:1,alts:['Wall Ball','DB Thruster','Russian KB Swing','Med Ball Sit-Up']},
+  {name:'Slam Ball',cat:'gymnastics',tier:1,alts:['Wall Ball','DB Thruster','Russian KB Swing','Med Ball Clean']},
   {name:'Med Ball Sit-Up',cat:'gymnastics',tier:1,alts:['AbMat Sit-Up','DB Sit-Up','Wall Ball','Slam Ball']},
-  {name:'Leg Raise',cat:'gymnastics',tier:1,alts:['AbMat Sit-Up','Hanging Knee Raise','V-Up','Toes-to-Bar']},
+  {name:'Leg Raise',cat:'gymnastics',tier:1,alts:['AbMat Sit-Up','Knees-to-Chest','V-Up','Toes-to-Bar']},
   {name:'Ring Row',cat:'gymnastics',tier:1,alts:['Banded Pull-Up','Jumping Pull-Up','Negative Pull-Up','Strict Pull-Up']},
   {name:'Reverse Lunge',cat:'gymnastics',tier:1,alts:['Walking Lunge','Lunge','Box Step-Up','Bulgarian Split Squat']},
   {name:'Lunge',cat:'gymnastics',tier:1,alts:['Walking Lunge','Reverse Lunge','Box Step-Up','DB Lunge']},
-  {name:'Broad Jump',cat:'gymnastics',tier:1,alts:['Box Jump','Jump Squat','Burpee','Box Step-Up']},
+  {name:'Broad Jump',cat:'gymnastics',tier:1,alts:['Box Jump','Jump Squat','Tuck Jump','Box Step-Up']},
   {name:'Side Plank',cat:'gymnastics',tier:1,unit:'time',alts:['Plank Hold','Hollow Hold','L-Sit','Arch Hold']},
   {name:'Superman Hold',cat:'gymnastics',tier:1,unit:'time',alts:['Arch Hold','Plank Hold','Hollow Hold','Back Extension (GHD)']},
   {name:'Glute Bridge',cat:'gymnastics',tier:1,alts:['Hip Thrust','Single-Leg Glute Bridge','Single-Leg Hip Thrust','Back Extension (GHD)']},
@@ -558,12 +557,12 @@ var STR=[
   {name:'Strict Pull-Up',cat:'gymnastics',tier:2,alts:['Kipping Pull-Up','Negative Pull-Up','Ring Row','Banded Pull-Up']},
   {name:'Jumping Muscle-Up',cat:'gymnastics',tier:2,alts:['Bar Muscle-Up','Chest-to-Bar Pull-Up','Kipping Pull-Up','Ring Row'],altOnly:true},
   {name:'Sandbag Carry',cat:'gymnastics',tier:2,unit:'carry',alts:['Farmers Carry','Bear Crawl','Sled Push','Overhead Carry']},
-  {name:'Inchworm',cat:'gymnastics',tier:2,alts:['Bear Crawl','Pike Push-Up','Good Morning','Mountain Climber'],altOnly:true},
+  {name:'Inchworm',cat:'gymnastics',tier:2,alts:['Bear Crawl','Pike Push-Up','Wall Walk','Mountain Climber'],altOnly:true},
   {name:'Burpee Box Jump',cat:'gymnastics',tier:2,alts:['Burpee','Box Jump','Burpee Box Jump Over','Bar-Facing Burpee'],altOnly:true},
   {name:'GHD Sit-Up',cat:'gymnastics',tier:2,alts:['AbMat Sit-Up','Sit-Up','V-Up','Toes-to-Bar'],altOnly:true},
   {name:'Back Extension (GHD)',cat:'gymnastics',tier:2,alts:['Good Morning','Superman Hold','Glute Bridge','Hip Thrust'],altOnly:true},
   {name:'Burpee Pull-Up',cat:'gymnastics',tier:2,alts:['Bar-Facing Burpee','Burpee','Kipping Pull-Up','Chest-to-Bar Pull-Up'],altOnly:true},
-  {name:'Med Ball Clean',cat:'gymnastics',tier:2,alts:['DB Clean','KB Clean','Med Ball Sit-Up','Wall Ball'],altOnly:true},
+  {name:'Med Ball Clean',cat:'gymnastics',tier:2,alts:['DB Clean','KB Clean','Sandbag Clean','Wall Ball'],altOnly:true},
   {name:'Tuck Jump',cat:'gymnastics',tier:2,alts:['Jump Squat','Box Jump','Broad Jump','Burpee'],altOnly:true},
   {name:'Handstand Push-Up (Kipping)',cat:'gymnastics',tier:3,alts:['Strict Handstand Push-Up','Pike Push-Up','DB Shoulder Press','Z-Press']},
   {name:'Bar Muscle-Up',cat:'gymnastics',tier:3,alts:['Chest-to-Bar Pull-Up','Jumping Muscle-Up','Kipping Pull-Up','Strict Pull-Up']},
@@ -599,7 +598,7 @@ var STR=[
   {name:'KB Deadlift',cat:'kettlebell',tier:1,alts:['Deadlift','DB Deadlift','Sumo KB Deadlift','KB Good Morning']},
   {name:'KB Good Morning',cat:'kettlebell',tier:1,alts:['Good Morning','Romanian Deadlift','DB Good Morning','KB Deadlift'],altOnly:true},
   {name:'KB Gorilla Row',cat:'kettlebell',tier:1,alts:['DB Row','Barbell Row','Ring Row','KB Row']},
-  {name:'Sumo KB Deadlift',cat:'kettlebell',tier:1,alts:['KB Deadlift','Sumo Deadlift','DB Deadlift','Goblet Squat'],altOnly:true},
+  {name:'Sumo KB Deadlift',cat:'kettlebell',tier:1,alts:['KB Deadlift','Sumo Deadlift','DB Deadlift','Deadlift'],altOnly:true},
   {name:'American KB Swing',cat:'kettlebell',tier:2,alts:['Russian KB Swing','KB Snatch','KB Clean','KB High Pull']},
   {name:'KB Snatch',cat:'kettlebell',tier:2,alts:['DB Snatch','American KB Swing','Power Snatch','KB Clean'],altOnly:true},
   {name:'Suitcase Carry',cat:'kettlebell',tier:2,unit:'carry',alts:['Farmers Carry','Overhead Carry','Sandbag Carry','Bear Crawl']},
@@ -650,7 +649,7 @@ var STR=[
   {name:'Devil\'s Press',cat:'dumbbell',tier:3,alts:['DB Snatch','DB Thruster','Man Maker','DB Clean and Press']},
   {name:'Man Maker',cat:'dumbbell',tier:3,alts:['Devil\'s Press','DB Thruster','DB Clean and Press','DB Turkish Get-up']},
   {name:'DB Clean and Press',cat:'dumbbell',tier:3,alts:['DB Clean','DB Thruster','DB Shoulder-to-Overhead','Power Clean'],altOnly:true},
-  {name:'DB Turkish Get-up',cat:'dumbbell',tier:3,unit:'side',alts:['KB Turkish Get-Up','Man Maker','DB Clean and Press','Renegade Row'],altOnly:true},
+  {name:'DB Turkish Get-up',cat:'dumbbell',tier:3,unit:'side',alts:['KB Turkish Get-Up','Man Maker','DB Clean and Press','DB Windmill'],altOnly:true},
   {name:'DB Hang Power Snatch',cat:'dumbbell',tier:3,alts:['DB Snatch','Power Snatch','KB Snatch','DB Clean']},
   {name:'DB Hang Snatch',cat:'dumbbell',tier:3,alts:['DB Hang Power Snatch','DB Power Snatch','DB Squat Snatch','KB Snatch']},
   {name:'DB Overhead Squat',cat:'dumbbell',tier:3,alts:['Overhead Squat','DB Front Squat','Goblet Squat','Zercher Squat']},
@@ -690,8 +689,6 @@ function fmtCa(ex){var u=ex.unit||'';return ex.amount+(u==='m'||u==='s'?u:' '+u)
 function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a}
 function pk(a){return a[Math.floor(Math.random()*a.length)]}
 function evenRep(n){return Math.round(n/2)*2||2;}
-function _snapFlat(r){return r<24?Math.max(2,Math.round(r/2)*2):Math.max(10,Math.round(r/10)*10);}
-function _snapTeam(r){return r<24?Math.max(2,Math.round(r/2)*2):Math.max(10,Math.round(r/10)*10);}
 var _sprMap={
   // Gymnastics T1
   'Air Squat':1.20,'Push-Up':1.20,'AbMat Sit-Up':1.4,'Russian Twist':1.20,
@@ -710,7 +707,7 @@ var _sprMap={
   'Sandbag Over Shoulder':6.00,
   'Strict Pull-Up':2.00,'Jumping Muscle-Up':2.50,'Sandbag Carry':3.00,'Inchworm':2.50,'Burpee Box Jump':5.50,
   // Gymnastics T3
-  'Handstand Push-Up (Kipping)':3.50,'Handstand Push-Up (Kipping)':3.50,'Bar Muscle-Up':4.00,'Rope Climb':10.00,
+  'Handstand Push-Up (Kipping)':3.50,'Bar Muscle-Up':4.00,'Rope Climb':10.00,
   'Single-leg Squat (Pistol)':2.60,'Wall Walk':6.00,'Butterfly Pull-Up':1.00,
   'L-Sit':1.00,'D-Ball Over Shoulder':7.00,'Tire Flip':5.00,'Skin the Cat':5.00,
   'Dragon Flag':4.00,'Nordic Curl':5.00,'Strict Chest-to-bar Pull-up':2.50,
@@ -732,7 +729,7 @@ var _sprMap={
   'Hang Power Clean':3.00,'Power Snatch':2.50,'Ground to Overhead':4.00,
   'Push Jerk':2.50,'Overhead Squat':4.00,'Hang Clean':3.50,'Hang Power Snatch':3.00,
   'High Hang Power Clean':3.00,'Muscle Snatch':2.6,'Snatch Pull':2.50,
-  'Overhead Lunge':3.50,'Hang Clean':3.50,'Muscle Clean':3.50,
+  'Overhead Lunge':3.50,'Muscle Clean':3.50,
   // Barbell T4
   'Clean':4.00,'Clean & Jerk':4.2,'Clean and Press':5.00,'Split Jerk':4.00,'Snatch Balance':3.4,
   'Snatch':3.75,'Power Jerk':2.60,
@@ -765,6 +762,12 @@ var _sprMap={
   // Dumbbell T4
   'DB Squat Clean':4.00,'DB Squat Snatch':3.75,'DB Clean & Jerk':3.6,'DB Push Jerk':3.00
 };
+// وقت الانتقال بين الحركات لكل مستوى (سولو). team=2 مشترك = 18ث في مواضعه.
+function _fmtMS(s){return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);} // تنسيق دقائق:ثواني
+// جدول جولات YGIG FT لكل شريك حسب الوقت — المصدر الوحيد (توليد + عرض)
+var _YGIG_FT_BANDS=[{max:5,e:[2,2]},{max:10,e:[3,4]},{max:15,e:[4,5]},{max:20,e:[4,5]},{max:25,e:[5,6]},{max:30,e:[6,7]},{max:35,e:[7,8]},{max:40,e:[8,9]},{max:45,e:[9,10]},{max:50,e:[10,11]},{max:55,e:[11,12]},{max:9999,e:[12,13]}];
+function _ygigFtBand(time){return(_YGIG_FT_BANDS.find(function(b){return time<=b.max;})||{e:[12,13]}).e;}
+function _tSec(lv){return{beginner:22,intermediate:16,advanced:10,elite:6}[lv]||16;}
 function getSecondsPerRep(ex,lv,team,split){
   var _teamF=(team===2&&split)?({beginner:0.75,intermediate:0.80,advanced:0.85,elite:0.90}[lv||'intermediate']||0.80):1;
   var spd=({elite:1.0,advanced:1.2,intermediate:1.4,beginner:1.6}[lv||'intermediate']||1.4)*_teamF;
@@ -784,18 +787,14 @@ function getSecondsPerRep(ex,lv,team,split){
 function _wodEstTime(repsArr,chosen,cardioEx,numItems,team,lv,split){
   // Transition: level-based for solo, fixed 30s for team
   var lvl=lv||S.level||'intermediate';
-  var tTime=team===2?18:({beginner:22,intermediate:16,advanced:10,elite:6}[lvl]||16);
+  var tTime=team===2?18:_tSec(lvl);
   var t=0;
   for(var i=0;i<Math.min(repsArr.length,chosen.length);i++)t+=repsArr[i]*getSecondsPerRep(chosen[i],lvl,team,split);
   if(cardioEx&&cardioEx.amount){t+=_cardioSecEst(cardioEx,lvl,team,split);}
   t+=(numItems-1)*tTime;
   return t;
 }
-function _scaleRep(r,sf,team,maxR){var minR=team===2?10:5;var capR=maxR!==undefined?maxR:(team===2?200:100);var s=r*sf;var res=Math.max(minR,team===2?_snapTeam(s):Math.round(s));return Math.min(capR,res);}
 // ── Cal Step: ≤22→+2، ==24→+6(قفز إلى 30)، >24→+10 ──
-function _calStep(v){if(!v||v<=22)return 2;if(v===24)return 6;return 10;}
-function _calStepDn(v){if(v>30)return 10;if(v===30)return 6;return 2;}
-function _duStep(){return 10;}
 function _roundCal(v,team){if(v<=0)return team===2?12:6;return v<24?Math.max(2,Math.round(v/2)*2):Math.max(10,Math.round(v/10)*10);}
 function _roundMtr(v){return Math.max(100,Math.round(v/100)*100);}
 // ── Flat Series for normal cardio (AMRAP / RFT / Chipper / YGIG / Group A-B) ──
@@ -840,7 +839,6 @@ function _cardioClamp(unit,amt,lv,team,isChipper){
 }
 function _cardioAtMax(cEx,CL){return cEx.unit==='Cal'?cEx.amount>=CL.calMax:cEx.unit==='m'?cEx.amount>=CL.mtrMax:cEx.amount>=CL.duMax;}
 function _cardioAtMin(cEx,CL){return cEx.unit==='Cal'?cEx.amount<=CL.calMin:cEx.unit==='m'?cEx.amount<=CL.mtrMin:cEx.amount<=CL.duMin;}
-function _mtrStep(amt){return amt>=600?200:100;}
 function _cardioUp(cEx,CL,noSmall){var mn=cEx.unit==='Cal'?CL.calMin:cEx.unit==='m'?CL.mtrMin:CL.duMin;var mx=cEx.unit==='Cal'?CL.calMax:cEx.unit==='m'?CL.mtrMax:CL.duMax;var a=_cardioNextSer(cEx.unit,cEx.amount,1,mn,mx,noSmall);return Object.assign({},cEx,{amount:a});}
 function _cardioDn(cEx,CL,noSmall){var mn=cEx.unit==='Cal'?CL.calMin:cEx.unit==='m'?CL.mtrMin:CL.duMin;var mx=cEx.unit==='Cal'?CL.calMax:cEx.unit==='m'?CL.mtrMax:CL.duMax;var a=_cardioNextSer(cEx.unit,cEx.amount,-1,mn,mx,noSmall);return Object.assign({},cEx,{amount:a});}
 function _cardioSecEst(cEx,lv,team,split){
@@ -874,15 +872,6 @@ function _cardioSecEst(cEx,lv,team,split){
 }
 // يخفض الكارديو حتى ما يتعدى capSec ثانية
 function _cardioCapSec(cEx,capSec,CL,lv,team,split,noSmall){if(!cEx||!cEx.amount||capSec<=0)return cEx;var s=0;while(_cardioSecEst(cEx,lv,team,split)>capSec&&!_cardioAtMin(cEx,CL)&&s++<30)cEx=_cardioDn(cEx,CL,noSmall);return cEx;}
-function _scaleCardio(cx,sf,team){
-  if(!cx||!cx.amount)return cx;
-  var s=cx.amount*sf;
-  var a;
-  if(cx.unit==='Cal'){a=_roundCal(s,team);}
-  else if(cx.unit==='m'){a=_roundMtr(s);}
-  else{a=Math.max(20,Math.round(s/10)*10);}
-  return Object.assign({},cx,{amount:a});
-}
 // ── Cardio Balance: يوازن الكارديو نسبة للتكرارات ──
 function _balanceCardio(cEx,strPerRoundSec,team,lv,cfg,split){
   if(!cEx||cfg.cardioAmt)return cEx;
@@ -1077,17 +1066,6 @@ function schemeLabel(ex,reps,lv,team){
   return reps.join(' - ')+' reps';
 }
 function cico(n){return n.indexOf('Run')>=0||n.indexOf('Sprint')>=0?'🏃':n.indexOf('Row')>=0?'🚣':n.indexOf('Bike')>=0||n.indexOf('Assault')>=0?'🚴':n.indexOf('Ski')>=0?'⛷️':n.indexOf('Double')>=0||n.indexOf('Jump')>=0?'⚡':'💨'}
-function getScheme(type,lv){
-  var s={
-    descending:{beginner:[[10,8,6],[9,6,3]],intermediate:[[21,15,9],[15,12,9],[18,12,6]],advanced:[[21,15,9],[15,12,9,6],[20,15,10,5]],elite:[[30,20,10],[21,18,15,12]]},
-    ascending:{beginner:[[3,6,9],[4,6,8]],intermediate:[[9,15,21],[5,10,15,20]],advanced:[[9,12,15,18],[6,12,18,24]],elite:[[9,15,21,27],[10,15,20,25]]},
-    pyramid:{beginner:[[3,5,8,5,3]],intermediate:[[6,9,12,9,6],[8,10,12,10,8]],advanced:[[10,12,15,12,10]],elite:[[12,15,20,15,12]]},
-    fixed:{beginner:[8],intermediate:[10],advanced:[12],elite:[15]},
-  };
-  if(type==='fixed')return[s.fixed[lv]||10];
-  var opts=s[type]&&s[type][lv]?s[type][lv]:[[21,15,9]];
-  return pk(opts);
-}
 function mkAmrap(time,lv,team,cfg){
   cfg=cfg||{};
   var _amrExR=[2,3];
@@ -1095,7 +1073,6 @@ function mkAmrap(time,lv,team,cfg){
   var cardioMode=cfg.withCardio;
   var addCardio=cardioMode===true||(cardioMode===undefined&&Math.random()>.5);
   // ── Base reps — نقطة بداية للـ auto-scaler ──
-  var _amrBaseReps=function(){return (team===2&&!cfg.noTeamSplit)?20:10;};
   var baseReps=cfg.baseReps?((team===2&&!cfg.noTeamSplit)?evenRep(cfg.baseReps):cfg.baseReps):10;
   var strCount=exCnt; // الكارديو محطة منفصلة — لا يُخصم من عدد الحركات
   // AMRAP pool: استبعاد تمارين Elite SPR > 15s/rep (لا يقدر الـ scaler ينزل تحت hardMin فتطلع > 100%)
@@ -1104,7 +1081,7 @@ function mkAmrap(time,lv,team,cfg){
   // YGIG: فلترة إضافية — أي تمرين بأدنى تكرار ممكن يتجاوز الـ hard cap يُستبعد قبل الاختيار
   if(cfg.maxTargetSec){
     var _ygigAmrTm2=cfg.noTeamSplit?1:team;
-    var _ygigAmrTr2=_ygigAmrTm2===2?18:({beginner:22,intermediate:16,advanced:10,elite:6}[lv]||16);
+    var _ygigAmrTr2=_ygigAmrTm2===2?18:_tSec(lv);
     var _ygigBudget=Math.floor((cfg.maxTargetSec-Math.max(0,exCnt-1)*_ygigAmrTr2)/Math.max(1,exCnt));
     var _ygigFilt=_amrPool.filter(function(e){var lm=_repLimits(e.cat,lv,1,false);return lm.min*getSecondsPerRep(e,lv,1,false)<=_ygigBudget;});
     if(_ygigFilt.length>=exCnt)_amrPool=_ygigFilt;
@@ -1121,7 +1098,7 @@ function mkAmrap(time,lv,team,cfg){
   var _amrCL=_cardioLimits(team,cfg.noTeamSplit?false:true,lv);
   // ── Unified transition table (solo: level-based | team=2: 18s) — AMRAP & YGIG same values ──
   var _amrTm=cfg.noTeamSplit?1:team;
-  var _amrTrans=_amrTm===2?18:({beginner:22,intermediate:16,advanced:10,elite:6}[lv]||16);
+  var _amrTrans=_amrTm===2?18:_tSec(lv);
   var _amrapCPool=cfg.cardioAmt?CARDIO.filter(function(c){return c.unit==='Cal'&&!c.altOnly;}):CARDIO.filter(function(c){return !c.altOnly;});
   var _amrapPickEx=_amrapCPool.length?pk(_amrapCPool):null;
   var _amrapExUnit=_amrapPickEx?_amrapPickEx.unit:'Cal';
@@ -1196,7 +1173,6 @@ function mkAmrap(time,lv,team,cfg){
   }
   // ── لووب ثنائي الاتجاه: هدف [90%,100%] — ↑ ارفع | ↓ نزّل ──
   if(!cfg.baseReps&&!cfg.forceRepsArr&&chosen.length){
-    var _amrRndMin=Math.round(_amrapTarget/60);
     var _amrTargetSec=_amrapTarget;
     var _calcAmrPW=function(){
       var _cpSpl=!cfg.noTeamSplit;
@@ -1209,27 +1185,29 @@ function mkAmrap(time,lv,team,cfg){
     var _amrSnapR=function(r){return _repSnap(Math.round(r),_amrHardMin,_patternMax);};
     var _amrCardioRemoved=false; // flag: لو شلنا الكارديو بسبب overfill لا نرجع نضيفه
     var _amrLastUpPick=null;
-    var _amrRepCycleIdx=0;
     var _amrSeenStates=[]; // oscillation guard
-    var _amrBestRArr=_rArr.slice(); // أحسن حالة شوهدت (أقرب لـ 100% من تحت)
+    var _amrBestRArr=_rArr.slice(); // أحسن حالة شوهدت
     var _amrBestEx=_amrapEx?Object.assign({},_amrapEx):null;
     var _amrBestPW=_calcAmrPW();
+    var _amrBestRnds=0; // لـ targetRounds: نتتبع الحالة الأقرب للـ target rounds
     var _amrHardCap=cfg.maxTargetSec||null;
     var _amrEnsureEven=!!cfg.ensureEvenRounds;
+    var _amrTargetRnds=cfg.targetRounds||null;
     // احسب وقت الجولة الكامل (مع transitions) — لفحص الـ hard cap والجولات الزوجية
     var _calcFullAmrPW=function(){var nI=chosen.length+(addCardio&&_amrapEx?1:0);var pw=_rArr.reduce(function(s,r,i){return s+(i<chosen.length?r*getSecondsPerRep(chosen[i],lv,_amrTm,false):0);},0);pw+=_cardioSecEst(_amrapEx,lv,_amrTm,false);pw+=(Math.max(1,nI)-1)*_amrTrans;return pw;};
     var _calcAmrRnds=function(){var pw=_calcFullAmrPW();return pw>0?Math.max(1,Math.floor(time*60/pw)):0;};
     for(var _amrLoop=0;_amrLoop<30;_amrLoop++){
       var _amrPW=_calcAmrPW();
+      var _amrCurRnds=_calcAmrRnds();
       var _amrAcceptCap=_amrHardCap||(_amrTargetSec*1.10);
-      if(_amrPW<=_amrAcceptCap&&(_amrBestPW>_amrAcceptCap||_amrPW>_amrBestPW)){_amrBestRArr=_rArr.slice();_amrBestEx=_amrapEx?Object.assign({},_amrapEx):null;_amrBestPW=_amrPW;}
-      // توقف فقط لو في المدى المطلوب + (مو YGIG أو جولات زوجية)
-      if(_amrPW>=_amrTargetSec*0.90&&_amrPW<=_amrAcceptCap&&(!_amrEnsureEven||_calcAmrRnds()%2===0))break;
+      if(_amrTargetRnds){var _bsDiff=Math.abs(_amrCurRnds-_amrTargetRnds),_bsBestDiff=Math.abs(_amrBestRnds-_amrTargetRnds);if(_bsDiff<_bsBestDiff||(_bsDiff===_bsBestDiff&&_amrPW>_amrBestPW)){_amrBestRArr=_rArr.slice();_amrBestEx=_amrapEx?Object.assign({},_amrapEx):null;_amrBestPW=_amrPW;_amrBestRnds=_amrCurRnds;}}else if(_amrPW<=_amrAcceptCap&&(_amrBestPW>_amrAcceptCap||_amrPW>_amrBestPW)){_amrBestRArr=_rArr.slice();_amrBestEx=_amrapEx?Object.assign({},_amrapEx):null;_amrBestPW=_amrPW;}
+      // توقف فقط لو في المدى المطلوب + (مو YGIG أو جولات زوجية) + (مو targetRounds أو وصلنا للجولات المطلوبة)
+      if(_amrPW>=_amrTargetSec*0.90&&_amrPW<=_amrAcceptCap&&(!_amrEnsureEven||_amrCurRnds%2===0)&&(!_amrTargetRnds||_amrCurRnds===_amrTargetRnds))break;
       var _amrStateKey=_rArr.join(',')+':'+chosen.length+':'+(_amrapEx?_amrapEx.amount:0);
       if(_amrSeenStates.indexOf(_amrStateKey)>=0){_rArr=_amrBestRArr;_amrapEx=_amrBestEx;if(!_amrapEx){addCardio=false;}break;}
       _amrSeenStates.push(_amrStateKey);
-      // اتجاه ↓: فوق الـ target أو فوق الـ hard cap (مع transitions) أو YGIG في المدى بس جولات فردية
-      if(_amrPW>_amrTargetSec*1.10||(_amrHardCap&&_calcFullAmrPW()>_amrHardCap)||(_amrEnsureEven&&_amrPW>=_amrTargetSec*0.90&&_amrPW<=_amrAcceptCap&&_calcAmrRnds()%2!==0)){
+      // اتجاه ↓: فوق الـ target أو فوق الـ hard cap أو جولات فردية أو جولات أقل من المطلوب (نحتاج رونداً أقصر → أكثر جولات)
+      if(_amrPW>_amrTargetSec*1.10||(_amrHardCap&&_calcFullAmrPW()>_amrHardCap)||(_amrEnsureEven&&_amrPW>=_amrTargetSec*0.90&&_amrPW<=_amrAcceptCap&&_amrCurRnds%2!==0)||(_amrTargetRnds&&_amrCurRnds<_amrTargetRnds)){
         // ↓ اجمع الكنوبات واختار عشوائي
         var _amrDnK=[];
         if(_rArr.some(function(r){return r>(team===2?Math.ceil(_amrHardMin/_amrLS)*_amrLS:_amrHardMin);}))_amrDnK.push('reps');
@@ -1354,6 +1332,8 @@ function mkAmrap(time,lv,team,cfg){
     var _erFSPR=chosen.reduce(function(s,e){return s+getSecondsPerRep(e,lv,_amrTm,false);},0);
     if(_erFSPR>0){var _erFBudget=_amrHardCap-_erFTr-_erFCrd;var _erFMaxR=_erFBudget>0?Math.max(2,Math.floor(_erFBudget/_erFSPR/(_amrLS||2))*(_amrLS||2)):2;_rArr=_rArr.map(function(r){return Math.min(r,_erFMaxR);});}
   }
+  // ترتيب العرض: 50% نازل / 50% صاعد — الثابت: الأسهل الأكثر تكرارات (قاعدة Laila)
+  if(chosen.length>1&&Math.random()<0.5){chosen=chosen.slice().reverse();_rArr=_rArr.slice().reverse();}
   var items=[];
   chosen.forEach(function(ex,i){
     var r=_clampRep(_rArr[i]||baseReps,ex,lv,team,!cfg.noTeamSplit);
@@ -1365,6 +1345,8 @@ function mkAmrap(time,lv,team,cfg){
   var _amrapRndMin=Math.round(_amrapTarget/60);
   var _amrapManual=!!cfg.target;
   var _amrapRnds=Math.round(time/(_amrapTarget/60));
+  // شبكة أمان قاعدة الصعوبة (كسور clamp النادرة) — القيم تتوزع حسب الصعوبة، والعرض 50/50
+  _ordRepsByDifficulty(items,lv,team,function(ex){return _exLims([ex],lv,team,!cfg.noTeamSplit);},team===2&&!cfg.noTeamSplit);
   return[{type:'AMRAP',title:time+' MIN AMRAP',infoKey:_amrapManual?'i_amrap_m':'i_amrap',infoVars:{t:time,rnd:_amrapRndMin,rnds:_amrapRnds,tgt:_amrapTarget},scoreKey:'sc_rounds',teamKey:team>1?'tm_one':null,teamVars:{n:team},items:items,amrapCfg:cfg,_patternLS:_amrLS,_patternFlat:_amrIsFlat,_patternType:_amrRpType}];
 }
 
@@ -1408,7 +1390,6 @@ function mkRFT(time,lv,team,cfg){
 
   // ── Step 3: baseReps — smart cap for Elite random (cfg override always respected) ──
   // ── خريطة الجولات الذكية: سبرينت=3 | متوسط=4-5 | ماراثون=5-7 (الكارديو يمتص الوقت الزائد) ──
-  var _rftMaxRounds=_rftDefaultRounds+2;
   var rounds=schemeReps?schemeReps.length:(cfg.rounds||_rftDefaultRounds);
   if(cfg.rounds)rounds=cfg.rounds; // early hard-lock: user-specified rounds always win
   var baseReps=null;
@@ -1451,7 +1432,6 @@ function mkRFT(time,lv,team,cfg){
     // ── Multi-Candidate RFT: ولّد 25 WOD واختار الأقرب للـ Time Cap ──
     // الإقفال: cfg.rounds → ثابت تماماً | cfg.exCnt → ثابت تماماً
     var _roundsLocked=!!cfg.rounds, _exCntLocked=!!cfg.exCnt;
-    var _cardioForced=(exCnt===2&&cfg.withCardio!==false)||cfg.withCardio===true;
     var _pool2=getPool(lv,null,team);
     var _rndLo=_roundsLocked?cfg.rounds:_rftTimeCfg.setsMin, _rndHi=_roundsLocked?cfg.rounds:_rftTimeCfg.setsMax;
     var _exLo2=_exCntLocked?cfg.exCnt:_rftTimeCfg.movMin, _exHi2=_exCntLocked?cfg.exCnt:_rftTimeCfg.movMax;
@@ -1576,6 +1556,13 @@ function mkRFT(time,lv,team,cfg){
     items.push({kind:'str',ex:ex,detail:_det,baseRep:_bRep});
   });
   if(addCardio&&_cEx){items.push({kind:'cardio',ex:_cEx});}
+  // ── محرك السكيمات الموحّد (قواعد Laila): سلم نظيف على الحركات أو فلات-مضاعفات ──
+  // يطبق فقط للتوليد العشوائي (بدون سكيم جولات مخصص/تكرارات مثبتة) وخارج مسار YGIG (له تطبيقه الخاص)
+  var _rsUniform=reps.length>0&&reps.every(function(v){return v===reps[0];});
+  var _rsHasRPR=items.some(function(x){return x.repsPerRound&&x.repsPerRound.length>1;});
+  if(!cfg.noTeamSplit&&!cfg.baseReps&&!cfg.schemeReps&&_rsUniform&&!_rsHasRPR){
+    _applyRepScheme(items,lv,team,team===2,cfg);
+  }
 
   // العنوان: سكيم متغير → "For Time (21-15-9)" | جولات ثابتة → "X Rounds For Time"
   var _rftTitle=rounds+' Rounds For Time';
@@ -1597,7 +1584,6 @@ function mkEmom(time,lv,team,cfg){
   var _movMax=addCardio?_emRange.movMax-1:_emRange.movMax;
   var numMov=cfg.numMov||ri(_emRange.movMin,Math.max(_emRange.movMin,_movMax));
   if(cardioMode===false){addCardio=false;numMov=cfg.numMov||ri(_emRange.movMin,_emRange.movMax);}
-  var strCount=numMov;
   var chosen=pkN(getPool(lv,null,team),numMov);
   // ── 3. تكرارات عشوائية من جدول EMOM ──
   var _emCL=_emomCardioLimits(lv,1); // EMOM: solo limits always, regardless of team size
@@ -1640,6 +1626,7 @@ function mkEmom(time,lv,team,cfg){
     var _rLtr=String.fromCharCode(65+chosen.length+(addCardio?1:0));
     items.push({kind:'str',ex:{name:'🛑 REST',cat:'rest',unit:'reps'},emomMin:'Min '+_rLtr,detail:'Complete Rest — Breathe & Recover',noEdit:true,noPencil:true,isRest:true});
   }
+  _ordRepsByDifficulty(items,lv,team,function(ex){return _emomRepLimits(ex.cat,lv,team);},false,function(ex,r){return _emomDetail(ex,r,lv);});
   var _emomActualTime=_emomCycle*sets;return[{type:'EMOM',title:_emomActualTime+' MIN EMOM',infoKey:'i_emom',infoVars:{n:numMov,s:sets,t:time},scoreKey:'sc_rounds_comp',teamKey:team>1?'tm_own':null,items:items,emomCfg:cfg}];
 }
 
@@ -1650,6 +1637,7 @@ var CHIPPER_SCHEMES={
   elite:      {3:[150,100,60],4:[150,120,90,60],5:[150,120,90,60,40],6:[100,80,70,60,50,40],7:[100,80,70,60,50,40,30],8:[80,80,70,70,60,60,50,50],9:[80,80,70,70,60,60,50,50,40]}
 };
 function mkChipper(time,lv,team,cfg){
+  var _crdF=0.30; // سقف الكارديو ثابت 30% (رجعناه بطلب Laila)
   cfg=cfg||{};
   // ── STATIONS MODE (cardioCount 2/3/4) ──────────────────────────
   var _resolvedMode=(cfg.cardioCount>=2)?'stations':(cfg.stationMode||(Math.random()>.5?'stations':'classic'));
@@ -1669,7 +1657,6 @@ function mkChipper(time,lv,team,cfg){
     var _szByTime={2:time<=15?[2,3]:time<=30?[2,3,4,5]:[2,3,4,5,6],3:time<=15?[2]:time<=30?[2,3]:[2,3,4],4:time<=30?[2]:[2,3]};
     // ── حد الحركات الكلي حسب الوقت ──
     var _stMaxTotalMov=time<=15?6:time<=25?8:time<=35?10:12;
-    var _stMinTotalMov=time<=15?3:time<=25?4:time<=35?6:8;
     // لما cardioCount محدد: exCnt من _CARDIO_CNT_MOV، sz مشتق منه
     var _ccMovPool=(_stLockN&&_CARDIO_CNT_MOV[numStations])||null;
     var _szPool=cfg.exCnt?null:(_szByTime[numStations]||_szAll[numStations]||[2,3]);
@@ -1689,8 +1676,8 @@ function mkChipper(time,lv,team,cfg){
     var gatePool=gUnit==='Cal'?GATE_CAL:GATE_MTR;
     // ── Gate 20-30% floor/cap per station ──
     var _stBdg=time*60;
-    var _gCapCal=Math.min(_stCL.calMax,_roundCal(_stBdg*0.30/numStations/5.5,team));
-    var _gCapMtr=Math.min(_stCL.mtrMax,_roundMtr(_stBdg*0.30/numStations/0.30));
+    var _gCapCal=Math.min(_stCL.calMax,_roundCal(_stBdg*_crdF/numStations/5.5,team));
+    var _gCapMtr=Math.min(_stCL.mtrMax,_roundMtr(_stBdg*_crdF/numStations/0.30));
     var _gStMin=gUnit==='Cal'?_stCL.calMin:_stCL.mtrMin;
     var _gStCap=gUnit==='Cal'?Math.max(_stCL.calMin,_gCapCal):Math.max(_stCL.mtrMin,_gCapMtr);
     var gFixedAmt=cfg.cardioAmt||_cardioNearestSer(gUnit,_gStMin,_gStMin,_gStCap);
@@ -1731,7 +1718,7 @@ function mkChipper(time,lv,team,cfg){
             if(_stCdnChanged)continue;
           }
           // كل الكنوبات بالحد ↓ — نزّل ستيشن (فقط لو مو مقفّل)
-          if(!cfg.stationCount&&!_stLockN&&numStations>_stMinSt){numStations--;sz=Math.max(1,Math.round((cfg.exCnt||exCnt)/numStations));if(cfg.exCnt)exCnt=cfg.exCnt;_gCapCal=Math.min(_stCL.calMax,_roundCal(_stBdg*0.30/numStations/5.5,team));_gCapMtr=Math.min(_stCL.mtrMax,_roundMtr(_stBdg*0.30/numStations/0.30));}
+          if(!cfg.stationCount&&!_stLockN&&numStations>_stMinSt){numStations--;sz=Math.max(1,Math.round((cfg.exCnt||exCnt)/numStations));if(cfg.exCnt)exCnt=cfg.exCnt;_gCapCal=Math.min(_stCL.calMax,_roundCal(_stBdg*_crdF/numStations/5.5,team));_gCapMtr=Math.min(_stCL.mtrMax,_roundMtr(_stBdg*_crdF/numStations/0.30));}
           else break;
         } else {
           // ↑ ارفع الرب أولاً
@@ -1752,7 +1739,7 @@ function mkChipper(time,lv,team,cfg){
             else{var _newSzPool=_szByTime[numStations]||_szAll[numStations]||[2,3];sz=Math.min(sz,Math.max.apply(null,_newSzPool));exCnt=Math.min(numStations*sz,_stMaxTotalMov);sz=Math.max(1,Math.round(exCnt/numStations));}
             if(chosen.length<exCnt){var _morePool=getChipperPool(lv,team).filter(function(e){return!chosen.some(function(c){return c.name===e.name;});});chosen=chosen.concat(pkN(_morePool,exCnt-chosen.length));}
             var _newLims=_exLimsForTime(chosen.slice(0,exCnt),lv,team,true);_stMaxR=Math.floor(_newLims.max/_stSerStep)*_stSerStep;_stMinR=Math.ceil(Math.max(_stSerStep,_newLims.min)/_stSerStep)*_stSerStep;
-            _gCapCal=Math.min(_stCL.calMax,_roundCal(_stBdg*0.30/numStations/5.5,team));_gCapMtr=Math.min(_stCL.mtrMax,_roundMtr(_stBdg*0.30/numStations/0.30));
+            _gCapCal=Math.min(_stCL.calMax,_roundCal(_stBdg*_crdF/numStations/5.5,team));_gCapMtr=Math.min(_stCL.mtrMax,_roundMtr(_stBdg*_crdF/numStations/0.30));
           } else break;
         }
       }
@@ -1881,7 +1868,7 @@ function mkChipper(time,lv,team,cfg){
         else{if(!cfg.baseReps&&_dTop+_clStep<=_clCap){_upK.push('reps');_upK.push('reps');_upK.push('reps');}}
         if(!_clCardioRemoved&&!cfg.cardioAmt){
           if(!addCardio||!cEx){if(cfg.withCardio!==false&&CARDIO.length)_upK.push('add-cardio');}
-          else if(!_cardioAtMax(cEx,_clCL)&&_cardioSecEst(cEx,lv,team,true)<_clBudget*0.30)_upK.push('cardio');
+          else if(!_cardioAtMax(cEx,_clCL)&&_cardioSecEst(cEx,lv,team,true)<_clBudget*_crdF)_upK.push('cardio');
         }
         // desc: only add exercise if new bottom gets a real step (not clamped to min)
         var _canAddEx=_isFlat||_isAsc||(_clMinR+chosen.length*_clStep<=_clCap);
@@ -1900,12 +1887,12 @@ function mkChipper(time,lv,team,cfg){
       for(var _ptL=0;_ptL<20;_ptL++){
         var _ptEst=_wodEstTime(repsArr,chosen,cEx,chosen.length+1,team,lv,true);
         if(_ptEst>=_clBudget*0.90)break;
-        if(!_cardioAtMax(cEx,_postCL)&&_cardioSecEst(cEx,lv,team,true)<_clBudget*0.30){cEx=_cardioUp(cEx,_postCL,true);}
+        if(!_cardioAtMax(cEx,_postCL)&&_cardioSecEst(cEx,lv,team,true)<_clBudget*_crdF){cEx=_cardioUp(cEx,_postCL,true);}
         else break; // لا swap في الـ post-loop — الهدف يوصل calMax ويوقف مو يدور
       }
     }
     // كاب الكارديو عند 30%
-    if(addCardio&&cEx)cEx=_cardioCapSec(cEx,_clBudget*0.30,_clCLInit,lv,team,true,true);
+    if(addCardio&&cEx)cEx=_cardioCapSec(cEx,_clBudget*_crdF,_clCLInit,lv,team,true,true);
   }
   // ── Guard: fix NaN amount before building items ──
   if(addCardio&&cEx&&(isNaN(cEx.amount)||!cEx.amount)){var _fbCL=_chipperCL(lv,team);cEx=Object.assign({},cEx,{amount:_cardioInitAmt(cEx.unit,_fbCL)});}
@@ -1943,6 +1930,29 @@ function mkChipper(time,lv,team,cfg){
     _allCardio.forEach(function(x){x.ex=Object.assign({},x.ex,{amount:_refAmt,unit:_refUnit});});
   }
   var _cardioAdded2=items.filter(function(x){return x.kind==='cardio';}).length;
+  _ordRepsByDifficulty(items,lv,team,function(ex){return _exLimsForTime([ex],lv,team,true);},team===2);
+  // ── تعبئة نهائية (بعد الترتيب): لو التقدير < 90% من الكاب، كبّر الحجم مع الحفاظ على قاعدة الصعوبة ──
+  if(!cfg.baseReps){
+    var _tuStr=items.filter(function(x){return x.kind==='str'&&!x.isRest&&x.ex&&x.baseRep&&['time','carry','m','dist','hold'].indexOf(x.ex.unit)<0;});
+    var _tuCrd=items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});
+    var _tuOrd=_tuStr.slice().sort(function(a,b){return getSecondsPerRep(a.ex,lv,1,false)-getSecondsPerRep(b.ex,lv,1,false);}); // أسهل→أصعب
+    var _tuTr=team===2?18:_tSec(lv);
+    var _tuEst=function(){var e=0;_tuStr.forEach(function(it){e+=it.baseRep*getSecondsPerRep(it.ex,lv,team,team===2);});_tuCrd.forEach(function(cx){e+=_cardioSecEst(cx.ex,lv,team,team===2);});var n=_tuStr.length+_tuCrd.length;if(n>1)e+=(n-1)*_tuTr;return e;};
+    var _tuBdg=time*60;
+    for(var _tuI=0;_tuI<20&&(_tuStr.length||_tuCrd.length);_tuI++){
+      if(_tuEst()>=_tuBdg*0.90)break;
+      var _tuStep=_tuStr.length&&_tuStr.every(function(it){return it.baseRep%10===0;})?10:(_tuStr.length&&_tuStr.every(function(it){return it.baseRep%5===0;})?5:2);
+      var _tuGrew=false;
+      _tuOrd.forEach(function(it,k){
+        var _tuL=_exLimsForTime([it.ex],lv,team,true);
+        var cap=Math.min(_tuL.max,k>0?_tuOrd[k-1].baseRep:Infinity); // الأصعب ما يتجاوز الأسهل
+        var nv=it.baseRep+_tuStep;
+        if(team===2&&nv%2!==0)nv+=1;
+        if(nv<=cap){it.baseRep=nv;it.detail=getDetail(it.ex,nv,null,lv,team);_tuGrew=true;}
+      });
+      if(!_tuGrew)break; // بدون تكبير كارديو — التعبئة بالتكرارات فقط (طلب Laila)
+    }
+  }
   return[{type:'Chipper',title:'Chipper — For Time',infoKey:'i_chipper',infoVars:{t:time},scoreKey:'sc_time',teamKey:team>1?'tm_split':null,items:items,chipperCfg:cfg}];
 }
 
@@ -2051,7 +2061,7 @@ var _SCHEME_LIBRARY={
 };
 function _calcLadderEst(reps,chosen,lv,team,withSchemeCardio){
   var lvl=lv||'intermediate';
-  var tTime=team===2?18:({beginner:22,intermediate:16,advanced:10,elite:6}[lvl]||16);
+  var tTime=team===2?18:_tSec(lvl);
   var est=0;
   chosen.forEach(function(ex){reps.forEach(function(r){est+=r*getSecondsPerRep(ex,lvl,team,true);});});
   if(withSchemeCardio){
@@ -2151,7 +2161,6 @@ function mkLadder(time,lv,team,cfg){
   // Station auto-extend: لو fill لسا < 95% بعد scheme extend، أضف محطات جديدة (كل المسارات)
   if(!isAsc&&!cfg.customReps&&!cfg.exCnt&&reps.length){var _stBudget=time*60;var _stFill=_ldrEst(reps,chosen,_resolvedCardio)/_stBudget;if(_stFill<0.90){if(!_resolvedCardio&&cfg.withCardio!==false){var _tryCardioEst=_ldrEst(reps,chosen,true);if(_tryCardioEst/_stBudget<=1.10){_resolvedCardio=true;_stFill=_tryCardioEst/_stBudget;}}var _MAX_ST=6;while(_stFill<0.90&&chosen.length<_MAX_ST){var _stPool=_ladderPool.filter(function(e){return!chosen.some(function(c){return c.name===e.name;});});if(!_stPool.length)break;var _newEx=pk(_stPool);var _testChosen=chosen.concat([_newEx]);var _testEst2=_ldrEst(reps,_testChosen,_resolvedCardio);if(_testEst2/_stBudget>1.10){// قفز فوق 105% — جرّب trim الـ scheme من الآخر لتسوية مساحة
   var _trimReps=reps.slice();while(_trimReps.length>2){_trimReps=_trimReps.slice(0,-1);var _trimEst=_ldrEst(_trimReps,_testChosen,_resolvedCardio);if(_trimEst/_stBudget>=0.90&&_trimEst/_stBudget<=1.10){reps=_trimReps;chosen=_testChosen;_stFill=_trimEst/_stBudget;break;}if(_trimEst/_stBudget<0.90)break;}break;}chosen=_testChosen;_stFill=_testEst2/_stBudget;}}}
-  var sepLabel=isAsc?'♾️ AMRAP — '+time+' MIN CAP':'── '+reps.length+' ROUNDS ──';
   var infoK=isAsc?'i_asc_ladder':'i_scheme';
   var infoV=isAsc?{step:dispStep,t:time}:{scheme:reps.join(' - '),t:time};
   var items=[];
@@ -2187,23 +2196,6 @@ function mkLadder(time,lv,team,cfg){
   }
   var _ladderTimeSec=isAsc?null:_ldrEst(reps,chosen,_resolvedCardio);
   return[{type:'Ladder',title:'For Time',infoKey:infoK,infoVars:infoV,scoreKey:'sc_time',teamKey:team>1?'tm_ladder':null,items:items,scheme:reps,chosen:chosen,ladderCfg:cfg,_ladderTimeSec:_ladderTimeSec,_estDiv:_estDiv}];
-}
-
-function buildSchemeForRounds(dir,rounds,lv){
-  var baseMap={beginner:6,intermediate:9,advanced:9,elite:12};
-  var stepMap={beginner:2,intermediate:3,advanced:3,elite:5};
-  var fixMap={beginner:8,intermediate:10,advanced:12,elite:15};
-  var base=baseMap[lv]||9;var step=stepMap[lv]||3;var reps=[];
-  if(dir==='fixed'){var f=fixMap[lv]||10;for(var i=0;i<rounds;i++)reps.push(f);}
-  else if(dir==='descending'){var top=base+(rounds-1)*step;for(var i=0;i<rounds;i++)reps.push(top-i*step);}
-  else if(dir==='ascending'){for(var i=0;i<rounds;i++)reps.push(base+i*step);}
-  else if(dir==='pyramid'){
-    var pr=rounds%2===0?rounds-1:rounds; // force odd — pyramid must have single peak
-    var half=Math.ceil(pr/2);
-    for(var i=0;i<half;i++)reps.push(base+i*step);
-    for(var i=half-2;i>=0;i--)reps.push(base+i*step);
-  }
-  return reps.length?reps:getScheme(dir,lv);
 }
 
 var _BUYIN_CARDIO_TABLE={
@@ -2292,38 +2284,175 @@ function mkBuyInOut(time,lv,team,cfg){
   var _biTitle=mode==='buyin'?'Buy-In + WOD':mode==='cashout'?'WOD + Cash-Out':'Buy-In + WOD + Cash-Out';
   return[{type:'Buy-In / Cash-Out',title:_biTitle,infoKey:'i_buyin',infoVars:{r:rounds,t:time},scoreKey:'sc_time',teamKey:team>1?'tm_buyin':null,items:items,buyInCfg:cfg,scheme:reps,noLongForm:true,biWodType:_biWodType}];
 }
+// ── محرّك سكيمات التكرارات (السلّم على الحركات) — قواعد Laila ──
+// 70% سلّم (Step 5/10/20) / 30% فلات-مضاعفات (Flat 2/5/10/20).
+// الحركات ترتَّب أسهل→أصعب؛ الأسهل=أعلى تكرار، الأصعب=أقل. team-split يستبعد 5. clamp لحدود الفئة.
+function _applyRepScheme(items,lv,team,split,cfg){
+  cfg=cfg||{};
+  var strs=items.filter(function(x){return x.kind==='str'&&!x.isRest&&x.ex&&x.baseRep&&['time','carry','m','dist','hold'].indexOf(x.ex.unit)<0;});
+  if(!strs.length)return;
+  // ترتيب أسهل→أصعب حسب الجهد/تكرار
+  var ordered=strs.slice().sort(function(a,b){return getSecondsPerRep(a.ex,lv,1,false)-getSecondsPerRep(b.ex,lv,1,false);});
+  var N=ordered.length;
+  var teamSplit=(team===2&&split);
+  var tgt=Math.round(strs.reduce(function(s,x){return s+x.baseRep;},0)/N)||10;
+  var lims=ordered.map(function(it){return _exLims([it.ex],lv,team,split);}); // حدود كل حركة أسهل→أصعب
+  var useLadder=(N>=2)&&(Math.random()<0.70);
+  var reps=null;
+  if(useLadder){
+    var steps=teamSplit?[2,4,10,20]:[2,4,5,10,20]; // أضفنا سلالم خطوة 2 و4 (أدق، تكرارات أقل)
+    var _stepCap={2:14,4:18}; // سقف القيمة الأكبر لكل سلّم جديد (خطوة2: 8→14 · خطوة4: 8→18)
+    var hardMin=lims[N-1].min;
+    var pick=null;
+    steps.forEach(function(s){
+      var smallest=Math.max(s,Math.ceil(hardMin/s)*s);
+      var vals=ordered.map(function(_x,i){return smallest+(N-1-i)*s;}); // الأسهل(i=0)=الأكبر ... الأصعب=الأصغر
+      var _capOk=!_stepCap[s]||vals[0]<=_stepCap[s]; // الأكبر ضمن سقف السلّم
+      var allFit=_capOk&&ordered.every(function(_x,i){return vals[i]>=lims[i].min&&vals[i]<=lims[i].max;}); // نافذة نظيفة فقط لو الكل يقع ضمن مداه
+      if(allFit){var mid=(vals[0]+vals[N-1])/2;var d=Math.abs(mid-tgt);if(!pick||d<pick.d)pick={vals:vals,d:d};}
+    });
+    if(pick)reps=pick.vals; else useLadder=false;
+  }
+  if(!reps){ // فلات-مضاعفات: قيمة موحّدة داخل تقاطع كل الحدود (فما تحتاج clamp يكسر التوحيد)
+    var loB=Math.max.apply(null,lims.map(function(l){return l.min;}));
+    var hiB=Math.min.apply(null,lims.map(function(l){return l.max;}));
+    var mults=teamSplit?[2,10,20]:[2,5,10,20];
+    var best=null;
+    mults.forEach(function(m){for(var v=Math.ceil(loB/m)*m;v<=hiB;v+=m){var d=Math.abs(v-tgt);if(best===null||d<best.d)best={v:v,d:d};}});
+    var val=best?best.v:Math.max(loB,Math.min(hiB,tgt));
+    reps=ordered.map(function(){return val;});
+  }
+  // إعادة الكتابة (القيم مختارة داخل الحدود أصلاً؛ الـ clamp أمان فقط)
+  ordered.forEach(function(it,i){
+    var r=Math.max(lims[i].min,Math.min(lims[i].max,reps[i]));
+    it.baseRep=r; it.detail=getDetail(it.ex,r,null,lv,team);
+  });
+  // ترتيب العرض: 50% تنازلي (20-15-10، الأسهل أول) / 50% تصاعدي (10-15-20، الأصعب أول)
+  // الثابت دايم: الأسهل = الأكثر تكرارات والأصعب = الأقل — يتغير ترتيب المحطات فقط
+  var _dispRev=Math.random()<0.5;
+  var _disp=_dispRev?ordered.slice().reverse():ordered;
+  var pos=[]; items.forEach(function(x,i){if(strs.indexOf(x)>=0)pos.push(i);});
+  pos.forEach(function(p,i){items[p]=_disp[i];});
+}
+// ── فرض قاعدة الصعوبة (تعميم على كل الأنواع): الأسهل = الأكثر تكرارات، الأصعب = الأقل ──
+// يعيد توزيع نفس قيم التكرارات على الحركات حسب رتبة الصعوبة (getSecondsPerRep سولو)،
+// مع clamp لحدود كل حركة + تمريرة خلفية تضمن عدم انعكاس الترتيب بعد الـ clamp.
+function _ordRepsByDifficulty(items,lv,team,limsFor,evenSnap,detailFor){
+  var strs=items.filter(function(x){return x.kind==='str'&&!x.isRest&&x.ex&&x.baseRep&&['time','carry','m','dist','hold'].indexOf(x.ex.unit)<0;});
+  if(strs.length<2)return;
+  var ordered=strs.slice().sort(function(a,b){return getSecondsPerRep(a.ex,lv,1,false)-getSecondsPerRep(b.ex,lv,1,false);});
+  var vals=strs.map(function(x){return x.baseRep;}).sort(function(a,b){return b-a;});
+  var lims=ordered.map(function(it){return limsFor(it.ex);});
+  var out=ordered.map(function(_x,i){return Math.max(lims[i].min,Math.min(lims[i].max,vals[i]));});
+  for(var j=out.length-2;j>=0;j--){if(out[j]<out[j+1])out[j]=Math.min(lims[j].max,out[j+1]);}
+  // تمريرة أمامية: الأصعب ما ياخذ أكثر من الأسهل حتى لو حدّ فئة الأسهل الأقصى منخفض
+  for(var j2=1;j2<out.length;j2++){if(out[j2]>out[j2-1])out[j2]=Math.max(lims[j2].min,out[j2-1]);}
+  ordered.forEach(function(it,i){
+    var r=out[i];
+    if(evenSnap&&r%2!==0)r=(r+1<=lims[i].max)?r+1:r-1;
+    r=Math.max(lims[i].min,Math.min(lims[i].max,r));
+    it.baseRep=r;it.detail=detailFor?detailFor(it.ex,r):getDetail(it.ex,r,null,lv,team);
+  });
+  // ترتيب العرض سلّم متجانس: 50% نازل (الأسهل أول) / 50% صاعد (الأصعب أول)
+  var _oAsc=Math.random()<0.5; // true = صاعد (الأصعب أول)
+  if(!items.some(function(x){return x.kind==='station-gate';})){
+    var _oDisp=_oAsc?ordered.slice().reverse():ordered.slice();
+    var _oPos=[];items.forEach(function(x,i){if(strs.indexOf(x)>=0)_oPos.push(i);});
+    _oPos.forEach(function(p,i){items[p]=_oDisp[i];});
+    var _oL=0;items.forEach(function(x){if(x.emomMin){x.emomMin='Min '+String.fromCharCode(65+_oL);_oL++;}});
+  }else{
+    // وضع المحطات: رتّب داخل كل محطة (شريحة متتالية من حركات القوة) بدون كسر التجميع
+    var _sgRun=[];
+    var _sgFlush=function(){if(_sgRun.length>1){var _sgSorted=_sgRun.map(function(p){return items[p];}).sort(function(a,b){var d=getSecondsPerRep(a.ex,lv,1,false)-getSecondsPerRep(b.ex,lv,1,false);return _oAsc?-d:d;});_sgRun.forEach(function(p,i){items[p]=_sgSorted[i];});}_sgRun=[];};
+    items.forEach(function(x,i){if(strs.indexOf(x)>=0){_sgRun.push(i);}else{_sgFlush();}});
+    _sgFlush();
+  }
+}
 function mkYGIG(time,lv,team,cfg){
   cfg=cfg||{};
   var eff=Math.max(team,2);
   var fmt=cfg.format||(Math.random()>0.5?'amrap':'for-time');
   // For-Time: roundsEach/timeCap خاصية YGIG فقط — حسب الوقت
   var _ftExCnt=time<=30?{mMin:2,mMax:3}:{mMin:3,mMax:4};
-  var _ygigRftRoundsMap={10:2,15:2,20:3,25:3,30:3,35:4,40:4,45:4,50:4,55:4,60:4};
-  var _ftDef={roundsEach:_ygigRftRoundsMap[time]||3};
+  // جدول جولات FT بالنطاقات «الوقت وأقل» — المجموع زوجي (المعروض = لكل شريك ×2)، لكل شريك = المجموع/2
+  var _ftE=_ygigFtBand(time); // الجدول المشترك
+  var _ftDef={roundsEach:ri(_ftE[0],_ftE[1])};
   if(fmt==='for-time'){
+    // ── حدود جداول YGIG FT ── الحركات: [_ftMMin,_ftMMax] | الجولات لكل شريك: [_ftEMin,_ftEMax] ──
+    var _ftMMin=_ftExCnt.mMin, _ftMMax=_ftExCnt.mMax;
+    var _ftEMin=_ftE[0], _ftEMax=_ftE[1];
+    var _exCnt=cfg.exCnt||ri(_ftMMin,_ftMMax); // تنويع: 2-3 أو 3-4 حسب الجدول → أشكال متنوّعة
     var roundsEach=cfg.roundsEach||_ftDef.roundsEach;
-    var _exCnt=cfg.exCnt||ri(_ftExCnt.mMin,_ftExCnt.mMax);
-    // mkRFT يستهدف time/(roundsEach*2) لكل جولة (كلا الشريكين يتناوبان)
-    var _rftSec=mkRFT(time,lv,team,{exCnt:_exCnt,baseReps:cfg.baseReps,withCardio:cfg.withCardio,rounds:roundsEach*2,noTeamSplit:true})[0];
-    var timeCap;
+    // تقدير زمن جولة واحدة (solo, noTeamSplit) من أيتمز القسم
+    var _ygEstOrs=function(sec){
+      var _it=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});
+      var _cd=sec.items.filter(function(x){return x.kind==='cardio'&&x.ex&&x.ex.amount;}).map(function(x){return x.ex;});
+      var s=0;
+      _it.forEach(function(x){s+=x.baseRep*getSecondsPerRep(x.ex,lv,1,false);});
+      _cd.forEach(function(g){s+=_cardioSecEst(g,lv,1,false);});
+      if(_it.length+_cd.length>1)s+=(_it.length+_cd.length-1)*30; // transitions
+      return s||60;
+    };
+    // الكارديو محطة منفصلة اختيارية (لا تُحسب ضمن جدول الحركات)
+    var _ftDoCardio=cfg.withCardio===true||(cfg.withCardio===undefined&&Math.random()<0.5);
+    var _ftCL=_cardioLimits(team,false,lv);
+    // بناء جولة: عدد حركات القوة = ex بالضبط (withCardio:false يمنع mkRFT من احتساب الكارديو ضمن العدد)
+    var _ygBuildFT=function(ex,rnds){
+      var s=mkRFT(time,lv,team,{exCnt:ex,baseReps:cfg.baseReps,withCardio:false,rounds:rnds*2,noTeamSplit:true})[0];
+      var _strOf=function(){return s.items.filter(function(x){return x.kind==='str'&&!x.isRest;});};
+      // ضمان ألا تقل حركات القوة عن عدد الجدول (safety net داخل mkRFT قد ينقص) — أعد المحاولة
+      for(var _g=0;_g<4&&_strOf().length<ex;_g++){
+        s=mkRFT(time,lv,team,{exCnt:ex,baseReps:cfg.baseReps,withCardio:false,rounds:rnds*2,noTeamSplit:true})[0];
+      }
+      // تعبئة إجبارية: إذا ظل أقل من الجدول، أكمّل حركات قوة من الـ pool (التزام بأدنى جدول الحركات)
+      if(_strOf().length<ex){
+        var _used={};_strOf().forEach(function(x){if(x.ex)_used[x.ex.name]=true;});
+        var _pool=getPool(lv,null,team).filter(function(e){return!_used[e.name];});
+        var _eb=_strOf().map(function(x){return x.baseRep;}).filter(Boolean);
+        var _baseR=_eb.length?Math.min.apply(null,_eb):null;
+        while(_strOf().length<ex&&_pool.length){
+          var _nx=_pool.shift();_used[_nx.name]=true;
+          var _li=_exLims([_nx],lv,team,false);
+          var _r=Math.max(_li.min,Math.min(_li.max,_baseR||_li.min));
+          var _it={kind:'str',ex:_nx,detail:getDetail(_nx,_r,null,lv,team),baseRep:_r};
+          var _idx=-1;s.items.forEach(function(x,i){if(x.kind==='str')_idx=i;});
+          s.items.splice(_idx+1,0,_it);
+        }
+      }
+      // سكيم التكرارات (سلّم/فلات على الحركات) — YGIG noTeamSplit فالـ split=false
+      _applyRepScheme(s.items,lv,team,false,cfg);
+      if(_ftDoCardio){
+        var _cExRaw=pk(CARDIO.filter(function(c){return !c.altOnly;}));
+        var _cEx=Object.assign({},_cExRaw,{amount:_cardioInitAmt(_cExRaw.unit,_ftCL)});
+        if(_cEx.unit==='Cal')_cEx.amount=_roundCal(_cEx.amount,team);
+        else if(_cEx.unit==='m')_cEx.amount=_roundMtr(_cEx.amount);
+        s.items.push({kind:'cardio',ex:_cEx});
+      }
+      return s;
+    };
+    var timeCap, _rftSec;
     if(cfg.timeCap){
+      _rftSec=_ygBuildFT(_exCnt,roundsEach);
       timeCap=cfg.timeCap;
     } else {
-      // حساب est لجولة واحدة مباشرة من الأيتمز (solo, noTeamSplit)
-      var _orItems=_rftSec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});
-      var _orCardio=_rftSec.items.filter(function(x){return x.kind==='cardio'&&x.ex&&x.ex.amount;}).map(function(x){return x.ex;});
-      var _orTTime=30; // YGIG دايماً team=2 → tTime=30s (يطابق _secFill)
-      var _ors=0;
-      _orItems.forEach(function(it){_ors+=it.baseRep*getSecondsPerRep(it.ex,lv,1,false);});
-      _orCardio.forEach(function(gx){_ors+=_cardioSecEst(gx,lv,1,false);});
-      if(_orItems.length+_orCardio.length>1)_ors+=(_orItems.length+_orCardio.length-1)*_orTTime;
-      if(!_ors)_ors=60;
-      // timeCap = وقت الـ WOD الكلي اللازم لكلا الشريكين × roundsEach
-      timeCap=Math.ceil(_ors*roundsEach*2/(0.90*60));
-      if(!cfg.roundsEach){
-        for(var _t=0;_t<10&&timeCap>time&&roundsEach>2;_t++){roundsEach--;timeCap=Math.ceil(_ors*roundsEach*2/(0.90*60));}
+      // best-of-N: يجرّب عدة تركيبات ويختار الأقرب لملء الوقت 100% بمقياس التطبيق نفسه (_secFillRatio).
+      // الجولات ثابتة من الجدول دايماً؛ التنويع في الحركات والتمارين والسكيم.
+      var _best=null;
+      var _reMax=_ftEMax+1; // فوق الجدول بخطوة زوجية وحدة فقط (roundsEach+1 = المعروض+2) — مو أكثر (طلب Laila)
+      // score: عقوبة خروج الملء عن 90-110% + مكافأة لجولات أكثر (تكرارات أقل) — طلب Laila «تكرار أقل جولات أكثر»
+      var _scoreFill=function(f,re){var pen=f>1.10?(f-1.10)*3:(f<0.90?(0.90-f)*2:0);return pen-re*0.002;};
+      for(var _try=0;_try<26;_try++){
+        _ftDoCardio=cfg.withCardio===true?true:cfg.withCardio===false?false:(Math.random()<0.5); // نوّع الكارديو أيضاً
+        var _re=cfg.roundsEach||ri(_ftEMin,_reMax); // من أدنى الجدول لأعلى (يسمح بالزيادة فوق الجدول)
+        var _ec=cfg.exCnt||ri(_ftMMin,_ftMMax);
+        var _sec=_ygBuildFT(_ec,_re);
+        _sec.type='YGIG / Partner WOD'; _sec.infoVars={r:_re,cap:time};
+        var _fill=_secFillRatio(_sec,lv,team);
+        var _sc=_scoreFill(_fill,_re);
+        if(!_best||_sc<_best.sc)_best={sec:_sec,ec:_ec,re:_re,fill:_fill,sc:_sc};
       }
-      timeCap=Math.min(time,Math.max(1,timeCap));
+      _exCnt=_best.ec; roundsEach=_best.re; _rftSec=_best.sec;
+      timeCap=Math.min(time,Math.max(1,Math.ceil(_ygEstOrs(_rftSec)*roundsEach*2/(0.90*60))));
     }
     _rftSec.type='YGIG / Partner WOD';_rftSec.title='YGIG - '+(roundsEach*2)+' Rounds For Time';
     _rftSec.infoKey='i_ygig_ft';_rftSec.infoVars={r:roundsEach,rt:roundsEach*2,cap:time};
@@ -2334,33 +2463,40 @@ function mkYGIG(time,lv,team,cfg){
   }
   // AMRAP — الفرق الوحيد عن AMRAP العادي: جدول وقت الجولة المستهدف (أقصر بسبب partner switch)
   // كل شيء آخر موحّد: exCnt، auto-scaler، transitions، retry جولات زوجية — كله داخل mkAmrap
-  var _ygigTR=time<=11?[60,90]:[120,180];
-  var _ygigRawRnds=Math.floor(time*60/_ygigTR[0]);
-  var _ygigInitEven=Math.max(2,Math.floor(_ygigRawRnds/2)*2);
-  var _ygigAmrapTgt=Math.round(time*60/_ygigInitEven);
+  var _ygigCap=time<=15?90:180;
+  // جدول جولات AMRAP بالنطاقات «الوقت وأقل» — أي وقت (بما فيه اليدوي) يلقى نطاقه
+  var _ygigAmrapRndBands=[{max:5,r:4},{max:10,r:8},{max:15,r:10},{max:20,r:10},{max:25,r:12},{max:30,r:14},{max:35,r:16},{max:40,r:20},{max:45,r:22},{max:50,r:24},{max:55,r:26},{max:60,r:30}];
+  var _ygigBand=_ygigAmrapRndBands.find(function(b){return time<=b.max;});
+  var _ygigInitEven=cfg.rounds||(_ygigBand?_ygigBand.r:30);
+  if(_ygigInitEven%2)_ygigInitEven=Math.max(2,_ygigInitEven-1); // أبقِها زوجية للتناوب
+  var _ygigAmrapTgt=Math.min(Math.round(time*60/_ygigInitEven),_ygigCap);
   var _ygigWithCardio=cfg.withCardio!==undefined?cfg.withCardio:Math.random()<0.50;
-  // نفس جدول exCnt حسب الوقت مثل AMRAP (بدل الـ 50/50 الثابت)
-  var _ygigExCnt=cfg.exCnt||ri(2,3);
+  // جدول حركات AMRAP حسب الوقت (Laila): ≤30 → 2 | >30 → 2-3
+  var _ygigExCnt=cfg.exCnt||(time<=30?2:ri(2,3));
   // استدعاء واحد لـ mkAmrap — نفس الـ auto-scaler 30-iteration مع قيدين إضافيين فقط:
   // maxTargetSec = hard cap على وقت الجولة | ensureEvenRounds = جولات زوجية داخل نفس اللووب
   var _amrSec=mkAmrap(time,lv,team,{
     exCnt:_ygigExCnt,baseReps:cfg.baseReps,withCardio:_ygigWithCardio,
-    target:_ygigAmrapTgt,maxTargetSec:_ygigTR[1],
-    noTeamSplit:true,ensureEvenRounds:true
+    target:_ygigAmrapTgt,maxTargetSec:_ygigCap,
+    noTeamSplit:true,ensureEvenRounds:true,targetRounds:_ygigInitEven
   })[0];
-  // احسب الجولات الفعلية للعرض (solo / noTeamSplit — نفس _amrTrans المستخدمة داخل mkAmrap)
-  var _ygigFinalRnds=(function(){
-    if(!_amrSec.items)return _ygigInitEven;
-    var strI=_amrSec.items.filter(function(x){return x.kind==='str'&&!x.isRest&&x.baseRep&&x.ex;});
-    var crdI=_amrSec.items.filter(function(x){return x.kind==='cardio'&&x.ex&&x.ex.amount;});
-    var tr={beginner:22,intermediate:16,advanced:10,elite:6}[lv]||16; // solo transitions
-    var nI=strI.length+(crdI.length?1:0);
-    var pw=0;
-    strI.forEach(function(it){pw+=it.baseRep*getSecondsPerRep(it.ex,lv,1,false);});
-    crdI.forEach(function(it){pw+=_cardioSecEst(it.ex,lv,1,false);});
-    if(nI>1)pw+=(nI-1)*tr;
-    return pw>0?Math.max(1,Math.floor(time*60/pw)):_ygigInitEven;
-  })();
+  // سكيم التكرارات على الحركات (YGIG noTeamSplit → split=false)
+  _applyRepScheme(_amrSec.items,lv,team,false,cfg);
+  // الجولات المعروضة = initEvenRounds من الجدول (زوجي دائماً، مطابق للـ target)
+  var _ygigFinalRnds=_ygigInitEven;
+  // تعديل واقعي متناظر: يحسب أكبر عدد جولات زوجي ينمشّي بالوقت فعلاً — ينزل لو الجولة ثقيلة، ويرتفع لو خفيفة
+  if(!cfg.rounds){
+    var _aIt=_amrSec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});
+    var _aCd=_amrSec.items.filter(function(x){return x.kind==='cardio'&&x.ex&&x.ex.amount;}).map(function(x){return x.ex;});
+    var _aOrs=0;
+    _aIt.forEach(function(x){_aOrs+=x.baseRep*getSecondsPerRep(x.ex,lv,1,false);});
+    _aCd.forEach(function(g){_aOrs+=_cardioSecEst(g,lv,1,false);});
+    if(_aIt.length+_aCd.length>1)_aOrs+=(_aIt.length+_aCd.length-1)*30;
+    if(!_aOrs)_aOrs=60;
+    var _aFit=Math.max(2,Math.floor(Math.floor(time*60/_aOrs)/2)*2); // أكبر عدد زوجي ينمشّي بالوقت
+    // النزول واقعي كامل (لا هدف مستحيل)، والصعود محدود بـ +2 فوق جدولك فقط
+    _ygigFinalRnds=Math.max(2,Math.min(_aFit,_ygigInitEven+2));
+  }
   var _amrRnd=Math.round(_ygigAmrapTgt/60);
   _amrSec.type='YGIG / Partner WOD';_amrSec.title='YGIG - '+time+' MIN AMRAP';
   _amrSec.infoKey='i_amrap';_amrSec.infoVars={t:time,rnd:_amrRnd,rnds:_ygigFinalRnds,tgt:_ygigAmrapTgt};
@@ -2369,11 +2505,6 @@ function mkYGIG(time,lv,team,cfg){
   return[_amrSec];
 }
 
-function _syncGabCardio(secA,secB){
-  var cA=secA.items&&secA.items.filter(function(x){return x.kind==='cardio';})[0];
-  var cB=secB.items&&secB.items.filter(function(x){return x.kind==='cardio';})[0];
-  if(cA&&cB&&cA.ex)cB.ex=Object.assign({},cB.ex,{amount:cA.ex.amount,unit:cA.ex.unit});
-}
 function mkGroupAB(time,lv,team,cfg){
   cfg=cfg||{};
   var _gabCfg=Object.assign({},cfg);
@@ -2397,6 +2528,8 @@ function mkGroupAB(time,lv,team,cfg){
   secB.type='Group B';secB.title='Station B — AMRAP '+(time/2)+' Min';
   secB.infoKey='i_groupB_amrap';
   secB.groupAbCfg=cfg;
+  // فرض قاعدة الصعوبة على الفترتين (سولو) — يعالج كسور الـ clamp النادرة من محرك AMRAP
+  [secA,secB].forEach(function(_gs){if(_gs&&_gs.items)_ordRepsByDifficulty(_gs.items,lv,1,function(ex){return _exLims([ex],lv,1,false);},false);});
   return[secA,secB];
 }
 
@@ -2412,16 +2545,6 @@ var SCHEMES={
   open_desc: {ar:'السلم التنازلي المفتوح', en:'Open Descending Ladder', dynamic:true, dType:'open_desc'},
   pyr_dyn:   {ar:'العداد الهرمي',          en:'Pyramid',                dynamic:true, dType:'pyr_dyn'},
 };
-function schemeSelectHtml(si,cfg,keys,onchangeFn){
-  var S_sel='width:100%;background:var(--bg2);border:0.5px solid var(--bdr);border-radius:7px;padding:7px 10px;font-size:13px;color:var(--txt);outline:none;min-height:36px;font-family:inherit;cursor:pointer;direction:'+(CFG.lang==='ar'?'rtl':'ltr');
-  var opts='<option value="">'+t('scheme_sel')+'</option>'
-  +keys.map(function(k){
-    var sch=SCHEMES[k];
-    var label=sch.dynamic?(CFG.lang==='ar'?sch.ar:sch.en):(sch.reps.join(' - ')+' reps');
-    return'<option dir="'+(sch.dynamic?'auto':'ltr')+'" value="'+k+'"'+(cfg.schemeKey===k?' selected':'')+'>'+label+'</option>';
-  }).join('');
-  return'<select onchange="'+onchangeFn+'('+si+',this.value)" style="'+S_sel+'">'+opts+'</select>';
-}
 function buildDynReps(key,cfg){
   var start=cfg.dynStart;var step=cfg.dynStep||1;
   if(!start||start<1)return null;
@@ -2434,13 +2557,6 @@ function buildDynReps(key,cfg){
     for(var x=start-step;x>=step;x-=step)arr.push(x);
   }
   return arr.length?arr:null;
-}
-function buildAmrapDynDetail(dType,cfg){
-  var start=cfg.dynStart||1;var step=cfg.dynStep||1;
-  if(dType==='ascending')return start+' - '+(start+step)+' - '+(start+step*2)+' ... reps';
-  if(dType==='open_desc')return start+' - '+(start-step)+' - '+(start-step*2)+' ... '+step+' reps';
-  var peak=cfg.dynStart||5;
-  return'1 - 2 - ... - '+peak+' - ... - 2 - 1 reps';
 }
 function renderDynInputsHTML(dType,start,step,si,prefix){
   var Si='background:var(--bg2);border:0.5px solid var(--bdr);border-radius:7px;padding:5px 8px;font-size:13px;color:var(--txt);outline:none;font-family:inherit;width:72px;direction:ltr;text-align:center;min-height:30px';
@@ -2509,7 +2625,8 @@ function _secFillRatio(sec,lv,team){
   sec.items.forEach(function(x){if((x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount)gateExArr.push(x.ex);});
   var repsArr=strItems.map(function(it){return it.baseRep;});
   var exArr=strItems.map(function(it){return it.ex;});
-  var tTime=team===2?18:({beginner:22,intermediate:16,advanced:10,elite:6}[lvl]||16);
+  // YGIG: كل جولة يسوّيها لاعب واحد (سولو) → انتقال سولو، مطابق لنص «الوقت التقريبي»
+  var tTime=(team===2&&!_isYgigFT)?18:_tSec(lvl);
   var totalItems=strItems.length+gateExArr.length;
   var est=0;
   try{
@@ -2519,8 +2636,9 @@ function _secFillRatio(sec,lv,team){
   }catch(e){return 0;}
   if(_isYgigFT&&iv.r){est=est*iv.r*2;}else if((sec.type==='For Time / RFT'||sec.type==='Buy-In / Cash-Out')&&iv.r){est=est*iv.r;}
   if(sec.type==='EMOM'&&iv.n){var _em=0;for(var _j=0;_j<Math.min(repsArr.length,exArr.length);_j++)_em+=repsArr[_j]*getSecondsPerRep(exArr[_j],lvl,team,false);gateExArr.forEach(function(gx){_em+=_cardioSecEst(gx,lvl,team,false);});est=_em;budget=(iv.n+(gateExArr.length||0))*45;}
-  if((sec.type==='AMRAP'||sec.type==='YGIG / Partner WOD')&&iv.rnd&&iv.rnd>0){var _am=0;for(var _k=0;_k<Math.min(repsArr.length,exArr.length);_k++)_am+=repsArr[_k]*getSecondsPerRep(exArr[_k],lvl,team,true);gateExArr.forEach(function(gx){_am+=_cardioSecEst(gx,lvl,team,true);});est=_am;budget=iv.tgt||iv.rnd*60;}  if((sec.type==='Group A'||sec.type==='Group B')&&iv.rnd&&iv.rnd>0){var _gab=0;for(var _kg=0;_kg<Math.min(repsArr.length,exArr.length);_kg++)_gab+=repsArr[_kg]*getSecondsPerRep(exArr[_kg],lvl,team,false);gateExArr.forEach(function(gx){_gab+=_cardioSecEst(gx,lvl,team,false);});est=_gab;budget=iv.tgt||iv.rnd*60;}
-  if(sec.type==='Ladder'&&sec.scheme&&sec.scheme.length){var _lsch=sec.scheme;var _lEstDiv=sec._estDiv||1;var _lEstTeam=_lEstDiv>1?1:team;var _lTTime=_lEstTeam===2?18:({beginner:22,intermediate:16,advanced:10,elite:6}[lvl]||16);var _lCrdItems=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex;});var _lEst2=0;strItems.forEach(function(it){var _rpr=it.repsPerRound;var _sch=(_rpr&&_rpr.length>1)?_rpr:_lsch;_sch.forEach(function(r){_lEst2+=(r/_lEstDiv)*getSecondsPerRep(it.ex,lvl,_lEstTeam,true);});});_lCrdItems.forEach(function(it){var _ca=it.cardioAmounts;if(_ca&&_ca.length>1){_ca.forEach(function(a){_lEst2+=_cardioSecEst(Object.assign({},it.ex,{amount:a/_lEstDiv}),lvl,_lEstTeam,true);});}else if(it.ex&&it.ex.amount){_lEst2+=_cardioSecEst(Object.assign({},it.ex,{amount:it.ex.amount/_lEstDiv}),lvl,_lEstTeam,true)*_lsch.length;}});_lEst2+=(strItems.length+_lCrdItems.length)*_lsch.length>0?((strItems.length+_lCrdItems.length)*_lsch.length-1)*_lTTime:0;return budget>0?_lEst2/budget:0;}
+  if((sec.type==='AMRAP'||sec.type==='YGIG / Partner WOD')&&iv.rnd&&iv.rnd>0){var _isYgA=sec.type==='YGIG / Partner WOD';var _amTm=_isYgA?1:team;var _amSp=_isYgA?false:true;var _am=0;for(var _k=0;_k<Math.min(repsArr.length,exArr.length);_k++)_am+=repsArr[_k]*getSecondsPerRep(exArr[_k],lvl,_amTm,_amSp);gateExArr.forEach(function(gx){_am+=_cardioSecEst(gx,lvl,_amTm,_amSp);});if(_isYgA&&(strItems.length+gateExArr.length)>1)_am+=(strItems.length+gateExArr.length-1)*_tSec(lvl);est=_am;budget=iv.tgt||iv.rnd*60;}  if((sec.type==='Group A'||sec.type==='Group B')&&iv.rnd&&iv.rnd>0){var _gab=0;for(var _kg=0;_kg<Math.min(repsArr.length,exArr.length);_kg++)_gab+=repsArr[_kg]*getSecondsPerRep(exArr[_kg],lvl,team,false);gateExArr.forEach(function(gx){_gab+=_cardioSecEst(gx,lvl,team,false);});est=_gab;budget=iv.tgt||iv.rnd*60;}
+  if(sec.type==='Buy-In / Cash-Out'){var _biR2=iv.r||1;var _biStr2=0;for(var _bk2=0;_bk2<Math.min(repsArr.length,exArr.length);_bk2++){var _brpr2=strItems[_bk2].repsPerRound;var _btot2=(_brpr2&&_brpr2.length>1)?_brpr2.reduce(function(a,c){return a+c;},0):(repsArr[_bk2]*_biR2);_biStr2+=_btot2*getSecondsPerRep(exArr[_bk2],lvl,team,team===2);}var _biRnd2=0;gateExArr.forEach(function(gx){_biRnd2+=_cardioSecEst(gx,lvl,team,team===2);});if(strItems.length+gateExArr.length>1)_biRnd2+=(strItems.length+gateExArr.length-1)*tTime;var _biBi2=0;sec.items.filter(function(x){return x.kind==='buyin'&&x.ex&&x.ex.amount;}).forEach(function(it){_biBi2+=_cardioSecEst(it.ex,lvl,team,team===2);});est=_biStr2+_biRnd2*_biR2+_biBi2;budget=(iv.t||S.time||20)*60;}
+  if(sec.type==='Ladder'&&sec.scheme&&sec.scheme.length){var _lsch=sec.scheme;var _lEstDiv=sec._estDiv||1;var _lEstTeam=_lEstDiv>1?1:team;var _lTTime=_lEstTeam===2?18:_tSec(lvl);var _lCrdItems=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex;});var _lEst2=0;strItems.forEach(function(it){var _rpr=it.repsPerRound;var _sch=(_rpr&&_rpr.length>1)?_rpr:_lsch;_sch.forEach(function(r){_lEst2+=(r/_lEstDiv)*getSecondsPerRep(it.ex,lvl,_lEstTeam,true);});});_lCrdItems.forEach(function(it){var _ca=it.cardioAmounts;if(_ca&&_ca.length>1){_ca.forEach(function(a){_lEst2+=_cardioSecEst(Object.assign({},it.ex,{amount:a/_lEstDiv}),lvl,_lEstTeam,true);});}else if(it.ex&&it.ex.amount){_lEst2+=_cardioSecEst(Object.assign({},it.ex,{amount:it.ex.amount/_lEstDiv}),lvl,_lEstTeam,true)*_lsch.length;}});_lEst2+=(strItems.length+_lCrdItems.length)*_lsch.length>0?((strItems.length+_lCrdItems.length)*_lsch.length-1)*_lTTime:0;return budget>0?_lEst2/budget:0;}
   return budget>0?est/budget:0;
 }
 // ── helper: نفس retry loop الـ generate لكن لسكشن واحد ──
@@ -2703,14 +2821,6 @@ function renderChipperCfg(sec,si){
   +'<button onclick="regenChipper('+si+')" style="width:100%;background:var(--or);color:#000;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;min-height:42px">↺ '+t('chip_regen')+'</button>'
   +'</div>';
 }
-function setChipperRepsKey(si,key){
-  var sec=S.wod.sections[si];
-  if(!sec.chipperCfg)sec.chipperCfg={};
-  sec.chipperCfg.repsKey=key||undefined;
-  var locked=!!key;
-  var fr=document.getElementById('chipper-frep-row-'+si);
-  if(fr){fr.style.opacity=locked?'0.35':'1';fr.style.pointerEvents=locked?'none':'auto';}
-}
 function setChipperPat(si,p){
   var sec=S.wod.sections[si];if(!sec.chipperCfg)sec.chipperCfg={};
   if(sec.chipperCfg.pat===p){delete sec.chipperCfg.pat;}else{sec.chipperCfg.pat=p;}
@@ -2736,79 +2846,24 @@ function _updateChipperSchemeDropdown(si,cnt){
   });
   sel.innerHTML=opts;
 }
-function setChipperMode(si,mode){
-  var sec=S.wod.sections[si];if(!sec.chipperCfg)sec.chipperCfg={};
-  sec.chipperCfg.stationMode=sec.chipperCfg.stationMode===mode?null:mode;
-  delete sec.chipperCfg.exCnt;
-  var el=document.getElementById('chipper-cfg-'+si);
-  if(el){var wasVisible=el.style.display!=='none';el.outerHTML=renderChipperCfg(sec,si);if(wasVisible){var nel=document.getElementById('chipper-cfg-'+si);if(nel)nel.style.display='block';}}
-}
-function setChipperStationSize(si,sz,btn){
-  var sec=S.wod.sections[si];if(!sec.chipperCfg)sec.chipperCfg={};
-  sec.chipperCfg.stationSize=sz;
-  delete sec.chipperCfg.exCnt;
-  var el=document.getElementById('chipper-cfg-'+si);
-  if(el){var wasVisible=el.style.display!=='none';el.outerHTML=renderChipperCfg(sec,si);if(wasVisible){var nel=document.getElementById('chipper-cfg-'+si);if(nel)nel.style.display='block';}}
-}
-function setChipperStationCount(si,n,btn){
-  var sec=S.wod.sections[si];if(!sec.chipperCfg)sec.chipperCfg={};
-  // toggle
-  if(sec.chipperCfg.stationCount===n){delete sec.chipperCfg.stationCount;delete sec.chipperCfg.exCnt;}
-  else{sec.chipperCfg.stationCount=n;delete sec.chipperCfg.exCnt;}
-  var el=document.getElementById('chipper-cfg-'+si);
-  if(el){var wasVisible=el.style.display!=='none';el.outerHTML=renderChipperCfg(sec,si);if(wasVisible){var nel=document.getElementById('chipper-cfg-'+si);if(nel)nel.style.display='block';}}
-}
-function _chipperLockScheme(si,locked){
-  var sel=document.getElementById('chipper-scheme-sel-'+si);
-  if(!sel)return;
-  sel.disabled=locked;
-  sel.style.opacity=locked?'0.35':'1';
-  sel.style.pointerEvents=locked?'none':'auto';
-}
-function _chipperClearScheme(si){
-  var sec=S.wod.sections[si];if(sec&&sec.chipperCfg)delete sec.chipperCfg.repsKey;
-  var sel=document.getElementById('chipper-scheme-sel-'+si);if(sel)sel.value='';
-  var fr=document.getElementById('chipper-frep-row-'+si);
-  if(fr){fr.style.opacity='1';fr.style.pointerEvents='auto';}
-}
-function setChipperRepPreset(si,n,btn){
-  var sec=S.wod.sections[si];if(!sec.chipperCfg)sec.chipperCfg={};
-  _chipperClearScheme(si);
-  var parent=btn.parentElement;
-  Array.from(parent.querySelectorAll('button')).forEach(function(b){b.style.background='var(--bg2)';b.style.borderColor='var(--bdr)';b.style.color='var(--txt2)';});
-  var inp=document.getElementById('chipper-rep-inp-'+si);if(inp)inp.value='';
-  if(sec.chipperCfg.baseReps===n){delete sec.chipperCfg.baseReps;_chipperLockScheme(si,false);return;}
-  sec.chipperCfg.baseReps=n;btn.style.background='var(--or)';btn.style.borderColor='var(--or)';btn.style.color='#000';
-  _chipperLockScheme(si,true);
-}
-function setChipperRepInput(si,inp){
-  var val=parseInt(inp.value);if(!val||val<1){_chipperLockScheme(si,false);return;}
-  var sec=S.wod.sections[si];if(!sec.chipperCfg)sec.chipperCfg={};
-  _chipperClearScheme(si);
-  sec.chipperCfg.baseReps=val;
-  var parent=inp.parentElement;
-  Array.from(parent.querySelectorAll('button')).forEach(function(b){b.style.background='var(--bg2)';b.style.borderColor='var(--bdr)';b.style.color='var(--txt2)';});
-  _chipperLockScheme(si,true);
-}
-
 function cfgGearRow(infoTxt,toggleFn,si,timeEst,preTime){
   var txt=(infoTxt||'').replace(/\. /g,' | ').replace(/\.$/,'');if(CFG.lang==='ar')txt=bdiNums(fixArPlural(txt));else txt=txt.replace(/(~<bdi>[^<]*<\/bdi> min)$/,'<span style="font-weight:900">$1<\/span>');
   var tH=timeEst?(CFG.lang==='ar'?(' | '+t('est_time_label')+(preTime?' '+preTime:'')+'<br><span dir="ltr" style="font-weight:800;unicode-bidi:bidi-override">~'+timeEst+' دقيقة</span>'):(' | '+t('est_time_label')+(preTime?' '+preTime:'')+' <span dir="ltr" style="font-weight:800">~'+timeEst+' min</span>')):'';
   return '<div class="si" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span dir="'+(CFG.lang==="ar"?"rtl":"ltr")+'">'+txt+tH+'</span><span onclick="'+toggleFn+'('+si+')" style="cursor:pointer;font-size:15px;flex-shrink:0;opacity:0.6">⚙️</span></div>';
 }
 function renderSecInfo(sec,si,infoTxt){
-  var _amrBoldTime='';if((sec.type==='AMRAP'||sec.type==='YGIG / Partner WOD')&&infoTxt===undefined&&sec.infoKey){var _riv=sec.infoVars||{};var _rlv=S.level||'intermediate';var _isYgigSec=sec.type==='YGIG / Partner WOD'&&!(_riv.r);var _rtm=_isYgigSec?1:(S.teamSize||1);var _rSplit=_isYgigSec?false:true;var _rtT=_rtm===2?18:({beginner:22,intermediate:16,advanced:10,elite:6}[_rlv]||16);var _rpw=0;var _rstrI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _rcardI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});_rstrI.forEach(function(it){_rpw+=it.baseRep*getSecondsPerRep(it.ex,_rlv,_rtm,_rSplit);});_rcardI.forEach(function(cx){_rpw+=_cardioSecEst(cx.ex,_rlv,_rtm,_rSplit);});_rpw+=(_rstrI.length+_rcardI.length-1)*_rtT;if(_rpw>0){var _rwSec=(_riv.t||S.time)*60;var _rdynRnds=Math.max(1,Math.floor(_rwSec/_rpw));var _rndSnap=Math.round(_rpw/10)*10;var _rndTime=Math.floor(_rndSnap/60)+':'+((_rndSnap%60)<10?'0':'')+(_rndSnap%60);var _amrTotSec=Math.round(_rdynRnds*_rpw);var _amrTotTime=Math.floor(_amrTotSec/60)+':'+( (_amrTotSec%60)<10?'0':'')+(_amrTotSec%60);_amrBoldTime=_rdynRnds?(CFG.lang==='ar'?(_rdynRnds+' جولات ~'+_rndTime+'/جولة ~'+_amrTotTime):(_rdynRnds+' rounds · ~'+_rndTime+'/round ~'+_amrTotTime)):_amrTotTime;infoTxt=ti(sec.infoKey,Object.assign({},_riv,{rnds:_rdynRnds,rndTime:_rndTime}));if(_rdynRnds){if(CFG.lang==='ar'){infoTxt='أكمل أكبر عدد جولات ممكن | الوقت التقريبي لإتمام ~<bdi>'+_rdynRnds+'</bdi> جولات · ~<bdi>'+_rndTime+'</bdi>/جولة = ~<bdi>'+_amrTotTime+'</bdi> دقيقة';_amrBoldTime='';}else{infoTxt='Complete as many rounds as possible | Estimated time to complete ~<bdi>'+_rdynRnds+'</bdi> rounds · ~<bdi>'+_rndTime+'</bdi>/round = ~<bdi>'+_amrTotTime+'</bdi> min';_amrBoldTime='';}}}}  
-  if(sec.type==='Group A'&&infoTxt===undefined){var _gabT=S.wod&&S.wod.cfg&&S.wod.cfg.time||S.time;var _gabDesc=ti('i_groupA',{cap:_gabT});var _grlv=S.level||'intermediate';var _grtT=({beginner:22,intermediate:16,advanced:10,elite:6}[_grlv]||16);var _gabCalc=function(s){if(!s||!s.items)return null;var _si=s.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _ci=s.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _pw=0;_si.forEach(function(it){_pw+=it.baseRep*getSecondsPerRep(it.ex,_grlv,1,false);});_ci.forEach(function(cx){_pw+=_cardioSecEst(cx.ex,_grlv,1,false);});_pw+=(_si.length+_ci.length-1)*_grtT;if(_pw<=0)return null;var _t=(s.infoVars&&s.infoVars.t)||S.time;var _rnds=Math.max(1,Math.floor(_t*60/_pw));var _snap=Math.round(_pw/10)*10;var _tm=Math.floor(_snap/60)+':'+((_snap%60)<10?'0':'')+(_snap%60);return{rnds:_rnds,rndTime:_tm,t:_t,totSec:Math.round(_rnds*_pw)};};var _secB=S.wod&&S.wod.sections&&S.wod.sections[si+1];var _iA=_gabCalc(sec);var _iB=_gabCalc(_secB);var _gabTotSec=(_iA?_iA.totSec:0)+(_iB?_iB.totSec:0);var _gabBoldTime=_gabTotSec>0?Math.floor(_gabTotSec/60)+':'+( (_gabTotSec%60)<10?'0':'')+(_gabTotSec%60):'';var _restMins=_gabT<=15?1:_gabT>=30?3:2;var _restWord=_restMins===1?'one-minute':_restMins===2?'two-minute':'three-minute';var _iATotFmt=_iA?Math.floor(_iA.totSec/60)+':'+(_iA.totSec%60<10?'0':'')+(_iA.totSec%60):'';var _iBTotFmt=_iB?Math.floor(_iB.totSec/60)+':'+(_iB.totSec%60<10?'0':'')+(_iB.totSec%60):'';var _halfT=Math.floor(_gabT/2);if(CFG.lang==='ar'){infoTxt='أكمل كل <bdi>'+_halfT+'</bdi> '+arMin(_halfT)+' AMRAP قبل الانتقال للتالي | استرح '+(_restMins===1?'دقيقة واحدة':_restMins===2?'دقيقتين':'3 دقائق')+' بين الفترات'+(_iA?' | الفترة الأولى: الوقت التقريبي لإتمام ~<bdi>'+_iA.rnds+'</bdi> جولات · ~<bdi>'+_iA.rndTime+'</bdi>/جولة = <span style="font-weight:900">~<bdi>'+_iATotFmt+'</bdi> دقيقة</span>':'')+(_iB?' | الفترة الثانية: الوقت التقريبي لإتمام ~<bdi>'+_iB.rnds+'</bdi> جولات · ~<bdi>'+_iB.rndTime+'</bdi>/جولة = <span style="font-weight:900">~<bdi>'+_iBTotFmt+'</bdi> دقيقة</span>':'');_gabBoldTime='';}else{infoTxt='Complete each <bdi>'+_halfT+'</bdi> minute AMRAP before moving on to the next | Take a '+_restWord+' rest between intervals'+(_iA?' | First Interval: Estimated time to complete ~<bdi>'+_iA.rnds+'</bdi> rounds · ~<bdi>'+_iA.rndTime+'</bdi>/round = <span style="font-weight:900">~<bdi>'+_iATotFmt+'</bdi> min</span>':'')+(_iB?' | Second Interval: Estimated time to complete ~<bdi>'+_iB.rnds+'</bdi> rounds · ~<bdi>'+_iB.rndTime+'</bdi>/round = <span style="font-weight:900">~<bdi>'+_iBTotFmt+'</bdi> min</span>':'');_gabBoldTime='';}}
+  var _amrBoldTime='';if((sec.type==='AMRAP'||sec.type==='YGIG / Partner WOD')&&infoTxt===undefined&&sec.infoKey){var _riv=sec.infoVars||{};var _rlv=S.level||'intermediate';var _isYgigSec=sec.type==='YGIG / Partner WOD'&&!(_riv.r);var _rtm=_isYgigSec?1:(S.teamSize||1);var _rSplit=_isYgigSec?false:true;var _rtT=_rtm===2?18:_tSec(_rlv);var _rpw=0;var _rstrI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _rcardI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});_rstrI.forEach(function(it){_rpw+=it.baseRep*getSecondsPerRep(it.ex,_rlv,_rtm,_rSplit);});_rcardI.forEach(function(cx){_rpw+=_cardioSecEst(cx.ex,_rlv,_rtm,_rSplit);});_rpw+=(_rstrI.length+_rcardI.length-1)*_rtT;if(_rpw>0){var _rwSec=(_riv.t||S.time)*60;var _rdynRnds=Math.max(1,Math.floor(_rwSec/_rpw));if(_isYgigSec&&_rdynRnds%2!==0)_rdynRnds+=1;var _rndSnap=Math.round(_rpw/10)*10;var _rndTime=Math.floor(_rndSnap/60)+':'+((_rndSnap%60)<10?'0':'')+(_rndSnap%60);var _amrTotSec=Math.round(_rdynRnds*_rpw);var _amrTotTime=Math.floor(_amrTotSec/60)+':'+( (_amrTotSec%60)<10?'0':'')+(_amrTotSec%60);_amrBoldTime=_rdynRnds?(CFG.lang==='ar'?(_rdynRnds+' جولات ~'+_rndTime+'/جولة ~'+_amrTotTime):(_rdynRnds+' rounds · ~'+_rndTime+'/round ~'+_amrTotTime)):_amrTotTime;infoTxt=ti(sec.infoKey,Object.assign({},_riv,{rnds:_rdynRnds,rndTime:_rndTime}));if(_rdynRnds){if(CFG.lang==='ar'){infoTxt='أكمل أكبر عدد جولات ممكن | الوقت التقريبي لإتمام ~<bdi>'+_rdynRnds+'</bdi> جولات · ~<bdi>'+_rndTime+'</bdi>/جولة = ~<bdi>'+_amrTotTime+'</bdi> دقيقة';_amrBoldTime='';}else{infoTxt='Complete as many rounds as possible | Estimated time to complete ~<bdi>'+_rdynRnds+'</bdi> rounds · ~<bdi>'+_rndTime+'</bdi>/round = ~<bdi>'+_amrTotTime+'</bdi> min';_amrBoldTime='';}}}}  
+  if(sec.type==='Group A'&&infoTxt===undefined){var _gabT=S.wod&&S.wod.cfg&&S.wod.cfg.time||S.time;var _gabDesc=ti('i_groupA',{cap:_gabT});var _grlv=S.level||'intermediate';var _grtT=_tSec(_grlv);var _gabCalc=function(s){if(!s||!s.items)return null;var _si=s.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _ci=s.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _pw=0;_si.forEach(function(it){_pw+=it.baseRep*getSecondsPerRep(it.ex,_grlv,1,false);});_ci.forEach(function(cx){_pw+=_cardioSecEst(cx.ex,_grlv,1,false);});_pw+=(_si.length+_ci.length-1)*_grtT;if(_pw<=0)return null;var _t=(s.infoVars&&s.infoVars.t)||S.time;var _rnds=Math.max(1,Math.floor(_t*60/_pw));var _snap=Math.round(_pw/10)*10;var _tm=Math.floor(_snap/60)+':'+((_snap%60)<10?'0':'')+(_snap%60);return{rnds:_rnds,rndTime:_tm,t:_t,totSec:Math.round(_rnds*_pw)};};var _secB=S.wod&&S.wod.sections&&S.wod.sections[si+1];var _iA=_gabCalc(sec);var _iB=_gabCalc(_secB);var _gabTotSec=(_iA?_iA.totSec:0)+(_iB?_iB.totSec:0);var _gabBoldTime=_gabTotSec>0?Math.floor(_gabTotSec/60)+':'+( (_gabTotSec%60)<10?'0':'')+(_gabTotSec%60):'';var _restMins=_gabT<=15?1:_gabT>=30?3:2;var _restWord=_restMins===1?'one-minute':_restMins===2?'two-minute':'three-minute';var _iATotFmt=_iA?Math.floor(_iA.totSec/60)+':'+(_iA.totSec%60<10?'0':'')+(_iA.totSec%60):'';var _iBTotFmt=_iB?Math.floor(_iB.totSec/60)+':'+(_iB.totSec%60<10?'0':'')+(_iB.totSec%60):'';var _halfT=Math.floor(_gabT/2);if(CFG.lang==='ar'){infoTxt='أكمل كل <bdi>'+_halfT+'</bdi> '+arMin(_halfT)+' AMRAP قبل الانتقال للتالي | استرح '+(_restMins===1?'دقيقة واحدة':_restMins===2?'دقيقتين':'3 دقائق')+' بين الفترات'+(_iA?' | الفترة الأولى: الوقت التقريبي لإتمام ~<bdi>'+_iA.rnds+'</bdi> جولات · ~<bdi>'+_iA.rndTime+'</bdi>/جولة = <span style="font-weight:900">~<bdi>'+_iATotFmt+'</bdi> دقيقة</span>':'')+(_iB?' | الفترة الثانية: الوقت التقريبي لإتمام ~<bdi>'+_iB.rnds+'</bdi> جولات · ~<bdi>'+_iB.rndTime+'</bdi>/جولة = <span style="font-weight:900">~<bdi>'+_iBTotFmt+'</bdi> دقيقة</span>':'');_gabBoldTime='';}else{infoTxt='Complete each <bdi>'+_halfT+'</bdi> minute AMRAP before moving on to the next | Take a '+_restWord+' rest between intervals'+(_iA?' | First Interval: Estimated time to complete ~<bdi>'+_iA.rnds+'</bdi> rounds · ~<bdi>'+_iA.rndTime+'</bdi>/round = <span style="font-weight:900">~<bdi>'+_iATotFmt+'</bdi> min</span>':'')+(_iB?' | Second Interval: Estimated time to complete ~<bdi>'+_iB.rnds+'</bdi> rounds · ~<bdi>'+_iB.rndTime+'</bdi>/round = <span style="font-weight:900">~<bdi>'+_iBTotFmt+'</bdi> min</span>':'');_gabBoldTime='';}}
   infoTxt=infoTxt!==undefined?infoTxt:(sec.infoKey?ti(sec.infoKey,sec.infoVars||{}):sec.info);
-  if(sec.type==='Chipper'){var _cE='';var _cL=S.level||'intermediate';var _cTm=S.teamSize||1;var _cTr=_cTm===2?18:({beginner:22,intermediate:16,advanced:10,elite:6}[_cL]||16);var _cSI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _cCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _cPW=0;_cSI.forEach(function(it){_cPW+=it.baseRep*getSecondsPerRep(it.ex,_cL,_cTm,_cTm===2);});_cCI.forEach(function(cx){_cPW+=_cardioSecEst(cx.ex,_cL,_cTm,_cTm===2);});_cPW+=(_cSI.length+_cCI.length>1?(_cSI.length+_cCI.length-1)*_cTr:0);if(_cPW>0){var _cs=Math.round(_cPW);_cE=Math.floor(_cs/60)+':'+(_cs%60<10?'0':'')+(_cs%60);}if(CFG.lang==='ar'){infoTxt='أكمل تكرارات كل حركة قبل الانتقال للتالية'+(_cE?' | الوقت التقريبي للإتمام ~<bdi>'+_cE+'</bdi> دقيقة':'');_cE='';}else{infoTxt='Complete all reps of each movement before moving on'+(_cE?' | Estimated time to complete ~<bdi>'+_cE+'</bdi> min':'');_cE='';}return cfgGearRow(infoTxt,'toggleChipperCfg',si,_cE)+renderChipperCfg(sec,si);}
+  if(sec.type==='Chipper'){var _cE='';var _cL=S.level||'intermediate';var _cTm=S.teamSize||1;var _cTr=_cTm===2?18:_tSec(_cL);var _cSI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _cCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _cPW=0;_cSI.forEach(function(it){_cPW+=it.baseRep*getSecondsPerRep(it.ex,_cL,_cTm,_cTm===2);});_cCI.forEach(function(cx){_cPW+=_cardioSecEst(cx.ex,_cL,_cTm,_cTm===2);});_cPW+=(_cSI.length+_cCI.length>1?(_cSI.length+_cCI.length-1)*_cTr:0);if(_cPW>0){var _cs=Math.round(_cPW);_cE=_fmtMS(_cs);}if(CFG.lang==='ar'){infoTxt='أكمل تكرارات كل حركة قبل الانتقال للتالية'+(_cE?' | الوقت التقريبي للإتمام ~<bdi>'+_cE+'</bdi> دقيقة':'');_cE='';}else{infoTxt='Complete all reps of each movement before moving on'+(_cE?' | Estimated time to complete ~<bdi>'+_cE+'</bdi> min':'');_cE='';}return cfgGearRow(infoTxt,'toggleChipperCfg',si,_cE)+renderChipperCfg(sec,si);}
   if(sec.type==='AMRAP')return cfgGearRow(infoTxt,'toggleAmrapCfg',si,_amrBoldTime)+renderAmrapCfg(sec,si);
-  if(sec.type==='For Time / RFT'){var _rE='';var _rL=S.level||'intermediate';var _rTm=S.teamSize||1;var _rTr=_rTm===2?18:({beginner:22,intermediate:16,advanced:10,elite:6}[_rL]||16);var _rIV=sec.infoVars||{};var _rRnds=_rIV.r||1;var _rSI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _rCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _rPW=0;_rSI.forEach(function(it){_rPW+=it.baseRep*getSecondsPerRep(it.ex,_rL,_rTm,_rTm===2);});_rCI.forEach(function(cx){_rPW+=_cardioSecEst(cx.ex,_rL,_rTm,_rTm===2);});_rPW+=(_rSI.length+_rCI.length>1?(_rSI.length+_rCI.length-1)*_rTr:0);if(_rPW>0){var _rndSec=Math.round(_rPW);var _rndTm=Math.floor(_rndSec/60)+':'+(_rndSec%60<10?'0':'')+(_rndSec%60);var _rt=Math.round(_rPW*_rRnds);_rE=CFG.lang==='ar'?(_rRnds+' جولات ~'+_rndTm+'/جولة ~'+Math.floor(_rt/60)+':'+(_rt%60<10?'0':'')+(_rt%60)):(_rRnds+' rounds ~'+_rndTm+'/round ~'+Math.floor(_rt/60)+':'+(_rt%60<10?'0':'')+(_rt%60));var _rtTot=Math.floor(_rt/60)+':'+(_rt%60<10?'0':'')+(_rt%60);if(CFG.lang==='ar'){infoTxt='أكمل <bdi>'+_rRnds+'</bdi> جولات بأسرع وقت ممكن | الوقت التقريبي لإتمام ~<bdi>'+_rtTot+'</bdi> دقيقة';_rE='';}else{infoTxt='Complete <bdi>'+_rRnds+'</bdi> rounds as fast as possible | Estimated time to complete ~<bdi>'+_rtTot+'</bdi> min';_rE='';}}return cfgGearRow(infoTxt,'toggleRftCfg',si,_rE)+renderRftCfg(sec,si);}
+  if(sec.type==='For Time / RFT'){var _rE='';var _rL=S.level||'intermediate';var _rTm=S.teamSize||1;var _rTr=_rTm===2?18:_tSec(_rL);var _rIV=sec.infoVars||{};var _rRnds=_rIV.r||1;var _rSI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _rCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _rPW=0;_rSI.forEach(function(it){_rPW+=it.baseRep*getSecondsPerRep(it.ex,_rL,_rTm,_rTm===2);});_rCI.forEach(function(cx){_rPW+=_cardioSecEst(cx.ex,_rL,_rTm,_rTm===2);});_rPW+=(_rSI.length+_rCI.length>1?(_rSI.length+_rCI.length-1)*_rTr:0);var _rHasCust=_rSI.some(function(it){return it.repsPerRound&&it.repsPerRound.length>1;})||_rCI.some(function(it){return it.cardioAmounts&&it.cardioAmounts.length>1;});if(_rHasCust&&_rRnds>0){var _rTot=0;_rSI.forEach(function(it){var _rp=it.repsPerRound;var _tt=(_rp&&_rp.length>1)?_rp.reduce(function(a,b){return a+b;},0):it.baseRep*_rRnds;_rTot+=_tt*getSecondsPerRep(it.ex,_rL,_rTm,_rTm===2);});_rCI.forEach(function(cx){var _ca=cx.cardioAmounts;if(_ca&&_ca.length>1){_ca.forEach(function(a){_rTot+=_cardioSecEst(Object.assign({},cx.ex,{amount:a}),_rL,_rTm,_rTm===2);});}else{_rTot+=_cardioSecEst(cx.ex,_rL,_rTm,_rTm===2)*_rRnds;}});_rTot+=(_rSI.length+_rCI.length>1?(_rSI.length+_rCI.length-1)*_rTr:0)*_rRnds;_rPW=_rTot/_rRnds;} /* سكيم يدوي: التقدير من مجموع الشغل الفعلي */ if(_rPW>0){var _rndSec=Math.round(_rPW);var _rndTm=_fmtMS(_rndSec);var _rt=Math.round(_rPW*_rRnds);_rE=CFG.lang==='ar'?(_rRnds+' جولات ~'+_rndTm+'/جولة ~'+_fmtMS(_rt)):(_rRnds+' rounds ~'+_rndTm+'/round ~'+_fmtMS(_rt));var _rtTot=_fmtMS(_rt);if(CFG.lang==='ar'){infoTxt='أكمل <bdi>'+_rRnds+'</bdi> جولات بأسرع وقت ممكن | الوقت التقريبي لإتمام ~<bdi>'+_rtTot+'</bdi> دقيقة';_rE='';}else{infoTxt='Complete <bdi>'+_rRnds+'</bdi> rounds as fast as possible | Estimated time to complete ~<bdi>'+_rtTot+'</bdi> min';_rE='';}}return cfgGearRow(infoTxt,'toggleRftCfg',si,_rE)+renderRftCfg(sec,si);}
   if(sec.type==='EMOM'){var _emIV=sec.infoVars||{};var _emS=_emIV.s||0;var _emCycle=(sec.items||[]).filter(function(x){return x.kind!=='sep';}).length;var _emMins=_emCycle*_emS;var _emE=_emMins>0?_emMins+':00':'';if(CFG.lang==='ar'){infoTxt='حركة جديدة كل دقيقة | <bdi>'+_emCycle+'</bdi> حركات متناوبة · <bdi>'+_emS+'</bdi> مجموعات · ~45 ثانية عمل/دقيقة';_emE='';}else{infoTxt='Every minute on the minute | <bdi>'+_emCycle+'</bdi> movements rotating · <bdi>'+_emS+'</bdi> sets · ~45s work/min';_emE='';}return cfgGearRow(infoTxt,'toggleEmomCfg',si,_emE)+renderEmomCfg(sec,si);}
   if(sec.type==='Tabata'){var _tIV=sec.infoVars||{};var _tTot=_tIV.tot||4;var _tTxt;if(CFG.lang==='ar'){if(sec.infoKey==='i_tabata_classic'){_tTxt='حركة واحدة، تتكرر عبر الفترات | 20 ثانية عمل / 10 ثانية راحة × 8 فترات | الوقت الكلي: 4 دقائق';}else if(sec.infoKey==='i_tabata_alt'){_tTxt='تناوب بين كل الحركات في كل فترة | 20 ثانية عمل / 10 ثانية راحة × 8 جولات | الوقت الكلي: <bdi>'+_tTot+'</bdi> دقيقة';}else{_tTxt='أكمل 8 فترات لكل حركة قبل الانتقال للتالية | 20 ثانية عمل / 10 ثانية راحة × 8 فترات لكل حركة | الوقت الكلي: <bdi>'+_tTot+'</bdi> دقيقة';}}else{_tTxt=infoTxt?infoTxt.replace(/Total time: ([\d]+) min/,'Total time: <span style="font-weight:900"><bdi>$1</bdi> min</span>'):infoTxt;}return cfgGearRow(_tTxt,'toggleTabataCfg',si)+renderTabataCfg(sec,si);}
   if(sec.type==='Death By'){var _dbIV=sec.infoVars||{};var _dbInc=_dbIV.inc||(S.teamSize===2?2:1);var _dbS=_dbIV.s||(S.teamSize===2?2:1);if(CFG.lang==='ar'){infoTxt='أضف <bdi>'+_dbInc+'</bdi> تكرار كل دقيقة حتى الفشل';}else{infoTxt='Add <bdi>'+_dbInc+'</bdi> rep'+(S.teamSize===2?'s':'')+(S.teamSize===2?' (split)':'')+' each minute until failure';}return cfgGearRow(infoTxt,'toggleDeathByCfg',si)+renderDeathByCfg(sec,si);}
-  if(sec.type==='YGIG / Partner WOD'){var _yE='';var _yLv=S.level||'intermediate';var _yTr={beginner:22,intermediate:16,advanced:10,elite:6}[_yLv]||16;var _ySI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _yCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _yIV=sec.infoVars||{};if(sec.infoKey==='i_ygig_ft'){var _yRnds=(_yIV.r||1)*2;var _yPW=0;_ySI.forEach(function(it){_yPW+=it.baseRep*getSecondsPerRep(it.ex,_yLv,1,false);});_yCI.forEach(function(cx){_yPW+=_cardioSecEst(cx.ex,_yLv,1,false);});_yPW+=(_ySI.length+_yCI.length>1?(_ySI.length+_yCI.length-1)*_yTr:0);var _yEst=_yPW*_yRnds;if(_yEst>0){var _ys=Math.round(_yEst);var _yRndSec=Math.round(_yPW);var _yRndTm=Math.floor(_yRndSec/60)+':'+(_yRndSec%60<10?'0':'')+(_yRndSec%60);_yE=_yRndTm+'/round ~'+Math.floor(_ys/60)+':'+(_ys%60<10?'0':'')+(_ys%60);}}else{var _yRndsA=_yIV.rnds||0;var _yTgtA=_yIV.tgt||0;if(_yRndsA>0&&_yTgtA>0){var _yEstA=Math.round(_yRndsA*_yTgtA);_yE=Math.floor(_yEstA/60)+':'+(_yEstA%60<10?'0':'')+(_yEstA%60);}}if(sec.infoKey==='i_ygig_ft'&&_yEst>0){var _yTotFmt=Math.floor(_ys/60)+':'+(_ys%60<10?'0':'')+(_ys%60);if(CFG.lang==='ar'){infoTxt='أكمل <bdi>'+_yRnds+'</bdi> جولات بأسرع وقت ممكن | الوقت التقريبي لإتمام ~<bdi>'+_yTotFmt+'</bdi> دقيقة';_yE='';}else{infoTxt='Complete <bdi>'+_yRnds+'</bdi> rounds as fast as possible | Estimated time to complete ~<bdi>'+_yTotFmt+'</bdi> min';_yE='';}}return cfgGearRow(infoTxt,'toggleYgigCfg',si,sec.infoKey==='i_ygig_ft'?(_yE?((_yIV.r||1)*2)+' rounds ~'+_yE:''):_amrBoldTime)+renderYgigCfg(sec,si);}
-  if(sec.type==='Buy-In / Cash-Out'){var _bE='';var _bL=S.level||'intermediate';var _bTm=S.teamSize||1;var _bTr=_bTm===2?18:({beginner:22,intermediate:16,advanced:10,elite:6}[_bL]||16);var _bIV=sec.infoVars||{};var _bRnds=_bIV.r||1;var _biItems=sec.items.filter(function(x){return x.kind==='buyin'&&x.ex&&x.ex.amount;});var _bSI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _bCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _bPW=0;var _bRndPW=0;_bSI.forEach(function(it){_bRndPW+=it.baseRep*getSecondsPerRep(it.ex,_bL,_bTm,_bTm===2);});_bCI.forEach(function(cx){_bRndPW+=_cardioSecEst(cx.ex,_bL,_bTm,_bTm===2);});if(_bSI.length+_bCI.length>1)_bRndPW+=(_bSI.length+_bCI.length-1)*_bTr;_bPW+=_bRndPW*_bRnds;var _bBiPW=0;_biItems.forEach(function(it){if(it.ex&&it.ex.amount)_bBiPW+=_cardioSecEst(it.ex,_bL,_bTm,_bTm===2);});if(_bPW>0||_bBiPW>0){var _bRndSec=Math.round(_bRndPW);var _bRndTm=Math.floor(_bRndSec/60)+':'+(_bRndSec%60<10?'0':'')+(_bRndSec%60);var _bs=Math.round(_bPW+_bBiPW);_bE=_bRnds+' rounds ~'+_bRndTm+'/round ~'+Math.floor(_bs/60)+':'+(_bs%60<10?'0':'')+(_bs%60);}var _hasBuyIn=_biItems.some(function(x){return x.which==='buyin';});var _hasCashOut=_biItems.some(function(x){return x.which==='cashout';});var _bTotFmt=(_bs!==undefined)?Math.floor(_bs/60)+':'+(_bs%60<10?'0':'')+(_bs%60):'';var _bDescEN=(_hasBuyIn&&_hasCashOut)?'Complete buy-in, then WOD, then cash-out':(_hasBuyIn?'Complete buy-in, then WOD':(_hasCashOut?'Complete WOD, then cash-out':'Complete WOD'));var _bDescAR=(_hasBuyIn&&_hasCashOut)?'أكمل البداية، ثم التمرين، ثم النهاية':(_hasBuyIn?'أكمل البداية، ثم التمرين':(_hasCashOut?'أكمل التمرين، ثم النهاية':'أكمل التمرين'));if(CFG.lang==='ar'){infoTxt=_bDescAR+(_bTotFmt?' | الوقت التقريبي لإتمام ~<bdi>'+_bTotFmt+'</bdi> دقيقة':'');_bE='';}else{infoTxt=_bDescEN+(_bTotFmt?' | Estimated time to complete ~<bdi>'+_bTotFmt+'</bdi> min':'');_bE='';}return cfgGearRow(infoTxt,'toggleBuyInCfg',si,_bE)+renderBuyInCfg(sec,si);}
-  if(sec.type==='Ladder'){var _ldE='';var _ldSch=sec.scheme;if(_ldSch&&_ldSch.length){var _ldLv=S.level||'intermediate';var _ldTm=S.teamSize||1;var _ldEstDiv=sec._estDiv||1;var _ldEstTeam=_ldEstDiv>1?1:_ldTm;var _ldTT=_ldEstTeam===2?18:({beginner:22,intermediate:16,advanced:10,elite:6}[_ldLv]||16);var _ldSI=sec.items.filter(function(x){return x.kind==='str'&&!x.isRest;});var _ldCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _ldEst=0;_ldSI.forEach(function(it){var _rpr=it.repsPerRound;var _sch=(_rpr&&_rpr.length>1)?_rpr:_ldSch;_sch.forEach(function(r){_ldEst+=(r/_ldEstDiv)*getSecondsPerRep(it.ex,_ldLv,_ldEstTeam,true);});});_ldCI.forEach(function(cx){var _ca=cx.cardioAmounts;if(_ca&&_ca.length>1){_ca.forEach(function(a){_ldEst+=_cardioSecEst(Object.assign({},cx.ex,{amount:a/_ldEstDiv}),_ldLv,_ldEstTeam,true);});}else if(cx.ex&&cx.ex.amount){_ldEst+=_cardioSecEst(Object.assign({},cx.ex,{amount:cx.ex.amount/_ldEstDiv}),_ldLv,_ldEstTeam,true)*_ldSch.length;}});_ldEst+=(_ldSI.length+_ldCI.length)*_ldSch.length>0?((_ldSI.length+_ldCI.length)*_ldSch.length-1)*_ldTT:0;if(_ldEst>0){var _ls=Math.round(_ldEst);_ldE=Math.floor(_ls/60)+':'+(_ls%60<10?'0':'')+(_ls%60);}}if(CFG.lang==='ar'){infoTxt='سلم تكرارات، العدد يتغير كل جولة'+(_ldE?' | الوقت التقريبي للإتمام ~<bdi>'+_ldE+'</bdi> دقيقة':'');_ldE='';}else{infoTxt='Ladder scheme, changing reps each round'+(_ldE?' | Estimated time to complete ~<bdi>'+_ldE+'</bdi> min':'');_ldE='';}return cfgGearRow(infoTxt||'','toggleLadderCfg',si,_ldE)+renderLadderCfg(sec,si);}
+  if(sec.type==='YGIG / Partner WOD'){var _yE='';var _yLv=S.level||'intermediate';var _yTr=_tSec(_yLv);var _ySI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _yCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _yIV=sec.infoVars||{};if(sec.infoKey==='i_ygig_ft'){var _yRnds=(_yIV.r||1)*2;var _yPW=0;_ySI.forEach(function(it){_yPW+=it.baseRep*getSecondsPerRep(it.ex,_yLv,1,false);});_yCI.forEach(function(cx){_yPW+=_cardioSecEst(cx.ex,_yLv,1,false);});_yPW+=(_ySI.length+_yCI.length>1?(_ySI.length+_yCI.length-1)*_yTr:0);var _yEst=_yPW*_yRnds;if(_yEst>0){var _ys=Math.round(_yEst);var _yRndSec=Math.round(_yPW);var _yRndTm=_fmtMS(_yRndSec);_yE=_yRndTm+'/round ~'+_fmtMS(_ys);}}else{var _yRndsA=_yIV.rnds||0;var _yTgtA=_yIV.tgt||0;if(_yRndsA>0&&_yTgtA>0){var _yEstA=Math.round(_yRndsA*_yTgtA);_yE=_fmtMS(_yEstA);}}if(sec.infoKey==='i_ygig_ft'&&_yEst>0){var _yTotFmt=_fmtMS(_ys);if(CFG.lang==='ar'){infoTxt='أكمل <bdi>'+_yRnds+'</bdi> جولات بأسرع وقت ممكن | الوقت التقريبي لإتمام ~<bdi>'+_yTotFmt+'</bdi> دقيقة';_yE='';}else{infoTxt='Complete <bdi>'+_yRnds+'</bdi> rounds as fast as possible | Estimated time to complete ~<bdi>'+_yTotFmt+'</bdi> min';_yE='';}}return cfgGearRow(infoTxt,'toggleYgigCfg',si,sec.infoKey==='i_ygig_ft'?(_yE?((_yIV.r||1)*2)+' rounds ~'+_yE:''):_amrBoldTime)+renderYgigCfg(sec,si);}
+  if(sec.type==='Buy-In / Cash-Out'){var _bE='';var _bL=S.level||'intermediate';var _bTm=S.teamSize||1;var _bTr=_bTm===2?18:_tSec(_bL);var _bIV=sec.infoVars||{};var _bRnds=_bIV.r||1;var _biItems=sec.items.filter(function(x){return x.kind==='buyin'&&x.ex&&x.ex.amount;});var _bSI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _bCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _bPW=0;var _bRndPW=0;var _bStrWork=0;_bSI.forEach(function(it){var _bTotR=(it.repsPerRound&&it.repsPerRound.length>1)?it.repsPerRound.reduce(function(a,b){return a+b;},0):it.baseRep*_bRnds;_bStrWork+=_bTotR*getSecondsPerRep(it.ex,_bL,_bTm,_bTm===2);});_bCI.forEach(function(cx){_bRndPW+=_cardioSecEst(cx.ex,_bL,_bTm,_bTm===2);});if(_bSI.length+_bCI.length>1)_bRndPW+=(_bSI.length+_bCI.length-1)*_bTr;_bPW+=_bStrWork+_bRndPW*_bRnds;var _bBiPW=0;_biItems.forEach(function(it){if(it.ex&&it.ex.amount)_bBiPW+=_cardioSecEst(it.ex,_bL,_bTm,_bTm===2);});if(_bPW>0||_bBiPW>0){var _bRndSec=Math.round(_bRndPW);var _bRndTm=_fmtMS(_bRndSec);var _bs=Math.round(_bPW+_bBiPW);_bE=_bRnds+' rounds ~'+_bRndTm+'/round ~'+_fmtMS(_bs);}var _hasBuyIn=_biItems.some(function(x){return x.which==='buyin';});var _hasCashOut=_biItems.some(function(x){return x.which==='cashout';});var _bTotFmt=(_bs!==undefined)?_fmtMS(_bs):'';var _bDescEN=(_hasBuyIn&&_hasCashOut)?'Complete buy-in, then WOD, then cash-out':(_hasBuyIn?'Complete buy-in, then WOD':(_hasCashOut?'Complete WOD, then cash-out':'Complete WOD'));var _bDescAR=(_hasBuyIn&&_hasCashOut)?'أكمل البداية، ثم التمرين، ثم النهاية':(_hasBuyIn?'أكمل البداية، ثم التمرين':(_hasCashOut?'أكمل التمرين، ثم النهاية':'أكمل التمرين'));if(CFG.lang==='ar'){infoTxt=_bDescAR+(_bTotFmt?' | الوقت التقريبي لإتمام ~<bdi>'+_bTotFmt+'</bdi> دقيقة':'');_bE='';}else{infoTxt=_bDescEN+(_bTotFmt?' | Estimated time to complete ~<bdi>'+_bTotFmt+'</bdi> min':'');_bE='';}return cfgGearRow(infoTxt,'toggleBuyInCfg',si,_bE)+renderBuyInCfg(sec,si);}
+  if(sec.type==='Ladder'){var _ldE='';var _ldSch=sec.scheme;if(_ldSch&&_ldSch.length){var _ldLv=S.level||'intermediate';var _ldTm=S.teamSize||1;var _ldEstDiv=sec._estDiv||1;var _ldEstTeam=_ldEstDiv>1?1:_ldTm;var _ldTT=_ldEstTeam===2?18:_tSec(_ldLv);var _ldSI=sec.items.filter(function(x){return x.kind==='str'&&!x.isRest;});var _ldCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _ldEst=0;_ldSI.forEach(function(it){var _rpr=it.repsPerRound;var _sch=(_rpr&&_rpr.length>1)?_rpr:_ldSch;_sch.forEach(function(r){_ldEst+=(r/_ldEstDiv)*getSecondsPerRep(it.ex,_ldLv,_ldEstTeam,true);});});_ldCI.forEach(function(cx){var _ca=cx.cardioAmounts;if(_ca&&_ca.length>1){_ca.forEach(function(a){_ldEst+=_cardioSecEst(Object.assign({},cx.ex,{amount:a/_ldEstDiv}),_ldLv,_ldEstTeam,true);});}else if(cx.ex&&cx.ex.amount){_ldEst+=_cardioSecEst(Object.assign({},cx.ex,{amount:cx.ex.amount/_ldEstDiv}),_ldLv,_ldEstTeam,true)*_ldSch.length;}});_ldEst+=(_ldSI.length+_ldCI.length)*_ldSch.length>0?((_ldSI.length+_ldCI.length)*_ldSch.length-1)*_ldTT:0;if(_ldEst>0){var _ls=Math.round(_ldEst);_ldE=_fmtMS(_ls);}}if(CFG.lang==='ar'){infoTxt='سلم تكرارات، العدد يتغير كل جولة'+(_ldE?' | الوقت التقريبي للإتمام ~<bdi>'+_ldE+'</bdi> دقيقة':'');_ldE='';}else{infoTxt='Ladder scheme, changing reps each round'+(_ldE?' | Estimated time to complete ~<bdi>'+_ldE+'</bdi> min':'');_ldE='';}return cfgGearRow(infoTxt||'','toggleLadderCfg',si,_ldE)+renderLadderCfg(sec,si);}
   if(sec.type==='Group A')return cfgGearRow(infoTxt,'toggleAmrapCfg',si,_gabBoldTime||'')+renderGroupAbAmrapCfg(sec,si);
   if(sec.type==='Group B')return '';
   if(sec.scheme){
@@ -2845,7 +2900,7 @@ function _secFill(sec){
     var _scheme=sec.scheme;if(!_scheme||!_scheme.length)return null;
     var _lvl=S.level||'intermediate';var _tm=S.teamSize||1;
     var _lEstDiv=sec._estDiv||1;var _lEstTm=_lEstDiv>1?1:_tm;
-    var _tTime=_lEstTm===2?18:({beginner:22,intermediate:16,advanced:10,elite:6}[_lvl]||16);
+    var _tTime=_lEstTm===2?18:_tSec(_lvl);
     var _lBudget=(sec.infoVars&&sec.infoVars.t||S.time)*60;
     var _lEst=0;
     var _strIt=sec.items.filter(function(x){return x.kind==='str';});
@@ -2875,7 +2930,8 @@ function _secFill(sec){
   sec.items.forEach(function(x){if((x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount){gateExArr.push(x.ex);gateItems.push(x);}});
   var repsArr=strItems.map(function(it){return it.baseRep;});
   var exArr=strItems.map(function(it){return it.ex;});
-  var tTime=team===2?18:({beginner:22,intermediate:16,advanced:10,elite:6}[lvl]||16);
+  // YGIG (FT+AMRAP): كل جولة يسوّيها لاعب واحد (سولو) → انتقال سولو، مطابق لنص «الوقت التقريبي»
+  var tTime=(team===2&&sec.type!=='YGIG / Partner WOD')?18:_tSec(lvl);
   var totalItems=strItems.length+gateExArr.length;
   var est;
   try{
@@ -2887,10 +2943,13 @@ function _secFill(sec){
   if(_isYgigFT2&&iv.r){
     if(sec._drPW&&sec._drBudget)return(sec._drPW*iv.r*2)/sec._drBudget;
     est=est*iv.r*2; // كلا الشريكين يكملان iv.r جولات بالتناوب
-  }else if(sec.type==='Buy-In / Cash-Out'&&sec._drPW){
-    var _biFillCrd=sec.items.filter(function(x){return x.kind==='buyin'&&x.ex&&x.ex.amount;});
-    var _biFillT=0;_biFillCrd.forEach(function(it){_biFillT+=_cardioSecEst(it.ex,lvl,team,team===2);});
-    return(sec._drPW*(iv.r||1)+_biFillT)/budget;
+  }else if(sec.type==='Buy-In / Cash-Out'){
+    // حساب كامل (مطابق للنص): قوة×الجولات + كارديو الجولة×الجولات + انتقالات + كارديو buy-in/cash-out
+    var _biR=iv.r||1;
+    var _biStr=0;for(var _bk=0;_bk<Math.min(repsArr.length,exArr.length);_bk++){var _brpr=strItems[_bk].repsPerRound;var _btot=(_brpr&&_brpr.length>1)?_brpr.reduce(function(a,c){return a+c;},0):(repsArr[_bk]*_biR);_biStr+=_btot*getSecondsPerRep(exArr[_bk],lvl,team,team===2);}
+    var _biRnd=0;gateExArr.forEach(function(gx){_biRnd+=_cardioSecEst(gx,lvl,team,team===2);});if(strItems.length+gateExArr.length>1)_biRnd+=(strItems.length+gateExArr.length-1)*tTime;
+    var _biBi=0;sec.items.filter(function(x){return x.kind==='buyin'&&x.ex&&x.ex.amount;}).forEach(function(it){_biBi+=_cardioSecEst(it.ex,lvl,team,team===2);});
+    est=_biStr+_biRnd*_biR+_biBi;
   }else if(sec.type==='For Time / RFT'&&iv.r){
     if(sec._drPW&&sec._drBudget)return(sec._drPW*iv.r)/sec._drBudget;
     var _hasCustomRounds=strItems.some(function(it){return it.repsPerRound&&it.repsPerRound.length>1;})||gateItems.some(function(it){return it.cardioAmounts&&it.cardioAmounts.length>1;});
@@ -2901,9 +2960,9 @@ function _secFill(sec){
       est=_strEst+_cardEst+(totalItems-1)*tTime*(iv.r||1);
     }else{est=est*iv.r;}
   }
-  if(sec.type==='EMOM'&&iv.n){var _emPW=0;for(var _ci2=0;_ci2<Math.min(repsArr.length,exArr.length);_ci2++)_emPW+=repsArr[_ci2]*getSecondsPerRep(exArr[_ci2],lvl,team,false);gateExArr.forEach(function(gx){_emPW+=_cardioSecEst(gx,lvl,team,false);});est=_emPW;budget=(iv.n+(gateExArr.length||0))*60;}
+  if(sec.type==='EMOM'&&iv.n){var _emPW=0;for(var _ci2=0;_ci2<Math.min(repsArr.length,exArr.length);_ci2++)_emPW+=repsArr[_ci2]*getSecondsPerRep(exArr[_ci2],lvl,team,false);gateExArr.forEach(function(gx){_emPW+=_cardioSecEst(gx,lvl,team,false);});est=_emPW;budget=(iv.n+(gateExArr.length||0))*45;}
   if((sec.type==='AMRAP'||sec.type==='YGIG / Partner WOD')&&iv.rnd&&iv.rnd>0){var _amrIsYgig=sec.type==='YGIG / Partner WOD'&&!iv.r;var _amrSplt=!_amrIsYgig;var _amrPW=0;for(var _ci3=0;_ci3<Math.min(repsArr.length,exArr.length);_ci3++)_amrPW+=repsArr[_ci3]*getSecondsPerRep(exArr[_ci3],lvl,_amrIsYgig?1:team,_amrSplt);gateExArr.forEach(function(gx){_amrPW+=_cardioSecEst(gx,lvl,_amrIsYgig?1:team,_amrSplt);});_amrPW+=(totalItems-1)*tTime;var _amrWodSec=(iv.t||S.time)*60;var _amrRnds=Math.max(1,Math.floor(_amrWodSec/_amrPW));est=_amrPW*_amrRnds;budget=_amrWodSec;}
-  if((sec.type==='Group A'||sec.type==='Group B')&&iv.rnd&&iv.rnd>0){var _gabPW=0;var _gabTT=({beginner:22,intermediate:16,advanced:10,elite:6}[lvl]||16);for(var _ci4=0;_ci4<Math.min(repsArr.length,exArr.length);_ci4++)_gabPW+=repsArr[_ci4]*getSecondsPerRep(exArr[_ci4],lvl,1,false);gateExArr.forEach(function(gx){_gabPW+=_cardioSecEst(gx,lvl,1,false);});_gabPW+=(totalItems-1)*_gabTT;if(_gabPW>0){var _gabWodSec=(iv.t||S.time)*60;var _gabRnds=Math.max(1,Math.floor(_gabWodSec/_gabPW));est=_gabPW*_gabRnds;budget=_gabWodSec;}}
+  if((sec.type==='Group A'||sec.type==='Group B')&&iv.rnd&&iv.rnd>0){var _gabPW=0;var _gabTT=_tSec(lvl);for(var _ci4=0;_ci4<Math.min(repsArr.length,exArr.length);_ci4++)_gabPW+=repsArr[_ci4]*getSecondsPerRep(exArr[_ci4],lvl,1,false);gateExArr.forEach(function(gx){_gabPW+=_cardioSecEst(gx,lvl,1,false);});_gabPW+=(totalItems-1)*_gabTT;if(_gabPW>0){var _gabWodSec=(iv.t||S.time)*60;var _gabRnds=Math.max(1,Math.floor(_gabWodSec/_gabPW));est=_gabPW*_gabRnds;budget=_gabWodSec;}}
   return est/budget;
 }
 // ── Timing Indicator: Gradient Progress Bar ──
@@ -2969,9 +3028,21 @@ function _gabChip(si){
 
 function renderSec(sec,si){
   // ── Dynamic round count: RFT / YGIG FT / Buy-In — adjusts when reps change ──
-  if((sec.type==='For Time / RFT'||(sec.type==='YGIG / Partner WOD'&&sec.infoKey==='i_ygig_ft')||sec.type==='Buy-In / Cash-Out')&&sec.items){
-    var _drLv=S.level||'intermediate';var _drTm=S.teamSize||1;var _drTr=_drTm===2?18:({beginner:22,intermediate:16,advanced:10,elite:6}[_drLv]||16);
+  // سكيم يدوي متعدد الجولات (repsPerRound/cardioAmounts) → عدد الجولات مقفول على طول السكيم،
+  // والتقدير/الشريط يُحسبان من مجموع الشغل الفعلي (يرتفع مع زيادة التكرارات — الكاب ثابت)
+  var _drCustomLock=sec.type==='For Time / RFT'&&sec.items&&sec.items.some(function(x){return(x.repsPerRound&&x.repsPerRound.length>1)||(x.cardioAmounts&&x.cardioAmounts.length>1);});
+  if(_drCustomLock){
+    var _dcLen=0;sec.items.forEach(function(x){if(x.repsPerRound&&x.repsPerRound.length>1)_dcLen=Math.max(_dcLen,x.repsPerRound.length);if(x.cardioAmounts&&x.cardioAmounts.length>1)_dcLen=Math.max(_dcLen,x.cardioAmounts.length);});
+    if(!sec.infoVars)sec.infoVars={};
+    sec.infoVars.r=_dcLen;sec._drPW=null;sec._drBudget=null;
+    sec.title=_dcLen+' Rounds For Time';
+    var _dcSep=sec.items.find(function(x){return x.kind==='sep';});if(_dcSep)_dcSep.label='── '+_dcLen+' ROUNDS ──';
+    if(sec.scheme&&sec.scheme.length!==_dcLen){var _dcSv=sec.scheme[sec.scheme.length-1]||10;while(sec.scheme.length<_dcLen)sec.scheme.push(_dcSv);if(sec.scheme.length>_dcLen)sec.scheme=sec.scheme.slice(0,_dcLen);}
+  }
+  else if((sec.type==='For Time / RFT'||(sec.type==='YGIG / Partner WOD'&&sec.infoKey==='i_ygig_ft')||sec.type==='Buy-In / Cash-Out')&&sec.items){
+    var _drLv=S.level||'intermediate';var _drTm=S.teamSize||1;
     var _drYgig=sec.type==='YGIG / Partner WOD';var _drSplit=_drYgig?false:(_drTm===2);var _drTmEff=_drYgig?1:_drTm;
+    var _drTr=(_drTm===2&&!_drYgig)?18:_tSec(_drLv);
     var _drSI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});
     var _drCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});
     var _drPW=0;
@@ -2981,9 +3052,10 @@ function renderSec(sec,si){
     if(_drPW>0){
       var _drTimeCap=(sec.infoVars&&sec.infoVars.t)||S.time||30;
       var _drN=Math.max(1,Math.round(_drTimeCap*60/(_drYgig?_drPW*2:_drPW)));
+      if(_drYgig){var _ygLkR=sec.ygigCfg&&sec.ygigCfg.roundsEach;if(_ygLkR){_drN=_ygLkR;}else{var _drBE=_ygigFtBand(_drTimeCap);_drN=Math.max(_drBE[0],Math.min(_drBE[1]+1,_drN));}} // اختيار المستخدم يقفل الجولات؛ وإلا سقف الجدول+1 (طلب Laila)
       if(!sec.infoVars)sec.infoVars={};
       if(sec.type!=='Buy-In / Cash-Out'){sec.infoVars.r=_drN;sec.infoVars.rt=_drN*2;}sec._drPW=_drPW;sec._drBudget=_drTimeCap*60;
-      if(sec.type==='For Time / RFT'){var _rftActR=(sec.rftCfg&&sec.rftCfg.rounds)||_drN;sec.infoVars.r=_rftActR;sec.title=_rftActR+' Rounds For Time';var _drSep=sec.items.find(function(x){return x.kind==='sep';});if(_drSep)_drSep.label='── '+_rftActR+' ROUNDS ──';}
+      if(sec.type==='For Time / RFT'){var _rftActR=(sec.rftCfg&&sec.rftCfg.rounds)||_drN;sec.infoVars.r=_rftActR;sec.title=_rftActR+' Rounds For Time';if(sec.scheme&&sec.scheme.length&&sec.scheme.length!==_rftActR){var _ssV=sec.scheme[0]||10;sec.scheme=[];for(var _ssK=0;_ssK<_rftActR;_ssK++)sec.scheme.push(_ssV);}var _drSep=sec.items.find(function(x){return x.kind==='sep';});if(_drSep)_drSep.label='── '+_rftActR+' ROUNDS ──';}
       else if(_drYgig){sec.title='YGIG - '+(_drN*2)+' Rounds For Time';var _drSepY=sec.items.find(function(x){return x.kind==='sep';});if(_drSepY)_drSepY.label='── '+(_drN*2)+' Rounds ──';}
       else if(sec.type==='Buy-In / Cash-Out'){var _biLkR=sec.buyInCfg&&sec.buyInCfg.rounds;if(_biLkR){sec.infoVars.r=_biLkR;}else{sec.infoVars.r=sec.biWodType==='chipper'?1:(sec.scheme&&sec.scheme.length>0?sec.scheme.length:1);}var _drSepB=sec.items.find(function(x){return x.kind==='sep'&&x.label&&x.label.indexOf('ROUNDS')>=0;});if(_drSepB)_drSepB.label='── '+sec.infoVars.r+' ROUNDS ──';}
     }
@@ -3102,32 +3174,7 @@ function fmtDetail(d){
   }
   return d;
 }
-function detNum(d){var m=d&&d.match(/^([\d][\d\s\-]*)(.*)$/);return m?m[1].trim():d;}
 function detUnit(d){var m=d&&d.match(/^[\d][\d\s\-]*(.+)$/);return m?m[1].trim():"";}
-function _exChip(it,si){
-  if(!it.baseRep||!it.ex||it.isRest)return'';
-  var sec=S.wod&&S.wod.sections&&S.wod.sections[si];
-  if(!sec)return'';
-  var iv=sec.infoVars||{};
-  var totalSec=(iv.t||S.time)*60;
-  var strItems=(sec.items||[]).filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});
-  var n=strItems.length||1;
-  var fairShare;
-  if(sec.type==='For Time / RFT'&&iv.r){fairShare=totalSec/(iv.r*n);}
-  else if(sec.type==='AMRAP'&&iv.rnd){fairShare=(iv.rnd*60)/n;}
-  else{fairShare=totalSec/n;}
-  var team=S.teamSize||1;
-  var _itmSplt=sec.type!=='YGIG / Partner WOD'&&sec.type!=='EMOM'&&sec.type!=='Tabata'&&sec.type!=='Group A'&&sec.type!=='Group B';
-  var est;
-  try{est=_wodEstTime([it.baseRep],[it.ex],null,1,team,S.level,_itmSplt);}catch(e){return'';}
-  if(!est||est<=0)return'';
-  var ratio=est/fairShare;
-  var color,bg;
-  if(ratio>=0.90&&ratio<=1.10){color='#2e7d32';bg='rgba(46,125,50,0.15)';}
-  else if(ratio>1.10){color='#c62828';bg='rgba(198,40,40,0.12)';}
-  else{color='#6a1b9a';bg='rgba(106,27,154,0.14)';}
-  return'<span style="background:'+bg+';color:'+color+';font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:5px">'+Math.round(ratio*100)+'%</span>';
-}
 function startReorder(si,ii){
   S._reorder={si:si,ii:ii};
   var el=document.getElementById('sec-'+si);
@@ -3188,7 +3235,6 @@ function renderStr(it,si,ii,num,roundIdx){
   +'<button onclick="manualSwap(\''+si+'\',\''+ii+'\')" style="width:100%;background:#2ECC71;border:1px solid #2ECC71;border-radius:8px;padding:8px;font-size:12px;color:#000;font-weight:700;cursor:pointer">'+t('use')+'</button>'
   +'</div></div>';
 }
-function splitCName(name){var m=name.match(/^([\D]*?)(\d+)([\s\S]*)$/);return m?{b:m[1],n:parseInt(m[2],10),a:m[3]}:{b:name,n:null,a:''}}
 function renderCardio(it,si,ii,roundIdx){
   var ex=it.ex;
   var emTag=it.emomMin?'<span style="background:var(--cag);color:var(--ca);font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;margin-left:5px">'+it.emomMin+'</span>':'';
@@ -3237,43 +3283,6 @@ function renderCardio(it,si,ii,roundIdx){
   +'</div></div>';
 }
 
-function openEditStrUnit(si,ii){
-  var item=S.wod&&S.wod.sections[si]&&S.wod.sections[si].items[ii];
-  if(!item)return;
-  var cur=detUnit(item.detail)||'reps';
-  editingDetail={si:si,ii:ii,unitOnly:true};
-  var sheet=document.getElementById('edit-sheet');
-  var units=['reps','m','s'];
-  var btns=units.map(function(u){
-    var sel=u===cur;
-    var bg=sel?'rgba(255,120,0,0.12)':' var(--bg3)';
-    var bc=sel?'var(--or)':' var(--bdr)';
-    var col=sel?'var(--or)':' var(--txt2)';
-    return '<bu'+'tton onclick="pickStrUnit(\''+u+'\')" style="background:'+bg+';border:1.5px solid '+bc+';border-radius:7px;padding:5px 10px;font-size:11px;color:'+col+';cursor:pointer;font-weight:700;min-height:28px">'+u+'</bu'+'tton>';
-  }).join('');
-  sheet.innerHTML=
-    '<div style="width:32px;height:3px;background:var(--bdr);border-radius:2px;margin:0 auto 14px"></div>'
-    +'<div style="text-align:right;margin-bottom:14px"><span style="font-size:10px;color:var(--or);font-weight:700;letter-spacing:1px">'+item.ex.name+' ✏️</span></div>'
-    +'<div style="display:flex;flex-direction:row;gap:8px;justify-content:center;margin-bottom:16px">'+btns+'</div>'
-    +'<bu'+'tton onclick="closeEditDetail()" style="width:100%;background:var(--bg3);border:0.5px solid var(--bdr);border-radius:12px;padding:13px;font-size:14px;color:var(--txt2);cursor:pointer;font-weight:600;min-height:48px">'+t('cancel')+'</bu'+'tton>';
-  var ov=document.getElementById('edit-overlay');
-  ov.style.display='block';
-  setTimeout(function(){document.getElementById('edit-sheet').style.transform='translateX(-50%) translateY(0)';},10);
-}
-function pickStrUnit(u){
-  var ed=editingDetail;
-  var item=S.wod.sections[ed.si].items[ed.ii];
-  var m=item.detail.match(/^([\d][\d\s\-]+?)\s*(reps.*|m$|s$|Cal.*|kg.*|each side)$/);
-  var nums=m?m[1].trim():detNum(item.detail);
-  var newDetail;
-  if(u==='m')newDetail=nums+'m';
-  else if(u==='s')newDetail=nums+'s';
-  else newDetail=nums+' reps';
-  S.wod.sections[ed.si].items[ed.ii]=Object.assign({},item,{detail:newDetail,detailEdited:true,savedUnit:strEditUnit});
-  closeEditDetail();
-  reRenderSec(ed.si);
-  toast('\u2705 Updated!');
-}
 function openCardioSchemeEdit(si,ii){
   var item=S.wod&&S.wod.sections[si]&&S.wod.sections[si].items[ii];
   if(!item)return;
@@ -3282,7 +3291,10 @@ function openCardioSchemeEdit(si,ii){
   cardioEditUnit=item.ex.unit||'m';
   editingDetail={si:si,ii:ii,cardioScheme:true};
   var _sec2=S.wod.sections[si];
-  _edCardioExpanded=!!(_sec2&&_sec2.type==='Ladder');
+  // Open expanded (per-round) by default for Ladder OR whenever the rounds already carry different values —
+  // otherwise the collapsed single-box editor would silently flatten an existing per-round customization on Save.
+  var _hasVariedRounds=item.cardioAmounts.length>1&&!item.cardioAmounts.every(function(v){return v===item.cardioAmounts[0];});
+  _edCardioExpanded=!!(_sec2&&_sec2.type==='Ladder')||_hasVariedRounds;
   _renderCardioSchemeSheet(item);
 }
 function _renderCardioSchemeSheet(item){
@@ -3497,7 +3509,6 @@ function buildStrDetail(newEx,old,sec){
   if(newUnit==='side')return repNum+' reps each side';
   return repNum+' reps';
 }
-function stripCardioNum(s){return s.replace(/\s+\d+(\s*[a-z]+\.?)?$/i,'').trim();}
 function tabataCardioEx(obj){
   return Object.assign({},obj,{_tabata:true});
 }
@@ -3520,8 +3531,8 @@ function swapCardio(si,ii,name){
     var _swEquiv=(_swRatePerUnit>0&&_swCurTime>0)?Math.round(_swCurTime/_swRatePerUnit):0;
     newAmount=_cardioClamp(newUnit,_swEquiv||_cardioAmtNew(newUnit,S.level,_swTeam,_swIsChip),S.level,_swTeam,_swIsChip);
   }else{
-    // نفس الوحدة — احتفظ بكمية اليوزر
-    newAmount=_cardioClamp(newUnit,cur.amount,S.level,_swTeam,_swIsChip);
+    // نفس الوحدة — احتفظ بكمية اليوزر (بدون snap للسلسلة لو عدّله يدوياً)
+    newAmount=old._userCardio?cur.amount:_cardioClamp(newUnit,cur.amount,S.level,_swTeam,_swIsChip);
   }
   // EMOM: clamp strictly to EMOM table limits (always solo, no 30% cap)
   if(_swIsEMOM){var _swEmCL=_emomCardioLimits(S.level,1);var _swEmMn=newUnit==='Cal'?_swEmCL.calMin:newUnit==='m'?_swEmCL.mtrMin:_swEmCL.duMin;var _swEmMx=newUnit==='Cal'?_swEmCL.calMax:newUnit==='m'?_swEmCL.mtrMax:_swEmCL.duMax;newAmount=_cardioNearestSer(newUnit,Math.max(_swEmMn,Math.min(_swEmMx,newAmount)),_swEmMn,_swEmMx);}
@@ -3535,9 +3546,26 @@ function swapCardio(si,ii,name){
   var newEx={name:name,amount:newAmount,unit:newUnit,alts:newAlts};
   var exObj=sec.type==='Tabata'?tabataCardioEx(newEx):newEx;
   var newItem=Object.assign({},old,{ex:exObj});
-  // Ladder: preserve scheme amounts; others: clamp to unit limits
+  // Plain min/max clamp (NO "nice series" snapping) — used to preserve a user-edited exact value while still respecting the category range
+  var _swPlainClamp=function(unit,amt){
+    var _pmn,_pmx;
+    if(_swIsEMOM){var _pec=_emomCardioLimits(S.level,1);_pmn=unit==='Cal'?_pec.calMin:unit==='m'?_pec.mtrMin:_pec.duMin;_pmx=unit==='Cal'?_pec.calMax:unit==='m'?_pec.mtrMax:_pec.duMax;}
+    else if(_swIsChip){var _pccl=_chipperCL(S.level,_swTeam);_pmn=unit==='Cal'?_pccl.calMin:unit==='m'?_pccl.mtrMin:_pccl.duMin;_pmx=unit==='Cal'?_pccl.calMax:unit==='m'?_pccl.mtrMax:_pccl.duMax;}
+    else{var _pcl=_cardioLimits(_swTeam,true,S.level);_pmn=unit==='Cal'?_pcl.calMin:unit==='m'?_pcl.mtrMin:_pcl.duMin;_pmx=unit==='Cal'?_pcl.calMax:unit==='m'?_pcl.mtrMax:_pcl.duMax;}
+    return Math.max(_pmn,Math.min(_pmx,amt||_pmn));
+  };
+  // Ladder: preserve scheme amounts; user-edited per-round cardio: keep each round's value (clamped to the new exercise's range, no series-snap); others: clamp to unit limits
   if(old.cardioAmounts){
     if(sec.type==='Ladder'&&sec.scheme&&sec.scheme.length){newItem.cardioAmounts=sec.scheme.slice();}
+    else if(old._userCardio&&old.kind!=='buyin'&&old.cardioAmounts.length>1){
+      var _swSameU=newUnit===cur.unit;
+      newItem.cardioAmounts=old.cardioAmounts.map(function(v){
+        var _swVAmt=v;
+        if(!_swSameU){var _swVSec=_cardioSecEst({name:cur.name,unit:cur.unit,amount:v},S.level,_swTeam,_swIsChip?false:true);var _swVRate=_cardioSecEst({name:name,unit:newUnit,amount:1},S.level,_swTeam,_swIsChip?false:true);_swVAmt=(_swVSec>0&&_swVRate>0)?Math.round(_swVSec/_swVRate):newAmount;}
+        return _swPlainClamp(newUnit,_swVAmt);
+      });
+      newItem.ex=Object.assign({},newItem.ex,{amount:newItem.cardioAmounts[0]});
+    }
     else{newItem.cardioAmounts=old.cardioAmounts.map(function(){return newAmount;});}
   }
   sec.items[ii]=newItem;
@@ -3572,18 +3600,26 @@ function regenEx(si,ii,kind){
         if(_isEMOM){var _ec2=_emomCardioLimits(S.level,1);var _emn2=unit==='Cal'?_ec2.calMin:unit==='m'?_ec2.mtrMin:_ec2.duMin;var _emx2=unit==='Cal'?_ec2.calMax:unit==='m'?_ec2.mtrMax:_ec2.duMax;return _cardioPickFlat(unit,_emn2,_emx2).amount;}
         return _cardioAmtNew(unit,S.level,_rgTeam,_rgIsChip);
       };
+      // Plain min/max clamp (NO "nice series" snapping) — used to preserve a user-edited exact value while still respecting the category range
+      var _rgPlainClamp=function(unit,amt){
+        var _pmn,_pmx;
+        if(_isEMOM){var _pec=_emomCardioLimits(S.level,1);_pmn=unit==='Cal'?_pec.calMin:unit==='m'?_pec.mtrMin:_pec.duMin;_pmx=unit==='Cal'?_pec.calMax:unit==='m'?_pec.mtrMax:_pec.duMax;}
+        else if(_rgIsChip){var _pccl=_chipperCL(S.level,_rgTeam);_pmn=unit==='Cal'?_pccl.calMin:unit==='m'?_pccl.mtrMin:_pccl.duMin;_pmx=unit==='Cal'?_pccl.calMax:unit==='m'?_pccl.mtrMax:_pccl.duMax;}
+        else{var _pcl=_cardioLimits(_rgTeam,true,S.level);_pmn=unit==='Cal'?_pcl.calMin:unit==='m'?_pcl.mtrMin:_pcl.duMin;_pmx=unit==='Cal'?_pcl.calMax:unit==='m'?_pcl.mtrMax:_pcl.duMax;}
+        return Math.max(_pmn,Math.min(_pmx,amt||_pmn));
+      };
       // حاول نفس الوحدة أولاً
       var _sameUnit=_cardioPool.filter(function(c){return c.unit===_oldUnit;});
       var _diffNames=_sameUnit.map(function(c){return c.name;}).filter(function(n,i,a){return a.indexOf(n)===i&&n!==_oldName;});
       if(_diffNames.length){
         var _newName=pk(_diffNames);
         var _newBase=_sameUnit.filter(function(c){return c.name===_newName;})[0]||_sameUnit[0];
-        newEx=Object.assign({},_newBase,{amount:_rgClamp(_oldUnit||_newBase.unit,_userAmt),unit:_oldUnit||_newBase.unit});
+        newEx=Object.assign({},_newBase,{amount:(old._userCardio?_userAmt:_rgClamp(_oldUnit||_newBase.unit,_userAmt)),unit:_oldUnit||_newBase.unit});
       }else{
         var _anyDiff=_cardioPool.filter(function(c){return c.name!==_oldName;});
         var _picked=pk(_anyDiff.length?_anyDiff:_cardioPool);
         var _newAmt;
-        if(_picked.unit===_oldUnit&&_userAmt){_newAmt=_rgClamp(_picked.unit,_userAmt);}
+        if(_picked.unit===_oldUnit&&_userAmt){_newAmt=old._userCardio?_userAmt:_rgClamp(_picked.unit,_userAmt);}
         else if(_userAmt&&_oldUnit&&_oldName){var _oldSec=_cardioSecEst({name:_oldName,unit:_oldUnit,amount:_userAmt},S.level,_rgTeam,_rgIsChip?false:true);var _rate1=_cardioSecEst({name:_picked.name,unit:_picked.unit,amount:1},S.level,_rgTeam,_rgIsChip?false:true);var _eqAmt=(_oldSec>0&&_rate1>0)?_rgClamp(_picked.unit,Math.round(_oldSec/_rate1)):null;_newAmt=_eqAmt?_eqAmt:_rgAmtNew(_picked.unit);}
         else{_newAmt=_rgAmtNew(_picked.unit);}
         newEx=Object.assign({},_picked,{amount:_newAmt});
@@ -3592,7 +3628,23 @@ function regenEx(si,ii,kind){
       if(old.kind==='buyin'){newEx=Object.assign({},newEx,{amount:_buyinRandAmt(newEx.unit,S.level,S.teamSize,true)});}
       // FIX #2: 30% time-cap (EMOM already tight via _emomCardioLimits; skip cap if user explicitly set the amount)
       else if(!_isEMOM&&!old._userCardio){var _rgCL=_rgIsChip?_chipperCL(S.level,_rgTeam):_cardioLimits(_rgTeam,true,S.level);var _rgRounds=(sec.infoKey==='i_ygig_ft'&&sec.infoVars&&sec.infoVars.r)?sec.infoVars.r:((sec.scheme&&sec.scheme.length>1)?sec.scheme.length:1);newEx=_cardioCapSec(newEx,(S.time*60*0.30)/_rgRounds,_rgCL,S.level,_rgTeam,_rgTeam===2);}
-      var _newItem4=Object.assign({},old,{ex:newEx});if(old.cardioAmounts){if(sec.type==='Ladder'&&sec.scheme&&sec.scheme.length){_newItem4.cardioAmounts=sec.scheme.slice();}else{_newItem4.cardioAmounts=old.cardioAmounts.map(function(){return newEx.amount;});}}S.wod.sections[si].items[ii]=_newItem4;
+      var _newItem4=Object.assign({},old,{ex:newEx});
+      // Ladder: preserve scheme amounts; user-edited per-round cardio: keep each round's value (clamped to the new exercise's range); others: flatten to the new amount
+      if(old.cardioAmounts){
+        if(sec.type==='Ladder'&&sec.scheme&&sec.scheme.length){_newItem4.cardioAmounts=sec.scheme.slice();}
+        else if(old._userCardio&&old.kind!=='buyin'&&old.cardioAmounts.length>1){
+          var _rgSameU=newEx.unit===_oldUnit;
+          _newItem4.cardioAmounts=old.cardioAmounts.map(function(v){
+            var _rgVAmt=v;
+            if(!_rgSameU){var _rgVSec=_cardioSecEst({name:_oldName,unit:_oldUnit,amount:v},S.level,_rgTeam,_rgIsChip?false:true);var _rgVRate=_cardioSecEst({name:newEx.name,unit:newEx.unit,amount:1},S.level,_rgTeam,_rgIsChip?false:true);_rgVAmt=(_rgVSec>0&&_rgVRate>0)?Math.round(_rgVSec/_rgVRate):newEx.amount;}
+            return _rgPlainClamp(newEx.unit,_rgVAmt);
+          });
+          newEx=Object.assign({},newEx,{amount:_newItem4.cardioAmounts[0]});
+          _newItem4.ex=newEx;
+        }
+        else{_newItem4.cardioAmounts=old.cardioAmounts.map(function(){return newEx.amount;});}
+      }
+      S.wod.sections[si].items[ii]=_newItem4;
     }
   }else{
     var _basePool=(sec.type==='Ladder'||sec.type==='Chipper')?getChipperPool(S.level,S.teamSize):getPool(S.level,null,S.teamSize);
@@ -3662,14 +3714,9 @@ function regenEx(si,ii,kind){
 }
 // ── Drag & Drop reorder exercises ──────────────────────────────
 var _drgSi=null,_drgIi=null;
-function drgS(e,si,ii){_drgSi=si;_drgIi=ii;e.dataTransfer.effectAllowed='move';setTimeout(function(){var el=document.getElementById('ex-'+si+'-'+ii);if(el)el.style.opacity='0.35';},0);}
-function drgO(e){e.preventDefault();e.dataTransfer.dropEffect='move';var el=e.currentTarget;el.classList.add('drg-over');}
 function _fixEmomMin(si){var its=S.wod.sections[si].items;var idx=0;its.forEach(function(it){if(it.emomMin&&it.emomMin!=='Each Min'&&!it.isRest){it.emomMin='Min '+String.fromCharCode(65+idx);idx++;}else if(it.kind==='cardio'&&it.emomMin&&it.emomMin!=='Each Min'){it.emomMin='Min '+String.fromCharCode(65+idx);idx++;}});}
-function drgD(e,si,ii){e.preventDefault();if(_drgSi===si&&_drgIi!==null&&_drgIi!==ii){var its=S.wod.sections[si].items;var tmp=its[_drgIi];its[_drgIi]=its[ii];its[ii]=tmp;_fixEmomMin(si);reRenderSec(si);toast('↕ Reordered!','#ff6600');}document.querySelectorAll('.er.drg-over').forEach(function(el){el.classList.remove('drg-over');});}
-function drgE(e){document.querySelectorAll('.er').forEach(function(el){el.style.opacity='';el.classList.remove('drg-over');});_drgSi=null;_drgIi=null;}
 // ── Touch drag ──────────────────────────────────────────────
 var _tSi=null,_tIi=null,_tClone=null;
-function tdS(e,si,ii){_tSi=si;_tIi=ii;var er=e.currentTarget.closest('.er');var r=er.getBoundingClientRect();_tClone=er.cloneNode(true);_tClone.style.cssText='position:fixed;left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;opacity:0.7;pointer-events:none;z-index:9999;background:var(--bg);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.2);';document.body.appendChild(_tClone);er.style.opacity='0.3';e.preventDefault();}
 document.addEventListener('touchmove',function(e){if(!_tClone){if(document.body.classList.contains('timer-open')){var tl=e.target.closest('.timer-ex-list');if(!tl)e.preventDefault();}return;}var t=e.touches[0];_tClone.style.left=(t.clientX-_tClone.offsetWidth/2)+'px';_tClone.style.top=(t.clientY-24)+'px';e.preventDefault();},{passive:false});
 document.addEventListener('wheel',function(e){if(!document.body.classList.contains('timer-open'))return;var tl=e.target.closest('.timer-ex-list');if(!tl)e.preventDefault();},{passive:false});
 document.addEventListener('touchend',function(e){if(!_tClone){return;}var t=e.changedTouches[0];_tClone.remove();_tClone=null;var hit=document.elementFromPoint(t.clientX,t.clientY);var tEl=hit?hit.closest('.er'):null;if(tEl&&_tSi!==null){var id=tEl.id.split('-');var tIi=parseInt(id[2],10);if(!isNaN(tIi)&&tIi!==_tIi){var its=S.wod.sections[_tSi].items;var tmp=its[_tIi];its[_tIi]=its[tIi];its[tIi]=tmp;_fixEmomMin(_tSi);reRenderSec(_tSi);toast('↕ Reordered!','#ff6600');}}else{var orig=document.getElementById('ex-'+_tSi+'-'+_tIi);if(orig)orig.style.opacity='';}  _tSi=null;_tIi=null;});
@@ -3745,7 +3792,6 @@ function shareWod(){
   else if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){toast('📋 Copied!');}).catch(function(){fbCopy(txt);});}
   else{fbCopy(txt);}
 }
-function copyWod(){var txt=_buildWodText();if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){toast('📋 Copied!');}).catch(function(){fbCopy(txt);});}else{fbCopy(txt);}}
 function fbCopy(txt){
   var ta=document.createElement('textarea');ta.value=txt;ta.style.cssText='position:fixed;opacity:0;top:0;left:0';
   document.body.appendChild(ta);ta.focus();ta.select();
@@ -3759,24 +3805,6 @@ function toggleChipperCfg(si){
   var el=document.getElementById('chipper-cfg-'+si);
   if(el)el.style.display=el.style.display==='none'?'block':'none';
 }
-function setChipperVal(si,key,val,btn){
-  var sec=S.wod.sections[si];
-  if(!sec.chipperCfg)sec.chipperCfg={};
-  var parent=btn.parentElement;
-  Array.from(parent.children).forEach(function(b){b.style.background='var(--bg2)';b.style.borderColor='var(--bdr)';b.style.color='var(--txt2)';});
-  if(sec.chipperCfg[key]===val){delete sec.chipperCfg[key];return;}
-  sec.chipperCfg[key]=val;
-  btn.style.background='var(--or)';btn.style.borderColor='var(--or)';btn.style.color='#000';
-}
-function setChipperRepsCustom(si,inp){
-  var val=parseInt(inp.value);
-  if(!val||val<1)return;
-  var sec=S.wod.sections[si];
-  if(!sec.chipperCfg)sec.chipperCfg={};
-  sec.chipperCfg.baseReps=val;
-  var parent=inp.parentElement;
-  Array.from(parent.querySelectorAll('button')).forEach(function(b){b.style.background='var(--bg2)';b.style.borderColor='var(--bdr)';b.style.color='var(--txt2)';});
-}
 function setChipperCardio(si){
   var sec=S.wod.sections[si];
   if(!sec.chipperCfg)sec.chipperCfg={};
@@ -3785,21 +3813,6 @@ function setChipperCardio(si){
   if(sec.chipperCfg.withCardio!==true){sec.chipperCfg.cardioCount=0;delete sec.chipperCfg.stationCount;if(sec.chipperCfg.withCardio===false){sec.chipperCfg.stationMode='classic';}else{delete sec.chipperCfg.stationMode;}}
   var el=document.getElementById('chipper-cfg-'+si);
   if(el){var wasVisible=el.style.display!=='none';el.outerHTML=renderChipperCfg(sec,si);if(wasVisible){var nel=document.getElementById('chipper-cfg-'+si);if(nel)nel.style.display='block';}}
-}
-function toggleChipperPyramid(si){
-  var sec=S.wod.sections[si];
-  if(!sec.chipperCfg)sec.chipperCfg={};
-  if(sec.chipperCfg.schemeKey==='pyr_dyn'){
-    delete sec.chipperCfg.schemeKey;
-    delete sec.chipperCfg.dynStart;
-    delete sec.chipperCfg.dynStep;
-  }else{
-    sec.chipperCfg.schemeKey='pyr_dyn';
-    if(!sec.chipperCfg.dynStart)sec.chipperCfg.dynStart=3;
-    if(!sec.chipperCfg.dynStep)sec.chipperCfg.dynStep=1;
-  }
-  var el=document.getElementById('sec-'+si);
-  if(el)el.outerHTML=renderSec(S.wod.sections[si],si);
 }
 function setChipperCardioCount(si,n){
   var sec=S.wod.sections[si];if(!sec.chipperCfg)sec.chipperCfg={};
@@ -3831,26 +3844,9 @@ function randomChipper(si){
   var el=document.getElementById('sec-'+si);
   if(el)el.outerHTML=renderSec(S.wod.sections[si],si);
 }
-function beginChipperSeq(si){
-  S.wod.sections[si].chipperStep=0;
-  var el=document.getElementById('sec-'+si);
-  if(el)el.outerHTML=renderSec(S.wod.sections[si],si);
-}
-function doneChipperStep(si){
-  var sec=S.wod.sections[si];
-  if(sec.chipperStep===undefined)sec.chipperStep=0;
-  sec.chipperStep++;
-  var el=document.getElementById('sec-'+si);
-  if(el)el.outerHTML=renderSec(sec,si);
-}
 function toggleAmrapCfg(si){
   var el=document.getElementById('amrap-cfg-'+si);
   if(el)el.style.display=el.style.display==='none'?'block':'none';
-}
-function setAmrapTarget(si,val){
-  var sec=S.wod.sections[si];if(!sec.amrapCfg)sec.amrapCfg={};
-  if(val===null){delete sec.amrapCfg.target;}else{sec.amrapCfg.target=val;}
-  regenAmrap(si);
 }
 function setAmrapVal(si,key,val,btn){
   var sec=S.wod.sections[si];
@@ -3860,46 +3856,6 @@ function setAmrapVal(si,key,val,btn){
   if(sec.amrapCfg[key]===val){delete sec.amrapCfg[key];}else{sec.amrapCfg[key]=val;btn.style.background='var(--or)';btn.style.borderColor='var(--or)';btn.style.color='#000';}
   // Group A/B: re-generate immediately so bar + items reflect the new setting
   // Group A: cfg saved above, visuals updated inline — panel stays open; user presses regen/random to regenerate
-}
-function setAmrapScheme(si,key){
-  var sec=S.wod.sections[si];if(!sec.amrapCfg)sec.amrapCfg={};
-  var cfg=sec.amrapCfg;
-  var dynDiv=document.getElementById('amrap-dyn-'+si);
-  if(!key){
-    delete cfg.amrapScheme;delete cfg.dynStart;delete cfg.dynStep;
-    var row=document.getElementById('amrap-reps-row-'+si);
-    if(row){row.style.opacity='1';row.style.pointerEvents='auto';}
-    if(dynDiv)dynDiv.style.display='none';
-    return;
-  }
-  cfg.amrapScheme=key;delete cfg.baseReps;if(!cfg.dynStart)cfg.dynStart=1;if(!cfg.dynStep)cfg.dynStep=1;
-  var sch=AMRAP_SCHEMES[key];
-  var row=document.getElementById('amrap-reps-row-'+si);
-  if(row){row.style.opacity='0.35';row.style.pointerEvents='none';}
-  if(dynDiv&&sch&&sch.dynamic){
-    dynDiv.style.display='block';
-    dynDiv.innerHTML=renderDynInputsHTML(sch.dType,cfg.dynStart,cfg.dynStep,si,'amrap');
-  }
-}
-function setAmrapReps(si,val,btn){
-  var sec=S.wod.sections[si];
-  if(!sec.amrapCfg)sec.amrapCfg={};
-  var inp=document.getElementById('amrap-reps-'+si);
-  var parent=btn.parentElement;
-  Array.from(parent.querySelectorAll('button')).forEach(function(b){b.style.background='var(--bg2)';b.style.borderColor='var(--bdr)';b.style.color='var(--txt2)';});
-  if(sec.amrapCfg.baseReps===val){delete sec.amrapCfg.baseReps;if(inp)inp.value='';return;}
-  sec.amrapCfg.baseReps=val;
-  if(inp)inp.value='';
-  btn.style.background='var(--or)';btn.style.borderColor='var(--or)';btn.style.color='#000';
-}
-function setAmrapRepsCustom(si,inp){
-  var val=parseInt(inp.value);
-  if(!val||val<1)return;
-  var sec=S.wod.sections[si];
-  if(!sec.amrapCfg)sec.amrapCfg={};
-  sec.amrapCfg.baseReps=val;
-  var parent=inp.parentElement;
-  Array.from(parent.querySelectorAll('button')).forEach(function(b){b.style.background='var(--bg2)';b.style.borderColor='var(--bdr)';b.style.color='var(--txt2)';});
 }
 function toggleAmrapCardio(si){
   var sec=S.wod.sections[si];
@@ -3935,7 +3891,7 @@ function renderAmrapCfg(sec,si){
   var cfg=sec.amrapCfg||{};
   var S_btn='background:var(--bg2);border:0.5px solid var(--bdr);border-radius:7px;padding:5px 10px;font-size:13px;color:var(--txt2);cursor:pointer;font-weight:600;font-family:inherit;min-height:30px';
   var S_sel='background:var(--or);border:0.5px solid var(--or);border-radius:7px;padding:5px 10px;font-size:13px;color:#000;cursor:pointer;font-weight:600;font-family:inherit;min-height:30px';
-  var movBtns=[1,2,3,4,5,6,7,8].map(function(n){
+  var movBtns=[1,2,3,4,5,6,7,8,9,10].map(function(n){
     return'<button onclick="setAmrapVal('+si+',\'exCnt\','+n+',this)" style="'+(cfg.exCnt===n?S_sel:S_btn)+'">'+n+'</button>';
   }).join('');
   var cv=cfg.withCardio;
@@ -3959,60 +3915,6 @@ function setRftVal(si,key,val,btn){
   if(sec.rftCfg[key]===val){delete sec.rftCfg[key];}
   else{sec.rftCfg[key]=val;}
   regenRft(si,true); // auto-apply + keep panel open
-}
-function setRftScheme(si,key,btn){
-  var sec=S.wod.sections[si];
-  if(!sec.rftCfg)sec.rftCfg={};
-  var panel=document.getElementById('rft-cfg-'+si);
-  if(panel)Array.from(panel.querySelectorAll('button')).forEach(function(b){b.style.background='var(--bg2)';b.style.borderColor='var(--bdr)';b.style.color='var(--txt2)';});
-  if(sec.rftCfg.schemeKey===key){
-    delete sec.rftCfg.schemeKey;
-    _rftLockRows(si,false);
-    return;
-  }
-  sec.rftCfg.schemeKey=key;delete sec.rftCfg.baseReps;delete sec.rftCfg.rounds;
-  btn.style.background='var(--or)';btn.style.borderColor='var(--or)';btn.style.color='#000';
-  _rftLockRows(si,true);
-}
-function _rftLockRows(si,lock){
-  var rr=document.getElementById('rft-rounds-'+si);
-  var rp=document.getElementById('rft-reps-row-'+si);
-  if(rr){rr.style.opacity=lock?'0.35':'1';rr.style.pointerEvents=lock?'none':'auto';}
-  if(rp){rp.style.opacity=lock?'0.35':'1';rp.style.pointerEvents=lock?'none':'auto';}
-  var inp=document.getElementById('rft-reps-'+si);
-  if(inp)inp.disabled=lock;
-}
-function _rftClearScheme(si){
-  // يمسح أي نظام نشط ويعيد الـ UI للوضع الطبيعي
-  var sec=S.wod.sections[si];if(!sec.rftCfg)return;
-  delete sec.rftCfg.schemeKey;delete sec.rftCfg.pyramidP;delete sec.rftCfg.pyramidS;delete sec.rftCfg.customReps;
-  var sel=document.querySelector('#rft-cfg-'+si+' select');if(sel)sel.value='';
-  var pyrDiv=document.getElementById('rft-pyr-'+si);if(pyrDiv)pyrDiv.style.display='none';
-  var dynDiv=document.getElementById('rft-dyn-'+si);if(dynDiv)dynDiv.style.display='none';
-}
-function setRftReps(si,val,btn){
-  var sec=S.wod.sections[si];
-  if(!sec.rftCfg)sec.rftCfg={};
-  var inp=document.getElementById('rft-reps-'+si);
-  var parent=btn.parentElement;
-  Array.from(parent.querySelectorAll('button')).forEach(function(b){b.style.background='var(--bg2)';b.style.borderColor='var(--bdr)';b.style.color='var(--txt2)';});
-  if(sec.rftCfg.baseReps===val){delete sec.rftCfg.baseReps;if(inp)inp.value='';return;}
-  _rftClearScheme(si);           // يمسح schemeKey / pyramid / custom
-  sec.rftCfg.baseReps=val;
-  if(inp)inp.value='';
-  _rftLockRows(si,false);        // يفتح الجولات لأن baseReps لا يحددها
-  btn.style.background='var(--or)';btn.style.borderColor='var(--or)';btn.style.color='#000';
-}
-function setRftRepsCustom(si,inp){
-  var val=parseInt(inp.value);
-  var sec=S.wod.sections[si];
-  if(!sec.rftCfg)sec.rftCfg={};
-  if(!val||val<1){delete sec.rftCfg.baseReps;return;}
-  _rftClearScheme(si);           // يمسح schemeKey / pyramid / custom
-  sec.rftCfg.baseReps=val;
-  _rftLockRows(si,false);
-  var parent=inp.parentElement;
-  Array.from(parent.querySelectorAll('button')).forEach(function(b){b.style.background='var(--bg2)';b.style.borderColor='var(--bdr)';b.style.color='var(--txt2)';});
 }
 function toggleRftCardio(si){
   var sec=S.wod.sections[si];
@@ -4044,56 +3946,14 @@ function randomRft(si){
   var el=document.getElementById('sec-'+si);
   if(el)el.outerHTML=renderSec(S.wod.sections[si],si);
 }
-function setRftPyramid(si,field,val){
-  var v=parseInt(val);
-  var sec=S.wod.sections[si];if(!sec.rftCfg)sec.rftCfg={};
-  if(v&&v>0)sec.rftCfg[field]=v;
-  else delete sec.rftCfg[field];
-  delete sec.rftCfg.schemeKey;delete sec.rftCfg.customReps;
-  // live preview
-  var p=parseInt(sec.rftCfg.pyramidP),s=parseInt(sec.rftCfg.pyramidS);
-  var prev=document.getElementById('rft-pyr-preview-'+si);
-  if(prev){
-    if(p>0&&s>0&&s<=p){var a=[];for(var r=s;r<=p;r+=s)a.push(r);for(var r=p-s;r>=s;r-=s)a.push(r);prev.textContent='→ '+a.join(' - ');}
-    else prev.textContent='';
-  }
-}
-function setRftCustomReps(si,val){
-  var sec=S.wod.sections[si];if(!sec.rftCfg)sec.rftCfg={};
-  var parts=val.split(/[\s,،]+/).map(function(s){return parseInt(s);}).filter(function(n){return!isNaN(n)&&n>0;});
-  delete sec.rftCfg.schemeKey;delete sec.rftCfg.pyramidP;delete sec.rftCfg.pyramidS;
-  // صفّي الـ dropdown ومخفي pyramid/dyn
-  var sel=document.querySelector('#rft-cfg-'+si+' select');if(sel)sel.value='';
-  var pyrDiv=document.getElementById('rft-pyr-'+si);if(pyrDiv)pyrDiv.style.display='none';
-  var dynDiv=document.getElementById('rft-dyn-'+si);if(dynDiv)dynDiv.style.display='none';
-  var schRow=document.getElementById('rft-scheme-row-'+si);
-  if(parts.length>0){
-    sec.rftCfg.customReps=parts;
-    _rftLockRows(si,true);   // يقفل الجولات والتكرارات الثابتة
-    if(schRow){schRow.style.opacity='0.35';schRow.style.pointerEvents='none';}
-  }else{
-    delete sec.rftCfg.customReps;
-    _rftLockRows(si,false);
-    if(schRow){schRow.style.opacity='1';schRow.style.pointerEvents='auto';}
-  }
-}
-function setRftMode(si,mode){
-  var sec=S.wod.sections[si];if(!sec.rftCfg)sec.rftCfg={};
-  sec.rftCfg.rftMode=mode;
-  delete sec.rftCfg.schemeKey;delete sec.rftCfg.pyramidP;delete sec.rftCfg.pyramidS;delete sec.rftCfg.customReps;
-  var el=document.getElementById('rft-cfg-'+si);
-  if(el){el.outerHTML=renderRftCfg(sec,si);}
-  var el2=document.getElementById('rft-cfg-'+si);
-  if(el2)el2.style.display='block';
-}
 function renderRftCfg(sec,si){
   var cfg=sec.rftCfg||{};
   var S_btn='background:var(--bg2);border:0.5px solid var(--bdr);border-radius:7px;padding:5px 10px;font-size:13px;color:var(--txt2);cursor:pointer;font-weight:600;font-family:inherit;min-height:30px';
   var S_sel='background:var(--or);border:0.5px solid var(--or);border-radius:7px;padding:5px 10px;font-size:13px;color:#000;cursor:pointer;font-weight:600;font-family:inherit;min-height:30px';
-  var roundBtns=[1,2,3,4,5,6,7,8].map(function(n){
+  var roundBtns=[1,2,3,4,5,6,7,8,9,10].map(function(n){
     return'<button onclick="setRftVal('+si+',\'rounds\','+n+',this)" style="'+(cfg.rounds===n?S_sel:S_btn)+'">'+n+'</button>';
   }).join('');
-  var movBtns=[1,2,3,4,5,6,7,8].map(function(n){
+  var movBtns=[1,2,3,4,5,6,7,8,9,10].map(function(n){
     return'<button onclick="setRftVal('+si+',\'exCnt\','+n+',this)" style="'+(cfg.exCnt===n?S_sel:S_btn)+'">'+n+'</button>';
   }).join('');
   var cv=cfg.withCardio;
@@ -4142,13 +4002,6 @@ function randomEmom(si){
   if(!newSecs)return;
   newSecs[0].emomCfg={};S.wod.sections[si]=newSecs[0];
   var el=document.getElementById('sec-'+si);if(el)el.outerHTML=renderSec(S.wod.sections[si],si);_updateTabataChip(si);
-}
-function setEmomManualReps(si,val){
-  var v=parseInt(val);if(!v||v<1)return;
-  var sec=S.wod.sections[si];if(!sec.emomCfg)sec.emomCfg={};
-  sec.emomCfg.baseReps=v;
-  var btns=document.querySelectorAll('#emom-rep-btns-'+si+' button');
-  btns.forEach(function(b){b.style.background='var(--bg2)';b.style.borderColor='var(--bdr)';b.style.color='var(--txt2)';});
 }
 function renderEmomCfg(sec,si){
   var cfg=sec.emomCfg||{};
@@ -4519,7 +4372,7 @@ function _wodBeep(freq,dur,vol){var ctx=_getAudioCtx();if(!ctx)return;try{var o=
 function _wodBeepStart(){_wodBeep(880,0.12);setTimeout(function(){_wodBeep(880,0.12);},130);}
 function _wodBeepCountdown(){_wodBeep(660,0.08);}
 function _wodBeepDone(){_wodBeep(660,0.15);setTimeout(function(){_wodBeep(880,0.15);},200);setTimeout(function(){_wodBeep(1100,0.4);},400);}
-function _fmtMS(sec){var m=Math.floor(sec/60),s=sec%60;return(m<10?'0':'')+m+':'+(s<10?'0':'')+s;}
+function _fmtClock(sec){var m=Math.floor(sec/60),s=sec%60;return(m<10?'0':'')+m+':'+(s<10?'0':'')+s;}
 
 function showAmrapTimer(si){
   var sec=S.wod.sections[si];
@@ -4638,19 +4491,19 @@ function _wodTimerRender(){
     var _isRest=_isHalf&&!wt.restDone;
     accent=finished?'#22c55e':(_isHalf?'#ff7800':'#6366f1');bg=finished?'#0a1a0a':(_isHalf?'#1a0900':'#08080f');
     mainLabel=finished?'TIME\'S UP!':(_isRest?'REST':_isHalf?'🔄 SWITCH!':wt.label||'AMRAP');
-    bigNum=_isRest?_fmtMS(wt.restRemSec):_fmtMS(rem);
+    bigNum=_isRest?_fmtClock(wt.restRemSec):_fmtClock(rem);
     subLabel=_isRest?'REST BETWEEN INTERVALS':(_isHalf?'START INTERVAL 2':wt.totalMin+' MIN');
     progressPct=wt.totalSec>0?Math.round((rem/wt.totalSec)*100):0;
   }else if(type==='rft'){
     accent=finished?'#22c55e':'#10b981';bg=finished?'#0a1a0a':'#04140a';
-    mainLabel=finished?'DONE!':(wt.label||'FOR TIME');bigNum=_fmtMS(wt.elapsed);
-    subLabel=finished?'Final: '+_fmtMS(wt.elapsed):'COUNT UP';progressPct=100;
+    mainLabel=finished?'DONE!':(wt.label||'FOR TIME');bigNum=_fmtClock(wt.elapsed);
+    subLabel=finished?'Final: '+_fmtClock(wt.elapsed):'COUNT UP';progressPct=100;
   }else if(type==='cap'){
     var rem=Math.max(0,wt.totalSec-wt.elapsed);
     var _flash=wt.flash&&!finished;
     accent=finished?'#ef4444':(_flash?'#fff':'#f59e0b');
     bg=finished?'#1a0000':(_flash?'#2d1a00':'#110800');
-    mainLabel=finished?'TIME CAP!':(wt.label||'CAP');bigNum=_fmtMS(rem);
+    mainLabel=finished?'TIME CAP!':(wt.label||'CAP');bigNum=_fmtClock(rem);
     if(wt.isDB&&!finished){
       var _dbMin=Math.floor(wt.elapsed/60)+1;
       var _dbReps=wt.dbStart+((_dbMin-1)*wt.dbInc);
@@ -4661,13 +4514,13 @@ function _wodTimerRender(){
         movName='MIN '+_dbMin+' — Do '+_dbReps+' reps';
       }
     }
-    subLabel=_fmtMS(wt.totalSec)+' TIME CAP';progressPct=wt.totalSec>0?Math.round((rem/wt.totalSec)*100):0;
+    subLabel=_fmtClock(wt.totalSec)+' TIME CAP';progressPct=wt.totalSec>0?Math.round((rem/wt.totalSec)*100):0;
   }else{
     var midx=wt.movs.length>0?(wt.curMin-1)%wt.movs.length:-1;
     movName=midx>=0&&wt.movs[midx]?(wt.movs[midx].ex&&wt.movs[midx].ex.name)||'':'';
     accent=finished?'#22c55e':'#f59e0b';bg=finished?'#0a1a0a':'#120900';
     mainLabel=finished?'DONE!':'MIN '+wt.curMin+' / '+wt.totalMin;
-    bigNum=finished?'00:00':_fmtMS(wt.minSec);
+    bigNum=finished?'00:00':_fmtClock(wt.minSec);
     subLabel=finished?'EMOM Complete':'EMOM';progressPct=Math.round((wt.minSec/60)*100);
   }
   ov.style.background=bg;
@@ -4709,14 +4562,6 @@ function toggleTabataCardio(si){
   var S_btn='background:var(--bg2);border:0.5px solid var(--bdr);border-radius:7px;padding:5px 10px;font-size:13px;color:var(--txt2);cursor:pointer;font-weight:600;font-family:inherit;min-height:30px';
   var S_sel='background:var(--or);border:0.5px solid var(--or);border-radius:7px;padding:5px 10px;font-size:13px;color:#000;cursor:pointer;font-weight:600;font-family:inherit;min-height:30px';
   if(btn){btn.textContent=v===true?(CFG.lang==='ar'?'تشغيل':'ON'):(CFG.lang==='ar'?'إيقاف':'OFF');btn.style.cssText=(v===true?S_sel:S_btn)+';min-width:60px;text-align:center';}
-}
-function toggleTabataRest(si){
-  var sec=S.wod.sections[si];if(!sec.tabataCfg)sec.tabataCfg={};
-  sec.tabataCfg.withRest=sec.tabataCfg.withRest===true?false:true;
-  var v=sec.tabataCfg.withRest;var btn=document.getElementById('tabata-rest-'+si);
-  var S_btn='background:var(--bg2);border:0.5px solid var(--bdr);border-radius:7px;padding:5px 10px;font-size:13px;color:var(--txt2);cursor:pointer;font-weight:600;font-family:inherit;min-height:30px';
-  var S_sel='background:var(--or);border:0.5px solid var(--or);border-radius:7px;padding:5px 10px;font-size:13px;color:#000;cursor:pointer;font-weight:600;font-family:inherit;min-height:30px';
-  if(btn){btn.textContent=v?'ON':'OFF';btn.style.cssText=(v?S_sel:S_btn)+';min-width:60px;text-align:center';}
 }
 function _updateTabataChip(si){
   if(!S.wod||S.wod.type!=='tabata')return;
@@ -4806,20 +4651,6 @@ function setDeathByVal(si,key,val,btn){
     }
   }
 }
-function setDeathByFixed(si,val){
-  var v=parseInt(val);
-  var sec=S.wod.sections[si];if(!sec.deathByCfg)sec.deathByCfg={};
-  if(v&&v>0)sec.deathByCfg.fixedReps=v;
-  else delete sec.deathByCfg.fixedReps;
-  var fixedRepsMap={beginner:5,intermediate:8,advanced:10,elite:12};
-  var fixed=sec.deathByCfg.fixedReps||(fixedRepsMap[S.level]||8);
-  var newDetail=fixed+' reps (Fixed)';
-  if(sec.items&&sec.items[1]){
-    sec.items[1].detail=newDetail;
-    var el=document.getElementById('ex-'+si+'-1');
-    if(el){var det=el.querySelector('.eb>span');if(det)det.textContent=newDetail;}
-  }
-}
 function setDeathByStart(si,val,btn){
   var v=parseInt(val);
   var sec=S.wod.sections[si];if(!sec.deathByCfg)sec.deathByCfg={};
@@ -4894,21 +4725,6 @@ function setLadderDir(si,dir){
   var el2=document.getElementById('ladder-cfg-'+si);
   if(el2)el2.style.display='block';
 }
-function toggleLadderDir(si,dir){
-  var sec=S.wod.sections[si];if(!sec.ladderCfg)sec.ladderCfg={};
-  sec.ladderCfg.direction=sec.ladderCfg.direction===dir?'':dir;
-  if(sec.ladderCfg.direction&&!sec.ladderCfg.dynStart)sec.ladderCfg.dynStart=1;
-  if(sec.ladderCfg.direction&&!sec.ladderCfg.dynStep)sec.ladderCfg.dynStep=1;
-  var el=document.getElementById('ladder-cfg-'+si);
-  if(el)el.outerHTML=renderLadderCfg(sec,si);
-  var el2=document.getElementById('ladder-cfg-'+si);
-  if(el2)el2.style.display='block';
-}
-function setLadderField(si,field,val){
-  var sec=S.wod.sections[si];if(!sec.ladderCfg)sec.ladderCfg={};
-  sec.ladderCfg[field]=parseInt(val)||val;
-  _ladderPreview(si);
-}
 function _ladderPreview(si){
   var sec=S.wod.sections[si];var cfg=sec.ladderCfg||{};
   var prev=document.getElementById('ladder-preview-'+si);if(!prev)return;
@@ -4972,7 +4788,7 @@ function renderLadderCfg(sec,si){
   // Map direction to dType for renderDynInputsHTML
   var dTypeMap={ascending:'ascending',descending:'open_desc',pyramid:'pyr_dyn'};
   var dynHtml=dir?renderDynInputsHTML(dTypeMap[dir],cfg.dynStart,cfg.dynStep,si,'ladder'):'';
-  var movBtns=[1,2,3,4,5,6,7,8].map(function(n){return'<button onclick="setLadderVal('+si+',\'exCnt\','+n+',this)" style="'+(cfg.exCnt===n?S_sel:S_btn)+'">'+n+'</button>';}).join('');
+  var movBtns=[1,2,3,4,5,6,7,8,9,10].map(function(n){return'<button onclick="setLadderVal('+si+',\'exCnt\','+n+',this)" style="'+(cfg.exCnt===n?S_sel:S_btn)+'">'+n+'</button>';}).join('');
   return'<div id="ladder-cfg-'+si+'" style="display:none;background:var(--bg3);border:0.5px solid var(--bdr);border-radius:10px;padding:12px;margin-top:6px">'
   +'<div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button onclick="randomLadder('+si+')" style="background:rgba(99,102,241,0.12);border:0.5px solid #6366f1;border-radius:20px;padding:4px 12px;font-size:11px;color:#6366f1;cursor:pointer;font-weight:600">'+t('random')+'</button></div>'
   +'<div style="font-size:13px;font-weight:600;color:var(--txt2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px">'+t('rft_mov')+'</div>'
@@ -5003,42 +4819,6 @@ function setBuyInVal(si,key,val,btn){
   if(sec.buyInCfg[key]===val){delete sec.buyInCfg[key];return;}
   sec.buyInCfg[key]=val;btn.style.background='var(--or)';btn.style.borderColor='var(--or)';btn.style.color='#000';
 }
-function setBuyInMode(si,val){
-  var sec=S.wod.sections[si];if(!sec.buyInCfg)sec.buyInCfg={};
-  sec.buyInCfg.mode=val;
-}
-function setBuyInAmt(si,val){
-  var v=parseInt(val);
-  var sec=S.wod.sections[si];if(!sec.buyInCfg)sec.buyInCfg={};
-  if(v&&v>0)sec.buyInCfg.buyInAmt=v;else delete sec.buyInCfg.buyInAmt;
-  sec.items&&sec.items.forEach(function(it,ii){
-    if(it.kind==='buyin'&&it.which==='buyin'){
-      it.detail=v||sec.buyInCfg.buyInAmt;
-      var el=document.getElementById('ex-'+si+'-'+ii);
-      if(el){var det=el.querySelector('.cd span,.edet');if(det)det.textContent=it.detail;}
-    }
-  });
-}
-function setCashOutAmt(si,val){
-  var v=parseInt(val);
-  var sec=S.wod.sections[si];if(!sec.buyInCfg)sec.buyInCfg={};
-  if(v&&v>0)sec.buyInCfg.cashOutAmt=v;else delete sec.buyInCfg.cashOutAmt;
-  sec.items&&sec.items.forEach(function(it,ii){
-    if(it.kind==='buyin'&&it.which==='cashout'){
-      it.detail=v||sec.buyInCfg.cashOutAmt;
-      var el=document.getElementById('ex-'+si+'-'+ii);
-      if(el){var det=el.querySelector('.cd span,.edet');if(det)det.textContent=it.detail;}
-    }
-  });
-}
-function setBuyInManualReps(si,val){
-  var v=parseInt(val);if(!v||v<1)return;
-  var sec=S.wod.sections[si];if(!sec.buyInCfg)sec.buyInCfg={};
-  sec.buyInCfg.baseReps=v;
-  var btns=document.querySelectorAll('#buyin-rep-btns-'+si+' button');
-  btns.forEach(function(b){b.style.background='var(--bg2)';b.style.borderColor='var(--bdr)';b.style.color='var(--txt2)';});
-}
-
 function regenBuyIn(si){
   var sec=S.wod.sections[si];var cfg=sec.buyInCfg||{};
   // لا تضيف stickyRep لو المستخدم قفّل rounds (يعطّل _rftAuto ويكسر حساب الجولات)
@@ -5075,8 +4855,8 @@ function renderBuyInCfg(sec,si){
   var S_btn='background:var(--bg2);border:0.5px solid var(--bdr);border-radius:7px;padding:5px 10px;font-size:13px;color:var(--txt2);cursor:pointer;font-weight:600;font-family:inherit;min-height:30px';
   var S_sel='background:var(--or);border:0.5px solid var(--or);border-radius:7px;padding:5px 10px;font-size:13px;color:#000;cursor:pointer;font-weight:600;font-family:inherit;min-height:30px';
   var _wt=cfg.wodType||null;
-  var roundBtns=[1,2,3,4,5,6,7,8].map(function(n){return'<button onclick="setBuyInVal('+si+',\'rounds\','+n+',this)" style="'+(cfg.rounds===n?S_sel:S_btn)+'">'+n+'</button>';}).join('');
-  var movBtns=[1,2,3,4,5,6,7,8].map(function(n){return'<button onclick="setBuyInVal('+si+',\'exCnt\','+n+',this)" style="'+(cfg.exCnt===n?S_sel:S_btn)+'">'+n+'</button>';}).join('');
+  var roundBtns=[1,2,3,4,5,6,7,8,9,10].map(function(n){return'<button onclick="setBuyInVal('+si+',\'rounds\','+n+',this)" style="'+(cfg.rounds===n?S_sel:S_btn)+'">'+n+'</button>';}).join('');
+  var movBtns=[1,2,3,4,5,6,7,8,9,10].map(function(n){return'<button onclick="setBuyInVal('+si+',\'exCnt\','+n+',this)" style="'+(cfg.exCnt===n?S_sel:S_btn)+'">'+n+'</button>';}).join('');
   var _wtSettings=_wt?('<div style="font-size:13px;font-weight:600;color:var(--txt2);text-transform:uppercase;margin-bottom:6px">'+(_wt==='rft'?t('bi_rounds'):'')+'</div>'
   +(_wt==='rft'?'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;direction:'+(CFG.lang==='ar'?'rtl':'ltr')+'">'+roundBtns+'</div>':'')
   +'<div style="font-size:13px;font-weight:600;color:var(--txt2);text-transform:uppercase;margin-bottom:6px">'+t('bi_mov')+'</div>'
@@ -5120,14 +4900,6 @@ function toggleYgigCardio(si){
   var v=sec.ygigCfg[sk].withCardio;var btn=document.getElementById('ygig-cardio-'+si);
   if(btn){btn.textContent=v===true?(CFG.lang==='ar'?'تشغيل':'ON'):v===false?(CFG.lang==='ar'?'إيقاف':'OFF'):(CFG.lang==='ar'?'تلقائي':'AUTO');btn.style.background=v===true?'var(--or)':'var(--bg2)';btn.style.borderColor=v===true?'var(--or)':'var(--bdr)';btn.style.color=v===true?'#000':v===false?'var(--txt2)':'var(--txt3)';}
 }
-function setYgigManualReps(si,val){
-  var v=parseInt(val);if(!v||v<1)return;
-  var sec=S.wod.sections[si];if(!sec.ygigCfg)sec.ygigCfg={};
-  var sk=_ygigSubKey(sec);if(!sec.ygigCfg[sk])sec.ygigCfg[sk]={};
-  sec.ygigCfg[sk].baseReps=v;
-  var btns=document.querySelectorAll('#ygig-rep-btns-'+si+' button');
-  btns.forEach(function(b){b.style.background='var(--bg2)';b.style.borderColor='var(--bdr)';b.style.color='var(--txt2)';});
-}
 function regenYgig(si){
   var sec=S.wod.sections[si];var cfg=sec.ygigCfg||{};
   var fmt=_ygigActiveFmt(sec);var sk=fmt==='for-time'?'ft':'amrap';
@@ -5167,10 +4939,10 @@ function renderYgigCfg(sec,si){
     +'<button onclick="setYgigMode('+si+',\'amrap\')" style="'+(fmt==='amrap'?S_sel:S_btn)+'">AMRAP</button>'
     +'<button onclick="setYgigMode('+si+',\'for-time\')" style="'+(fmt==='for-time'?S_sel:S_btn)+'">For Time</button>'
     +'</div>';
-  var movBtns=[1,2,3,4,5,6,7,8].map(function(n){return'<button onclick="setYgigVal('+si+',\'exCnt\','+n+',this)" style="'+(fmtCfg.exCnt===n?S_sel:S_btn)+'">'+n+'</button>';}).join('');
+  var movBtns=[1,2,3,4,5,6,7,8,9,10].map(function(n){return'<button onclick="setYgigVal('+si+',\'exCnt\','+n+',this)" style="'+(fmtCfg.exCnt===n?S_sel:S_btn)+'">'+n+'</button>';}).join('');
   var body='';
   if(displayFmt==='for-time'){
-    var rndPresets=[1,2,3,4,5,6,7,8];
+    var rndPresets=[1,2,3,4,5,6,7,8,9,10];
     var rndBtns=rndPresets.map(function(n){return'<button onclick="setYgigVal('+si+',\'roundsEach\','+n+',this)" style="'+(fmtCfg.roundsEach===n?S_sel:S_btn)+'">'+n+'</button>';}).join('');
     body+=lbl(t('yg_rounds')+' ('+(CFG.lang==='ar'?'لكل شريك':'each partner')+')')
       +row(rndBtns)
@@ -5191,97 +4963,6 @@ function renderYgigCfg(sec,si){
   +'<button onclick="regenYgig('+si+')" style="width:100%;background:var(--or);color:#000;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;min-height:42px">↺ '+t('chip_regen')+'</button>'
   +'</div>';
 }
-function _updateFixedRows(prefix,si,dir){
-  var lock=dir&&dir!=='fixed';
-  var fs=lock?'opacity:0.35;pointer-events:none':'opacity:1;pointer-events:auto';
-  ['rounds-lbl','rounds-row','reps-lbl','reps-row'].forEach(function(s){
-    var el=document.getElementById(prefix+s+'-'+si);if(el)el.style.cssText=el.style.cssText.replace(/opacity:[^;]+;pointer-events:[^;]+/,fs)||(el.style.opacity=lock?'0.35':'1',el.style.pointerEvents=lock?'none':'auto');
-  });
-}
-function schemeExampleByDir(dir){
-  if(dir==='ascending')return'e.g. 9 - 15 - 21';
-  if(dir==='fixed')return'e.g. 10 - 10 - 10';
-  if(dir==='pyramid')return'e.g. 5 - 8 - 10 - 8 - 5';
-  return'e.g. 21 - 15 - 9';
-}
-function setRftSchemeSelect(si,key){
-  var sec=S.wod.sections[si];if(!sec.rftCfg)sec.rftCfg={};
-  var cfg=sec.rftCfg;
-  var dynDiv=document.getElementById('rft-dyn-'+si);
-  var pyrDiv=document.getElementById('rft-pyr-'+si);
-  if(!key){
-    delete cfg.schemeKey;delete cfg.dynStart;delete cfg.dynStep;delete cfg.pyramidP;delete cfg.pyramidS;
-    ['rft-rounds-'+si,'rft-reps-row-'+si,'rft-mov-row-'+si].forEach(function(id){
-      var el=document.getElementById(id);if(el){el.style.opacity='1';el.style.pointerEvents='auto';}});
-    var inp=document.getElementById('rft-reps-'+si);if(inp)inp.disabled=false;
-    if(dynDiv)dynDiv.style.display='none';
-    if(pyrDiv)pyrDiv.style.display='none';
-    // أفتح Custom Reps row
-    var cusRow0=document.getElementById('rft-custom-row-'+si);
-    if(cusRow0){cusRow0.style.opacity='1';cusRow0.style.pointerEvents='auto';}
-    return;
-  }
-  // هرمي option
-  if(key==='__pyramid__'){
-    delete cfg.schemeKey;delete cfg.baseReps;delete cfg.rounds;delete cfg.customReps;
-    var rr=document.getElementById('rft-rounds-'+si);if(rr){rr.style.opacity='0.35';rr.style.pointerEvents='none';}
-    var rpr=document.getElementById('rft-reps-row-'+si);if(rpr){rpr.style.opacity='0.35';rpr.style.pointerEvents='none';}
-    if(dynDiv)dynDiv.style.display='none';
-    if(pyrDiv)pyrDiv.style.display='flex';
-    // اقفل Custom Reps row + صفّي الإدخال
-    var cusRow1=document.getElementById('rft-custom-row-'+si);
-    if(cusRow1){cusRow1.style.opacity='0.35';cusRow1.style.pointerEvents='none';var ci1=cusRow1.querySelector('input');if(ci1)ci1.value='';}
-    return;
-  }
-  delete cfg.pyramidP;delete cfg.pyramidS;
-  if(pyrDiv)pyrDiv.style.display='none';
-  cfg.schemeKey=key;delete cfg.baseReps;delete cfg.rounds;delete cfg.customReps;
-  // اقفل Custom Reps row + صفّي الإدخال
-  var cusRow2=document.getElementById('rft-custom-row-'+si);
-  if(cusRow2){cusRow2.style.opacity='0.35';cusRow2.style.pointerEvents='none';var ci2=cusRow2.querySelector('input');if(ci2)ci2.value='';}
-  var sch=SCHEMES[key];var isDyn=sch&&sch.dynamic;var isLocked=sch&&sch.locked;
-  var rr=document.getElementById('rft-rounds-'+si);
-  if(rr){rr.style.opacity='0.35';rr.style.pointerEvents='none';}
-  var rpr=document.getElementById('rft-reps-row-'+si);
-  if(rpr){rpr.style.opacity=isDyn?'1':'0.35';rpr.style.pointerEvents=isDyn?'auto':'none';}
-  var mrr=document.getElementById('rft-mov-row-'+si);
-  if(mrr){mrr.style.opacity=isLocked?'0.35':'1';mrr.style.pointerEvents=isLocked?'none':'auto';}
-  var inp=document.getElementById('rft-reps-'+si);if(inp)inp.disabled=!isDyn;
-  if(dynDiv){
-    if(isDyn){dynDiv.style.display='block';dynDiv.innerHTML=renderDynInputsHTML(sch.dType,cfg.dynStart,cfg.dynStep,si,'rft');}
-    else dynDiv.style.display='none';
-  }
-}
-function setYgigSchemeSelect(si,key){
-  var sec=S.wod.sections[si];if(!sec.ygigCfg)sec.ygigCfg={};
-  var cfg=sec.ygigCfg;
-  if(!key){
-    delete cfg.schemeKey;delete cfg.dynStart;delete cfg.dynStep;
-  } else {
-    cfg.schemeKey=key;delete cfg.baseReps;delete cfg.splitReps;
-    // In split mode: lock movements to scheme length
-    if(cfg.ygMode==='split'){var sch=SCHEMES[key];if(sch&&sch.reps)cfg.exCnt=sch.reps.length;}
-  }
-  // Re-render panel to reflect locked/unlocked state
-  var el=document.getElementById('ygig-cfg-'+si);
-  if(el)el.outerHTML=renderYgigCfg(sec,si);
-  var el2=document.getElementById('ygig-cfg-'+si);
-  if(el2)el2.style.display='block';
-}
-function setYgigSplitReps(si,val,btn){
-  var sec=S.wod.sections[si];if(!sec.ygigCfg)sec.ygigCfg={};
-  var parent=btn.parentElement;
-  Array.from(parent.children).forEach(function(b){if(b.tagName==='BUTTON'){b.style.background='var(--bg2)';b.style.borderColor='var(--bdr)';b.style.color='var(--txt2)';}});
-  if(sec.ygigCfg.splitReps===val){delete sec.ygigCfg.splitReps;return;}
-  sec.ygigCfg.splitReps=val;btn.style.background='var(--or)';btn.style.borderColor='var(--or)';btn.style.color='#000';
-}
-function setYgigSplitRepsCustom(si,val){
-  var v=parseInt(val);if(!v||v<1)return;
-  var sec=S.wod.sections[si];if(!sec.ygigCfg)sec.ygigCfg={};
-  sec.ygigCfg.splitReps=v;
-  var btns=document.querySelectorAll('#ygig-split-reps-'+si+' button');
-  btns.forEach(function(b){b.style.background='var(--bg2)';b.style.borderColor='var(--bdr)';b.style.color='var(--txt2)';});
-}
 function setYgigMode(si,fmt){
   var sec=S.wod.sections[si];if(!sec.ygigCfg)sec.ygigCfg={};
   var savedCfg=sec.ygigCfg;
@@ -5300,20 +4981,11 @@ function setYgigMode(si,fmt){
   if(el2)el2.style.display='block';
 }
 
-function setYgigScheme(si,key,btn){
-  var sec=S.wod.sections[si];if(!sec.ygigCfg)sec.ygigCfg={};
-  var panel=document.getElementById('ygig-cfg-'+si);
-  if(panel)Array.from(panel.querySelectorAll('button')).forEach(function(b){b.style.background='var(--bg2)';b.style.borderColor='var(--bdr)';b.style.color='var(--txt2)';});
-  if(sec.ygigCfg.schemeKey===key){delete sec.ygigCfg.schemeKey;return;}
-  sec.ygigCfg.schemeKey=key;delete sec.ygigCfg.baseReps;
-  btn.style.background='var(--or)';btn.style.borderColor='var(--or)';btn.style.color='#000';
-}
-
 function renderGroupAbAmrapCfg(sec,si){
   var cfg=sec.amrapCfg||{};
   var S_btn='background:var(--bg2);border:0.5px solid var(--bdr);border-radius:7px;padding:5px 10px;font-size:13px;color:var(--txt2);cursor:pointer;font-weight:600;font-family:inherit;min-height:30px';
   var S_sel='background:var(--or);border:0.5px solid var(--or);border-radius:7px;padding:5px 10px;font-size:13px;color:#000;cursor:pointer;font-weight:600;font-family:inherit;min-height:30px';
-  var movBtns=[1,2,3,4,5,6,7,8].map(function(n){
+  var movBtns=[1,2,3,4,5,6,7,8,9,10].map(function(n){
     return'<button onclick="setAmrapVal('+si+',\'exCnt\','+n+',this)" style="'+(cfg.exCnt===n?S_sel:S_btn)+'">'+n+'</button>';
   }).join('');
   var cv=cfg.withCardio;
@@ -5572,7 +5244,9 @@ function openEditDetail(si,ii,r){
     if(_detEmbed){_detParts=item.detail.split(/\s*-\s*/).map(function(s){return s.replace(/[^\d]/g,'');}).filter(function(s){return s.length>0;});}
   }
   var _schemeLen=sec.scheme&&sec.scheme.length>1?sec.scheme.length:(_detParts.length>1?_detParts.length:0);
-  if(r===undefined&&_schemeLen>1){
+  // YGIG FT: كل الجولات نفس التكرارات → تعديل مفرد (قيمة وحدة تنطبق على الكل)، لا R1-R10
+  var _isYgigFTedit=sec.type==='YGIG / Partner WOD'&&sec.infoVars&&sec.infoVars.r&&sec.infoVars.cap;
+  if(r===undefined&&_schemeLen>1&&!_isYgigFTedit){
     var ex2=item.ex;var unit2=ex2.unit||'';
     var label2,presets2,fixedUnit2;
     if(unit2==='carry'){label2=t('edit_dist');fixedUnit2='m';presets2=[10,20,30,40,50,60,80,100];}
@@ -5661,16 +5335,6 @@ function _renderEditDetailSheet(name,num,label,presets,fixedUnit,showUnitPicker,
     +'<bu'+'tton onclick="closeEditDetail()" style="flex:1;background:var(--bg3);border:0.5px solid var(--bdr);border-radius:12px;padding:13px;font-size:14px;color:var(--txt2);cursor:pointer;font-weight:600;min-height:48px">'+t('cancel')+'</bu'+'tton>'
     +'<bu'+'tton onclick="saveEditDetail()" style="flex:2;background:var(--or);border:none;border-radius:12px;padding:13px;font-size:15px;color:#000;cursor:pointer;font-weight:700;min-height:48px">'+t('save')+'</bu'+'tton>'
     +'</div>';
-}
-function switchStrUnitRound(u,si,ii,r){
-  strEditUnit=u;
-  var item=S.wod.sections[si].items[ii];
-  var cur=parseInt(document.getElementById('ed-num').value,10)||10;
-  var _rUnit=u;
-  var _presets={reps:[10,15,20,40,60,80,100],m:[10,15,20,40,60,80,100],s:[10,15,20,40,60,80,100]}[u]||[10,15,20,40,60,80,100];
-  // re-open with new unit
-  openEditDetail(si,ii,r);
-  setTimeout(function(){var inp=document.getElementById('ed-num');if(inp){inp.value=cur;inp.focus();inp.select();}},50);
 }
 function switchStrUnit(u){
   strEditUnit=u;
@@ -5761,6 +5425,7 @@ function saveEditDetail(){
     }
     _item.cardioAmounts=_cVals;
     _item.ex=Object.assign({},_item.ex,{amount:_cVals[0],unit:cardioEditUnit});
+    _item._userCardio=true;
     closeEditDetail();
     reRenderSec(ed.si);
     toast('✅ Updated!');
@@ -5779,6 +5444,7 @@ function saveEditDetail(){
     }
     _item.cardioAmounts[ed.cardioRound]=val;
     _item.ex=Object.assign({},_item.ex,{amount:val}); // sync ex.amount for _secChip
+    _item._userCardio=true;
     closeEditDetail();
     reRenderSec(ed.si);
     toast('✅ Updated!');
@@ -5825,53 +5491,6 @@ function saveEditDetail(){
 
 // ── Scheme detail editor ──
 var editingScheme=null;
-function openSchemeDetailEdit(si){
-  var sec=S.wod&&S.wod.sections[si];if(!sec)return;
-  var scheme=sec.scheme||[];
-  editingScheme={si:si,count:scheme.length};
-  var inputs=scheme.map(function(r,i){
-    return'<div style="display:flex;flex-direction:column;align-items:center;gap:5px">'
-      +'<div style="font-size:10px;color:var(--txt3);font-weight:700;letter-spacing:0.5px">R'+(i+1)+'</div>'
-      +'<input id="sch-r-'+i+'" type="number" value="'+r+'" inputmode="numeric" min="1" max="999" '
-      +'style="width:60px;background:var(--bg3);border:1.5px solid var(--or);border-radius:10px;padding:10px 4px;font-size:16px;font-weight:900;color:var(--or);text-align:center;outline:none">'
-      +'</div>';
-  }).join('');
-  var sheet=document.getElementById('edit-sheet');
-  sheet.innerHTML=
-    '<div style="width:36px;height:4px;background:var(--bdr);border-radius:2px;margin:0 auto 16px"></div>'
-    +'<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:24px">'+inputs+'</div>'
-    +'<div style="display:flex;gap:8px">'
-    +'<button onclick="closeEditDetail()" style="flex:1;background:var(--bg3);border:0.5px solid var(--bdr);border-radius:10px;padding:13px;font-size:13px;color:var(--txt2);cursor:pointer;font-weight:600;min-height:46px">'+t('cancel')+'</button>'
-    +'<button onclick="saveSchemeDetailEdit()" style="flex:2;background:var(--or);border:none;border-radius:10px;padding:13px;font-size:14px;color:#000;cursor:pointer;font-weight:700;min-height:46px">'+t('save')+'</button>'
-    +'</div>';
-  var ov=document.getElementById('edit-overlay');
-  ov.style.display='block';
-  setTimeout(function(){sheet.style.transform='translateX(-50%) translateY(0)';},10);
-}
-function saveSchemeDetailEdit(){
-  var ed=editingScheme;if(!ed)return;
-  var sec=S.wod.sections[ed.si];
-  var newScheme=[];
-  for(var i=0;i<ed.count;i++){
-    var inp=document.getElementById('sch-r-'+i);
-    if(!inp)break;
-    var v=parseInt(inp.value,10);
-    if(isNaN(v)||v<1){toast('Enter valid numbers','#ff6600');return;}
-    newScheme.push(v);
-  }
-  var newLabel=newScheme.join(' - ')+' reps';
-  sec.scheme=newScheme;
-  var cs=newScheme.join(' - ');
-  if(sec.type==='Ladder')sec.ladderCfg=Object.assign({},sec.ladderCfg||{},{customReps:newScheme});
-  sec.items=sec.items.map(function(it){
-    if(it.kind==='sep')return Object.assign({},it,{label:'── '+newScheme.length+' ROUNDS ──'});
-    if(it.kind==='str')return Object.assign({},it,{detail:newLabel,detailEdited:true});
-    return it;
-  });
-  closeEditDetail();
-  reRenderSec(ed.si);
-  toast('✅ Updated!');
-}
 // ── T&C ──
 function renderTnC(){
   var ov=document.getElementById('tnc-overlay');
@@ -5957,10 +5576,6 @@ function tryCode(){
 }
 loadCfg();
 checkAccess();
-function setTripletVal(si,key,val,btn){
-  sec.tripletCfg[key]=val;btn.style.background='var(--or)';btn.style.borderColor='var(--or)';btn.style.color='#000';
-}
-
 // ─── My WODs (Saved WODs) ────────────────────────────────────────────────────
 var _SW_MAX=30;
 var _SW_KEY='cft_saved_v1';
