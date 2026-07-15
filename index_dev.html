@@ -2853,7 +2853,7 @@ function cfgGearRow(infoTxt,toggleFn,si,timeEst,preTime){
 }
 function renderSecInfo(sec,si,infoTxt){
   var _amrBoldTime='';if((sec.type==='AMRAP'||sec.type==='YGIG / Partner WOD')&&infoTxt===undefined&&sec.infoKey){var _riv=sec.infoVars||{};var _rlv=S.level||'intermediate';var _isYgigSec=sec.type==='YGIG / Partner WOD'&&!(_riv.r);var _rtm=_isYgigSec?1:(S.teamSize||1);var _rSplit=_isYgigSec?false:true;var _rtT=_rtm===2?18:_tSec(_rlv);var _rpw=0;var _rstrI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _rcardI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});_rstrI.forEach(function(it){_rpw+=it.baseRep*getSecondsPerRep(it.ex,_rlv,_rtm,_rSplit);});_rcardI.forEach(function(cx){_rpw+=_cardioSecEst(cx.ex,_rlv,_rtm,_rSplit);});_rpw+=(_rstrI.length+_rcardI.length-1)*_rtT;if(_rpw>0){var _rwSec=(_riv.t||S.time)*60;var _rdynRnds=Math.max(1,Math.floor(_rwSec/_rpw));if(_isYgigSec&&_rdynRnds%2!==0)_rdynRnds+=1;var _rndSnap=Math.round(_rpw/10)*10;var _rndTime=Math.floor(_rndSnap/60)+':'+((_rndSnap%60)<10?'0':'')+(_rndSnap%60);var _amrTotSec=Math.round(_rdynRnds*_rpw);var _amrTotTime=Math.floor(_amrTotSec/60)+':'+( (_amrTotSec%60)<10?'0':'')+(_amrTotSec%60);_amrBoldTime=_rdynRnds?(CFG.lang==='ar'?(_rdynRnds+' جولات ~'+_rndTime+'/جولة ~'+_amrTotTime):(_rdynRnds+' rounds · ~'+_rndTime+'/round ~'+_amrTotTime)):_amrTotTime;infoTxt=ti(sec.infoKey,Object.assign({},_riv,{rnds:_rdynRnds,rndTime:_rndTime}));if(_rdynRnds){if(CFG.lang==='ar'){infoTxt='أكمل أكبر عدد جولات ممكن | الوقت التقريبي لإتمام ~<bdi>'+_rdynRnds+'</bdi> جولات · ~<bdi>'+_rndTime+'</bdi>/جولة = ~<bdi>'+_amrTotTime+'</bdi> دقيقة';_amrBoldTime='';}else{infoTxt='Complete as many rounds as possible | Estimated time to complete ~<bdi>'+_rdynRnds+'</bdi> rounds · ~<bdi>'+_rndTime+'</bdi>/round = ~<bdi>'+_amrTotTime+'</bdi> min';_amrBoldTime='';}}}}  
-  if(sec.type==='Group A'&&infoTxt===undefined){var _gabT=S.wod&&S.wod.cfg&&S.wod.cfg.time||S.time;var _gabDesc=ti('i_groupA',{cap:_gabT});var _grlv=S.level||'intermediate';var _grtT=_tSec(_grlv);var _gabCalc=function(s){if(!s||!s.items)return null;var _si=s.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _ci=s.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _pw=0;_si.forEach(function(it){_pw+=it.baseRep*getSecondsPerRep(it.ex,_grlv,1,false);});_ci.forEach(function(cx){_pw+=_cardioSecEst(cx.ex,_grlv,1,false);});_pw+=(_si.length+_ci.length-1)*_grtT;if(_pw<=0)return null;var _t=(s.infoVars&&s.infoVars.t)||S.time;var _rnds=Math.max(1,Math.floor(_t*60/_pw));var _snap=Math.round(_pw/10)*10;var _tm=Math.floor(_snap/60)+':'+((_snap%60)<10?'0':'')+(_snap%60);return{rnds:_rnds,rndTime:_tm,t:_t,totSec:Math.round(_rnds*_pw)};};var _secB=S.wod&&S.wod.sections&&S.wod.sections[si+1];var _iA=_gabCalc(sec);var _iB=_gabCalc(_secB);var _gabTotSec=(_iA?_iA.totSec:0)+(_iB?_iB.totSec:0);var _gabBoldTime=_gabTotSec>0?Math.floor(_gabTotSec/60)+':'+( (_gabTotSec%60)<10?'0':'')+(_gabTotSec%60):'';var _restMins=_gabT<=15?1:_gabT>=30?3:2;var _restWord=_restMins===1?'one-minute':_restMins===2?'two-minute':'three-minute';var _iATotFmt=_iA?Math.floor(_iA.totSec/60)+':'+(_iA.totSec%60<10?'0':'')+(_iA.totSec%60):'';var _iBTotFmt=_iB?Math.floor(_iB.totSec/60)+':'+(_iB.totSec%60<10?'0':'')+(_iB.totSec%60):'';var _halfT=Math.floor(_gabT/2);if(CFG.lang==='ar'){infoTxt='أكمل كل <bdi>'+_halfT+'</bdi> '+arMin(_halfT)+' AMRAP قبل الانتقال للتالي | استرح '+(_restMins===1?'دقيقة واحدة':_restMins===2?'دقيقتين':'3 دقائق')+' بين الفترات'+(_iA?' | الفترة الأولى: الوقت التقريبي لإتمام ~<bdi>'+_iA.rnds+'</bdi> جولات · ~<bdi>'+_iA.rndTime+'</bdi>/جولة = <span style="font-weight:900">~<bdi>'+_iATotFmt+'</bdi> دقيقة</span>':'')+(_iB?' | الفترة الثانية: الوقت التقريبي لإتمام ~<bdi>'+_iB.rnds+'</bdi> جولات · ~<bdi>'+_iB.rndTime+'</bdi>/جولة = <span style="font-weight:900">~<bdi>'+_iBTotFmt+'</bdi> دقيقة</span>':'');_gabBoldTime='';}else{infoTxt='Complete each <bdi>'+_halfT+'</bdi> minute AMRAP before moving on to the next | Take a '+_restWord+' rest between intervals'+(_iA?' | First Interval: Estimated time to complete ~<bdi>'+_iA.rnds+'</bdi> rounds · ~<bdi>'+_iA.rndTime+'</bdi>/round = <span style="font-weight:900">~<bdi>'+_iATotFmt+'</bdi> min</span>':'')+(_iB?' | Second Interval: Estimated time to complete ~<bdi>'+_iB.rnds+'</bdi> rounds · ~<bdi>'+_iB.rndTime+'</bdi>/round = <span style="font-weight:900">~<bdi>'+_iBTotFmt+'</bdi> min</span>':'');_gabBoldTime='';}}
+  if(sec.type==='Group A'&&infoTxt===undefined){var _gabT=S.wod&&S.wod.cfg&&S.wod.cfg.time||S.time;var _gabDesc=ti('i_groupA',{cap:_gabT});var _grlv=S.level||'intermediate';var _grtT=_tSec(_grlv);var _gabCalc=function(s){if(!s||!s.items)return null;var _si=s.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _ci=s.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _pw=0;_si.forEach(function(it){_pw+=it.baseRep*getSecondsPerRep(it.ex,_grlv,1,false);});_ci.forEach(function(cx){_pw+=_cardioSecEst(cx.ex,_grlv,1,false);});_pw+=(_si.length+_ci.length-1)*_grtT;if(_pw<=0)return null;var _t=(s.infoVars&&s.infoVars.t)||S.time;var _rnds=Math.max(1,Math.floor(_t*60/_pw));var _snap=Math.round(_pw/10)*10;var _tm=Math.floor(_snap/60)+':'+((_snap%60)<10?'0':'')+(_snap%60);return{rnds:_rnds,rndTime:_tm,t:_t,totSec:Math.round(_rnds*_pw)};};var _secB=S.wod&&S.wod.sections&&S.wod.sections[si+1];var _iA=_gabCalc(sec);var _iB=_gabCalc(_secB);var _gabTotSec=(_iA?_iA.totSec:0)+(_iB?_iB.totSec:0);var _gabBoldTime=_gabTotSec>0?Math.floor(_gabTotSec/60)+':'+( (_gabTotSec%60)<10?'0':'')+(_gabTotSec%60):'';var _restMins=_gabT<=15?1:_gabT>=30?3:2;var _restWord=_restMins===1?'one-minute':_restMins===2?'two-minute':'three-minute';var _iATotFmt=_iA?Math.floor(_iA.totSec/60)+':'+(_iA.totSec%60<10?'0':'')+(_iA.totSec%60):'';var _iBTotFmt=_iB?Math.floor(_iB.totSec/60)+':'+(_iB.totSec%60<10?'0':'')+(_iB.totSec%60):'';var _halfT=Math.floor(_gabT/2);if(CFG.lang==='ar'){infoTxt='أكمل كل <bdi>'+_halfT+'</bdi> '+arMin(_halfT)+' AMRAP قبل الانتقال للتالي | استرح '+(_restMins===1?'دقيقة واحدة':_restMins===2?'دقيقتين':'3 دقائق')+' بين الفترات'+(_iA?' | الفترة الأولى: الوقت التقريبي لإتمام ~<bdi>'+_iA.rnds+'</bdi> جولات · ~<bdi>'+_iA.rndTime+'</bdi>/جولة = <span style="font-weight:900">~<bdi>'+_iATotFmt+'</bdi> دقيقة</span>':'')+(_iB?' | الفترة الثانية: الوقت التقريبي لإتمام ~<bdi>'+_iB.rnds+'</bdi> جولات · ~<bdi>'+_iB.rndTime+'</bdi>/جولة = <span style="font-weight:900">~<bdi>'+_iBTotFmt+'</bdi> دقيقة</span>':'');_gabBoldTime='';}else{infoTxt='Complete each <bdi>'+_halfT+'</bdi> minute AMRAP before moving on to the next | Take '+_restWord+' rest between intervals'+(_iA?' | First Interval: Estimated time to complete ~<bdi>'+_iA.rnds+'</bdi> rounds · ~<bdi>'+_iA.rndTime+'</bdi>/round = <span style="font-weight:900">~<bdi>'+_iATotFmt+'</bdi> min</span>':'')+(_iB?' | Second Interval: Estimated time to complete ~<bdi>'+_iB.rnds+'</bdi> rounds · ~<bdi>'+_iB.rndTime+'</bdi>/round = <span style="font-weight:900">~<bdi>'+_iBTotFmt+'</bdi> min</span>':'');_gabBoldTime='';}}
   infoTxt=infoTxt!==undefined?infoTxt:(sec.infoKey?ti(sec.infoKey,sec.infoVars||{}):sec.info);
   if(sec.type==='Chipper'){var _cE='';var _cL=S.level||'intermediate';var _cTm=S.teamSize||1;var _cTr=_cTm===2?18:_tSec(_cL);var _cSI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _cCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _cPW=0;_cSI.forEach(function(it){_cPW+=it.baseRep*getSecondsPerRep(it.ex,_cL,_cTm,_cTm===2);});_cCI.forEach(function(cx){_cPW+=_cardioSecEst(cx.ex,_cL,_cTm,_cTm===2);});_cPW+=(_cSI.length+_cCI.length>1?(_cSI.length+_cCI.length-1)*_cTr:0);if(_cPW>0){var _cs=Math.round(_cPW);_cE=_fmtMS(_cs);}if(CFG.lang==='ar'){infoTxt='أكمل تكرارات كل حركة قبل الانتقال للتالية'+(_cE?' | الوقت التقريبي للإتمام ~<bdi>'+_cE+'</bdi> دقيقة':'');_cE='';}else{infoTxt='Complete all reps of each movement before moving on'+(_cE?' | Estimated time to complete ~<bdi>'+_cE+'</bdi> min':'');_cE='';}return cfgGearRow(infoTxt,'toggleChipperCfg',si,_cE)+renderChipperCfg(sec,si);}
   if(sec.type==='AMRAP')return cfgGearRow(infoTxt,'toggleAmrapCfg',si,_amrBoldTime)+renderAmrapCfg(sec,si);
@@ -3437,7 +3437,10 @@ function manualSwap(si,ii){
   // rebuild detail based on unit
   var manualDetail=dEl&&dEl.value.trim();
   var newDetail;
-  if(S.wod.sections[si].type==='Tabata'){
+  if(S.wod.sections[si].type==='Death By'){
+    var _mdSec=S.wod.sections[si];
+    newDetail=((old.detail||'').indexOf('/min')>-1)?_dbSwapDetail(_mdSec,old,newEx):(manualDetail||old.detail);
+  }else if(S.wod.sections[si].type==='Tabata'){
     var _msCfg=S.wod.sections[si].tabataCfg||{};
     newDetail=_msCfg.mode==='alternating'?'20s on / 10s off':'20s on / 10s off × 8';
   }else if(manualDetail){
@@ -3454,6 +3457,19 @@ function manualSwap(si,ii){
   reRenderSec(si);toast('✅ Done!');
 }
 function toggleSwap(si,ii){var p=document.getElementById('sp-'+si+'-'+ii);if(p)p.classList.toggle('open')}
+// Death By: صيغة الرب ثابتة "start + inc rep/min" (أو 2+2 لفريق سبلت) — لا تتغير مع Swap/New/يدوي
+function _dbSwapDetail(sec,old,newEx){
+  var _dbCfg=sec.deathByCfg||{};
+  var _dbS=_dbCfg.startVal||_dbCfg._genStart||(S.teamSize===2?2:1);
+  var _dbI=_dbCfg.increment||_dbCfg._genInc||(S.teamSize===2?2:1);
+  var _nu=(newEx&&newEx.unit)||'reps';
+  if((old.detail||'').indexOf('/min')>-1){
+    if(_nu==='time')return _dbS+'s + '+_dbI+'s/min';
+    if(_nu==='carry')return _dbS+'m + '+_dbI+'m/min';
+    return _dbS+' + '+_dbI+' '+(_dbI===1?'rep':'reps')+'/min';
+  }
+  return old.detail; // النمط الثابت (الحركة الثانية fixed) — مستقل عن التمرين
+}
 function swapStr(si,ii,name){
   var found=null;for(var i=0;i<STR.length;i++){if(STR[i].name===name){found=STR[i];break}}
   if(!found)found={name:name,alts:[],cat:'gymnastics'};
@@ -3463,7 +3479,7 @@ function swapStr(si,ii,name){
   var oldNum=parseInt(((old.detail||'').match(/\d+/)||['10'])[0],10)||10;
   var _ssCfg=S.wod.sections[si].tabataCfg||{};
   var _ssIsLScheme=S.wod.sections[si].type==='Ladder'&&old.detail&&old.detail.indexOf(' - ')>-1;
-  var newDetail=S.wod.sections[si].type==='Tabata'?(_ssCfg.mode==='alternating'?'20s on / 10s off':'20s on / 10s off × 8'):_ssIsLScheme?old.detail:buildStrDetail(found,old,S.wod.sections[si]);
+  var newDetail=S.wod.sections[si].type==='Death By'?_dbSwapDetail(S.wod.sections[si],old,found):S.wod.sections[si].type==='Tabata'?(_ssCfg.mode==='alternating'?'20s on / 10s off':'20s on / 10s off × 8'):_ssIsLScheme?old.detail:buildStrDetail(found,old,S.wod.sections[si]);
   S.wod.sections[si].items[ii]=Object.assign({},old,{ex:found,detail:newDetail});
   reRenderSec(si);toast('✅ Swapped!');
 }
@@ -3677,13 +3693,8 @@ function regenEx(si,ii,kind){
       S.wod.sections[si].items[ii]=Object.assign({},old,{ex:newEx,detail:_tabDetail,noEdit:true});
     }else{
       var newDetail;
-      if(sec.type==='Death By'&&ii===0){
-        var _dbCfg=sec.deathByCfg||{};
-        var _dbS=_dbCfg.startVal||_dbCfg._genStart||1;var _dbI=_dbCfg.increment||_dbCfg._genInc||1;
-        var _nu=newEx.unit||'reps';
-        if(_nu==='time')newDetail=_dbS+'s + '+_dbI+'s/min';
-        else if(_nu==='carry')newDetail=_dbS+'m + '+_dbI+'m/min';
-        else newDetail=_dbS+' + '+_dbI+' reps/min';
+      if(sec.type==='Death By'){
+        newDetail=_dbSwapDetail(sec,old,newEx);
       }else if(sec.type==='Ladder'){
         // ladder: rebuild detail with correct unit (time/carry already filtered from pool)
         var _lu=newEx.unit||'reps';var _ln=parseInt(((old.detail||'').match(/\d+/)||['10'])[0],10)||10;
@@ -4007,7 +4018,7 @@ function renderEmomCfg(sec,si){
   var cfg=sec.emomCfg||{};
   var S_btn='background:var(--bg2);border:0.5px solid var(--bdr);border-radius:7px;padding:5px 10px;font-size:13px;color:var(--txt2);cursor:pointer;font-weight:600;font-family:inherit;min-height:30px';
   var S_sel='background:var(--or);border:0.5px solid var(--or);border-radius:7px;padding:5px 10px;font-size:13px;color:#000;cursor:pointer;font-weight:600;font-family:inherit;min-height:30px';
-  var movBtns=[1,2,3,4,5,6,7,8].map(function(n){return'<button onclick="setEmomVal('+si+',\'numMov\','+n+',this)" style="'+(cfg.numMov===n?S_sel:S_btn)+'">'+n+'</button>';}).join('');
+  var movBtns=[1,2,3,4,5,6,7,8,9,10].map(function(n){return'<button onclick="setEmomVal('+si+',\'numMov\','+n+',this)" style="'+(cfg.numMov===n?S_sel:S_btn)+'">'+n+'</button>';}).join('');
   var cv=cfg.withCardio;
   return'<div id="emom-cfg-'+si+'" style="display:none;background:var(--bg3);border:0.5px solid var(--bdr);border-radius:10px;padding:12px;margin-top:6px">'
   +'<div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button onclick="randomEmom('+si+')" style="background:rgba(99,102,241,0.12);border:0.5px solid #6366f1;border-radius:20px;padding:4px 12px;font-size:11px;color:#6366f1;cursor:pointer;font-weight:600">'+t('random')+'</button></div>'
