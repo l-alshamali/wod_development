@@ -1812,6 +1812,8 @@ function mkChipper(time,lv,team,cfg){
     var _clSnap=function(v,cap){var s=Math.round(v/_clStep)*_clStep;s=Math.max(_clMinR,Math.max(_clStep,s));s=Math.ceil(s/_clStep)*_clStep;return Math.min(cap||_clMaxR,s);};
     // ── Safe step for ladder patterns ──
     if((_isDesc||_isAsc)&&chosen.length>1){var _clSafeStep=Math.floor((_clCap-_clMinR)/Math.max(1,chosen.length-1));var _clVS=[10,20].filter(function(s){return s<=_clSafeStep;});if(_clVS.length){_clStep=Math.max.apply(null,_clVS);}}
+    // السلم لازم N قيم متمايزة — إذا المدى ما يكفي حتى بخطوة 10، حوّله فلات (ممنوع تكرار نفس القيمة بالسلم)
+    if((_isDesc||_isAsc)&&chosen.length>1&&(_clCap-_clMinR)<(chosen.length-1)*_clStep){_clPat='flat_10';_isFlat=true;_isDesc=false;_isAsc=false;_clStep=10;}
     // ── Viability for ladder patterns ──
     if(_isDesc||_isAsc){
       var _maxLadderEx=Math.max(1,Math.floor((_clCap-_clMinR)/_clStep)+1);
@@ -2317,8 +2319,9 @@ function _applyRepScheme(items,lv,team,split,cfg){
     var loB=Math.max.apply(null,lims.map(function(l){return l.min;}));
     var hiB=Math.min.apply(null,lims.map(function(l){return l.max;}));
     var mults=teamSplit?[2,10,20]:[2,5,10,20];
+    var _flatCap={2:20,5:25}; // فلات مضاعفات 2 حتى 20 و5 حتى 25 — الأكبر لازم مضاعف 10/20 (لا 34 وأشباهها)
     var best=null;
-    mults.forEach(function(m){for(var v=Math.ceil(loB/m)*m;v<=hiB;v+=m){var d=Math.abs(v-tgt);if(best===null||d<best.d)best={v:v,d:d};}});
+    mults.forEach(function(m){var _fcap=Math.min(hiB,_flatCap[m]||hiB);for(var v=Math.ceil(loB/m)*m;v<=_fcap;v+=m){var d=Math.abs(v-tgt);if(best===null||d<best.d)best={v:v,d:d};}});
     var val=best?best.v:Math.max(loB,Math.min(hiB,tgt));
     reps=ordered.map(function(){return val;});
   }
@@ -2344,9 +2347,11 @@ function _ordRepsByDifficulty(items,lv,team,limsFor,evenSnap,detailFor){
   var vals=strs.map(function(x){return x.baseRep;}).sort(function(a,b){return b-a;});
   var lims=ordered.map(function(it){return limsFor(it.ex);});
   var out=ordered.map(function(_x,i){return Math.max(lims[i].min,Math.min(lims[i].max,vals[i]));});
-  for(var j=out.length-2;j>=0;j--){if(out[j]<out[j+1])out[j]=Math.min(lims[j].max,out[j+1]);}
-  // تمريرة أمامية: الأصعب ما ياخذ أكثر من الأسهل حتى لو حدّ فئة الأسهل الأقصى منخفض
-  for(var j2=1;j2<out.length;j2++){if(out[j2]>out[j2-1])out[j2]=Math.max(lims[j2].min,out[j2-1]);}
+  // نمط سلم = كل القيم الأصلية متمايزة → نحافظ على التمايز أثناء الـ clamp (ممنوع تكرار نفس القيمة بالسلم)
+  var _isLad=vals.length>1&&vals.every(function(v,i,a){return i===0||v!==a[i-1];});
+  var _gap=_isLad?Math.min.apply(null,vals.slice(1).map(function(v,i){return vals[i]-v;})):0;
+  for(var j=out.length-2;j>=0;j--){if(out[j]<=out[j+1]-( _isLad?0:0 )&&out[j]<out[j+1]+(_isLad?_gap:0)){var _tg=out[j+1]+(_isLad?_gap:0);if(out[j]<out[j+1])out[j]=Math.min(lims[j].max,_tg);}}
+  for(var j2=1;j2<out.length;j2++){var _fw=out[j2-1]-(_isLad?_gap:0);if(out[j2]>out[j2-1]||(_isLad&&out[j2]===out[j2-1])){out[j2]=Math.max(lims[j2].min,Math.min(out[j2],Math.max(_fw,0)));if(out[j2]>out[j2-1])out[j2]=Math.max(lims[j2].min,out[j2-1]);}}
   ordered.forEach(function(it,i){
     var r=out[i];
     if(evenSnap&&r%2!==0)r=(r+1<=lims[i].max)?r+1:r-1;
