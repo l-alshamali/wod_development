@@ -1486,8 +1486,9 @@ function mkRFT(time,lv,team,cfg){
       baseReps=_perExReps[0]||_rftLimsAll.min;
       reps=[];for(var _ri2=0;_ri2<rounds;_ri2++)reps.push(baseReps);
       if(_cEx&&!cfg.cardioAmt){var _rftStrRd=_wodEstTime(_perExReps,chosen,null,chosen.length,team,lv,_rftSplit);_cEx=_balanceCardio(_cEx,_rftStrRd,team,lv,cfg,_rftSplit);_cEx=_cardioCapSec(_cEx,(_rftBdg2/Math.max(1,rounds))*0.30,_rftCL,lv,team,_rftSplit);}
-      // ── Trim exCnt: دورات + حركات مقفلتان والنتيجة برة التايم كاب → نزّل الحركات ──
-      if(_roundsLocked&&_exCntLocked){
+      // ── اختيار المستخدم مقدّس: جولات + حركات مقفلتان ما ننزّل الحركات أبداً —
+      // إذا التوليفة أكبر من الوقت، التقدير/الشريط يطلع LONG بصدق (طلب Laila) ──
+      if(false&&_roundsLocked&&_exCntLocked){
         var _trimN=chosen.length;
         for(;_trimN>1;_trimN--){
           var _trC=chosen.slice(0,_trimN);
@@ -3923,21 +3924,30 @@ function renderAmrapCfg(sec,si){
 
 function toggleRftCfg(si){
   var el=document.getElementById('rft-cfg-'+si);
-  if(el)el.style.display=el.style.display==='none'?'block':'none';
+  if(!el)return;
+  var closing=el.style.display!=='none';
+  el.style.display=closing?'none':'block';
+  // عند الإغلاق: إذا تغيّرت الإعدادات أثناء الفتح → ولّد حسبها (طلب Laila)
+  var sec=S.wod.sections[si];
+  if(closing&&sec&&sec._rftDirty){sec._rftDirty=false;regenRft(si,false);}
 }
+function _rftCfgRefresh(si){var sec=S.wod.sections[si];var _cfgEl=document.getElementById('rft-cfg-'+si);if(_cfgEl){var _tmp=document.createElement('div');_tmp.innerHTML=renderRftCfg(sec,si);var _n=_tmp.firstElementChild;if(_n){_n.style.display=_cfgEl.style.display;_cfgEl.replaceWith(_n);}}}
 function setRftVal(si,key,val,btn){
+  // اختيار فقط — بدون توليد لايف؛ التوليد عند إغلاق الستنغ أو زر Regenerate (طلب Laila)
   var sec=S.wod.sections[si];
   if(!sec.rftCfg)sec.rftCfg={};
   if(sec.rftCfg[key]===val){delete sec.rftCfg[key];}
   else{sec.rftCfg[key]=val;}
-  regenRft(si,true); // auto-apply + keep panel open
+  sec._rftDirty=true;
+  _rftCfgRefresh(si);
 }
 function toggleRftCardio(si){
   var sec=S.wod.sections[si];
   if(!sec.rftCfg)sec.rftCfg={};
   var c=sec.rftCfg.withCardio;
   sec.rftCfg.withCardio=c===undefined?true:c===true?false:undefined;
-  regenRft(si,true); // auto-apply + keep panel open
+  sec._rftDirty=true;
+  _rftCfgRefresh(si);
 }
 function regenRft(si,keepPanel){
   var sec=S.wod.sections[si];
