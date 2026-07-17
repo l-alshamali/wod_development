@@ -60,7 +60,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;heigh
 .ws{background:var(--bg2);border:0.5px solid var(--bdr2);border-radius:14px;padding:18px 14px;margin:0 4px 10px}
 .st{font-size:11px;color:var(--or);text-transform:uppercase;letter-spacing:2px;font-weight:700;margin-bottom:2px;font-family:'Segoe UI',sans-serif}
 .stt{font-size:16px;font-weight:600;margin-bottom:12px;padding-bottom:10px;border-bottom:0.5px solid var(--bdr2);color:var(--txt);font-family:'Segoe UI',sans-serif;text-align:start}
-.si{font-size:13px;color:var(--txt2);padding:7px 10px;background:var(--bg3);border-radius:7px;border-left:2px solid var(--or);margin-bottom:8px;line-height:1.55;font-family:'Segoe UI',sans-serif;text-align:start}
+.si{font-size:13px;color:var(--txt2);padding:7px 10px;background:var(--bg3);border-radius:7px;border-left:2px solid var(--or);margin-bottom:8px;line-height:1.55;font-family:'Segoe UI',sans-serif;text-align:justify}
 .si.team{border-left-color:var(--ye)}
 .si.sc{border-left-color:var(--bl)}
 .rsep{padding:8px 0 2px;font-size:11px;color:var(--or);text-align:center;letter-spacing:2px;font-weight:700;text-transform:uppercase}
@@ -229,14 +229,14 @@ var T={
     i_rft:'Complete {r} rounds as fast as possible | Time cap: {t} min',
     i_emom:'Every minute on the minute | Time cap: {t} min | {n} movements rotating · {s} sets · ~45s work/min',
     i_chipper:'Complete all reps of each movement before moving on | Time cap: {t} min',i_chipper_st:'Complete all reps of each movement before moving on | Time cap: {t} min',
-    i_tabata_classic:'One movement, rotating through intervals | 20s work / 10s rest × 8 intervals | Total time: 4 min',
-    i_tabata:'Complete all 8 intervals per movement before moving to next | 20s work / 10s rest × 8 intervals each | Total time: {tot} min',
-    i_tabata_alt:'Rotate through all movements each interval | 20s work / 10s rest × 8 rounds | Total time: {tot} min',
+    i_tabata_classic:'Perform 8 rounds of 20 seconds on, 10 seconds off for a total of 4 minutes | Total workout time: 4 min',
+    i_tabata:'Perform each exercise for 8 rounds of 20 seconds on, 10 seconds off for a total of 4 minutes per exercise. Rest 1 minute and move to the next exercise | Total workout time: {tot} min',
+    i_tabata_alt:'20 seconds on, 10 seconds off, 4 minutes each set, alternating between two exercises for a total of 4 rounds | Rest 1 min between sets | Total workout time: {tot} min',
     i_deathby:'Add {inc} reps each minute until failure | Time cap: {t} min | Starting at {s} reps in Min 1',
     i_buyin:'Complete buy-in, then {r} rounds, then cash-out. Cap: {t} min.',
     i_ygig:'Alternate full rounds with your partner | Time cap: {t} min',
     i_ygig_ft:'Complete {rt} rounds as fast as possible | Time cap: {cap} min',
-    i_ygig_split:'YGIG Split — partners share reps on each exercise, alternating in short bursts. Cap: {t} min. Scale weight per partner if needed.',est_time_label:'Estimated time to complete',
+    i_ygig_split:'YGIG Split — partners share reps on each exercise, alternating in short bursts. Cap: {t} min. Scale weight per partner if needed.',est_time_label:'Estimated workout time',
 
     i_groupA:'Both groups work simultaneously, then switch stations | Time cap: {cap} min',
     i_groupA_amrap:'A — AMRAP {t} Min · <span style="color:var(--accent)">~{rnds} rounds</span> · ~{rndTime}/round',
@@ -250,7 +250,7 @@ var T={
     sc_sets:'Score = total sets completed',sc_tabata:'Score = lowest reps in any round',sc_tabata_alt:'Score = lowest reps in any interval, across all movements',
     sc_deathby:'Score = last completed minute',sc_total:'Score = total rounds across all intervals',
     sc_ygig:'Score = total rounds or finish time',sc_score_rounds:'Score = total rounds',
-    tm_split:'✂️ Partition reps freely (Move to next exercise only when current is done)',tm_one:'✂️ Partition reps freely (One works, one rests)',
+    tm_split:'✂️ Partition reps freely (Move to next exercise only when current is done)',tm_one:'✂️ Partition reps freely (One works, one rests)',tm_gabSplit:'👥 ✂️ Partition reps freely (One works, one rests)',
     tm_partition:'✂️ Partition reps freely to finish all rounds AFAP',tm_own:'🔁 Alternate minutes (Min 1: Athlete A / Min 2: Athlete B)',
     tm_alternate:'⏱️ Smart transition inside the time window or work together',tm_3min:'⏱️ Smart transition inside the time window or work together',
     tm_simultaneous:'💥 Work simultaneously (Both work at the same time)',tm_both:'✂️ Partition ascending reps inside the minute window',
@@ -298,14 +298,14 @@ var T={
     i_rft:'أكمل {r} جولات بأسرع وقت. الحد الزمني: {t} دقيقة.',
     i_emom:'كل دقيقة على الدقيقة · {n} حركات بالتناوب · {s} جولات · ~45 ث. عمل',
     i_chipper:'{n} حركات تنفذ مرة واحدة بالترتيب. الحد الزمني: {t} دقيقة.',i_chipper_st:'{s} محطات · {tot} حركة إجمالية · الحد الزمني: {t} دقيقة',
-    i_tabata_classic:'حركة واحدة. 20ث عمل / 10ث راحة × 8 جولات = 4 دقائق. النتيجة = أقل تكرارات في أي جولة واحدة.',
-    i_tabata:'20ث عمل / 10ث راحة × 8 جولات لكل حركة = 4 دقائق. أكمل الـ8 جولات كاملة لكل حركة قبل الانتقال للتالية. النتيجة = أقل عدد تكرارات حققته في أي جولة واحدة. المجموع: {tot} دقيقة.',
-    i_tabata_alt:'تناوب بين {n} حركات في كل فترة. 20ث عمل / 10ث راحة × 8 جولات = {tot} دقيقة. النتيجة = أقل تكرارات في أي فترة واحدة.',
+    i_tabata_classic:'قم بأداء 8 جولات (20 ثانية تمرين، 10 ثوانٍ راحة) بإجمالي 4 دقائق | إجمالي وقت التمرين: 4 دقائق',
+    i_tabata:'قم بأداء كل تمرين لمدة 8 جولات (20 ثانية تمرين، 10 ثوانٍ راحة) بإجمالي 4 دقائق لكل تمرين | خذ استراحة لمدة دقيقة واحدة ثم انتقل إلى التمرين التالي | إجمالي وقت التمرين: {tot} دقيقة',
+    i_tabata_alt:'20 ثانية تمرين، 10 ثوانٍ راحة، 4 دقائق لكل مجموعة، بالتبادل بين تمرينين بإجمالي 4 جولات | راحة دقيقة واحدة بين المجموعات | إجمالي وقت التمرين: {tot} دقيقة',
     i_deathby:'الدقيقة 1: {s} تكرارات. تضاف {inc} تكرارات كل دقيقة حتى الفشل. الحد: {t} دقيقة.',
     i_buyin:'أكمل البداية، ثم {r} جولات، ثم النهاية. الحد: {t} دقيقة.',
     i_ygig:'{t} دقيقة AMRAP — الشريكان يتبادلان الجولات الكاملة | التبادل بعد كل جولة مكتملة | يمكن تعديل الوزن لكل شريك',
     i_ygig_ft:'أكمل {rt} جولة إجمالية ({r} لكل شريك, بالتناوب) بأسرع وقت. الحد الأقصى: {cap} دقيقة.',
-    i_ygig_split:'تقسيم الجولة — الشريكان يقتسمان التكرارات على كل حركة بالتناوب بجرعات صغيرة. الحد: {t} دقيقة. يمكن تعديل الوزن لكل شريك حسب مستواه.',est_time_label:'الوقت التقريبي للإتمام',
+    i_ygig_split:'تقسيم الجولة — الشريكان يقتسمان التكرارات على كل حركة بالتناوب بجرعات صغيرة. الحد: {t} دقيقة. يمكن تعديل الوزن لكل شريك حسب مستواه.',est_time_label:'الوقت التقريبي للتمرين',
 
     i_groupA:'تتدرب المجموعتان بالتزامن لمدة {t} دقائق، ثم تتبادلان المحطات',
     i_groupA_amrap:'A — AMRAP {t} دقيقة · <span style="color:var(--accent)">~{rnds} جولة</span> · ~{rndTime}/جولة',
@@ -319,7 +319,7 @@ var T={
     sc_sets:'النتيجة = اكتمال جميع الجولات',sc_tabata:'النتيجة = أقل تكرارات في كل جولة (نتيجة تاباتا)',sc_tabata_alt:'النتيجة = أقل تكرارات في أي فترة واحدة (عبر كل الحركات)',
     sc_deathby:'النتيجة = آخر دقيقة مكتملة',sc_total:'النتيجة = مجموع الجولات عبر جميع الفترات',
     sc_ygig:'النتيجة = مجموع الجولات + التكرارات الجزئية',sc_score_rounds:'النتيجة = الجولات',
-    tm_split:'✂️ تقسيم التكرارات بحرية (لا تنتقل للتمرين التالي إلا بإنهاء الحالي)',tm_one:'✂️ تقسيم التكرارات بحرية (لاعب يعمل ولاعب يرتاح)',
+    tm_split:'✂️ تقسيم التكرارات بحرية (لا تنتقل للتمرين التالي إلا بإنهاء الحالي)',tm_one:'✂️ تقسيم التكرارات بحرية (لاعب يعمل ولاعب يرتاح)',tm_gabSplit:'👥 ✂️ تقسيم التكرارات بحرية (لاعب يعمل ولاعب يرتاح)',
     tm_partition:'✂️ تقسيم التكرارات بحرية لإنهاء الجولات بأسرع وقت',tm_own:'🔁 تناوب بالدقائق (دقيقة كاملة للاعب A / دقيقة كاملة للاعب B)',
     tm_alternate:'⏱️ تبادل ذكي داخل نافذة الوقت أو العمل معاً',tm_3min:'⏱️ تبادل ذكي داخل نافذة الوقت أو العمل معاً',
     tm_simultaneous:'💥 عمل متزامن (كلاهما يعمل في نفس الوقت)',tm_both:'✂️ تقسيم التكرارات المتصاعدة المشتركة داخل الدقيقة',
@@ -355,7 +355,7 @@ var WOD_DESC={
   'Death By':{
     ar:'تحدي الفشل التدريجي. يبدأ التمرين بتكرار واحد في الدقيقة الأولى، ثم تزيد تكراراً واحداً في كل دقيقة تالية. يستمر التحدي حتى تعجز عن إتمام التكرارات المطلوبة ضمن نافذة الـ 60 ثانية.',
     en:'The progressive failure challenge. Start with 1 rep in the first minute, then add 1 rep every subsequent minute. The challenge continues until you can no longer complete the required workload within the 60-second window.'},
-  'Group A':{
+  'Interval 1':{
     ar:'فترات عمل منظمة تتخللها راحة مخطط لها. الهدف هو أداء أكبر عدد ممكن من الجولات خلال كل فترة، تليها استراحة محددة قبل بدء الفترة التالية.',
     en:'Structured work periods with planned rest. You aim for as many rounds as possible in each block, followed by a set rest before starting the next one.'},
   'YGIG / Partner WOD':{
@@ -1631,6 +1631,40 @@ function mkEmom(time,lv,team,cfg){
   var _emomActualTime=_emomCycle*sets;return[{type:'EMOM',title:_emomActualTime+' MIN EMOM',infoKey:'i_emom',infoVars:{n:numMov,s:sets,t:time},scoreKey:'sc_rounds_comp',teamKey:team>1?'tm_own':null,items:items,emomCfg:cfg}];
 }
 
+function _chipCleanPattern(items,lv,team){
+  // الشيبر الكلاسيكي: النمط النهائي لازم نظيف — فلات موحد أو سلم بخطوة ثابتة. أي خلط (30/40/30) يترمم فلات
+  // على القيمة الأكثر تكراراً، والحركة اللي حدودها (جداول الشيبر) ما تسمح بالقيمة تتبدل بحركة تسمح.
+  var strs=items.filter(function(x){return x.kind==='str'&&!x.isRest&&x.ex&&x.baseRep&&['time','carry','m','dist','hold'].indexOf(x.ex.unit)<0;});
+  if(strs.length<2)return;
+  var vals=strs.map(function(x){return x.baseRep;}).sort(function(a,b){return a-b;});
+  if(vals.every(function(v){return v===vals[0];}))return; // فلات نظيف
+  var g=vals[1]-vals[0],lad=g>0;
+  for(var i=2;i<vals.length;i++)if(vals[i]-vals[i-1]!==g)lad=false;
+  if(lad)return; // سلم نظيف
+  var counts={};strs.forEach(function(x){counts[x.baseRep]=(counts[x.baseRep]||0)+1;});
+  var V=+Object.keys(counts).sort(function(a,b){return counts[b]-counts[a]||(+a)-(+b);})[0];
+  if(team===2&&V%2!==0)V-=1;
+  var step=V%10===0?10:V%5===0?5:2;
+  var guard=0;
+  while(guard++<30&&V>=2){
+    var ok=true;
+    var names=items.filter(function(x){return x.kind==='str'&&x.ex;}).map(function(x){return x.ex.name;});
+    var plan=[];
+    for(var k=0;k<strs.length;k++){
+      var it=strs[k];var lm=_exLimsForTime([it.ex],lv,team,true);
+      if(V>=lm.min&&V<=lm.max){plan.push({it:it});continue;}
+      var cnds=getChipperPool(lv,team).filter(function(e){
+        if(names.indexOf(e.name)>=0)return false;
+        if(['time','carry','m','dist','hold'].indexOf(e.unit)>=0)return false;
+        var l2=_exLimsForTime([e],lv,team,true);return V>=l2.min&&V<=l2.max;
+      });
+      if(cnds.length){var pe=pk(cnds);names.push(pe.name);plan.push({it:it,swap:pe});}
+      else{ok=false;break;}
+    }
+    if(ok){plan.forEach(function(p){if(p.swap)p.it.ex=p.swap;p.it.baseRep=V;p.it.detail=getDetail(p.it.ex,V,null,lv,team);});return;}
+    V-=step;if(team===2&&V%2!==0)V-=1;
+  }
+}
 var CHIPPER_SCHEMES={
   beginner:   {3:[30,20,10],4:[40,30,20,10],5:[40,30,20,15,10],6:[30,25,20,15,10,5],7:[30,25,20,15,10,8,5],8:[25,25,20,20,15,15,10,10],9:[25,25,20,20,15,15,10,10,5]},
   intermediate:{3:[50,40,30],4:[60,50,40,30],5:[60,50,40,30,20],6:[50,45,40,35,30,25],7:[50,45,40,35,30,25,20],8:[40,40,35,35,30,30,25,25],9:[40,40,35,35,30,30,25,25,20]},
@@ -1934,6 +1968,7 @@ function mkChipper(time,lv,team,cfg){
   }
   var _cardioAdded2=items.filter(function(x){return x.kind==='cardio';}).length;
   _ordRepsByDifficulty(items,lv,team,function(ex){return _exLimsForTime([ex],lv,team,true);},team===2);
+  _chipCleanPattern(items,lv,team); // ممنوع الخلط: رمم أي نمط مو نظيف قبل التعبئة
   // ── تعبئة نهائية (بعد الترتيب): لو التقدير < 90% من الكاب، كبّر الحجم مع الحفاظ على قاعدة الصعوبة ──
   if(!cfg.baseReps){
     var _tuStr=items.filter(function(x){return x.kind==='str'&&!x.isRest&&x.ex&&x.baseRep&&['time','carry','m','dist','hold'].indexOf(x.ex.unit)<0;});
@@ -1942,18 +1977,38 @@ function mkChipper(time,lv,team,cfg){
     var _tuTr=team===2?18:_tSec(lv);
     var _tuEst=function(){var e=0;_tuStr.forEach(function(it){e+=it.baseRep*getSecondsPerRep(it.ex,lv,team,team===2);});_tuCrd.forEach(function(cx){e+=_cardioSecEst(cx.ex,lv,team,team===2);});var n=_tuStr.length+_tuCrd.length;if(n>1)e+=(n-1)*_tuTr;return e;};
     var _tuBdg=time*60;
-    for(var _tuI=0;_tuI<20&&(_tuStr.length||_tuCrd.length);_tuI++){
+    // التعبئة بالنمط الكامل فقط (فلات كله يرتفع سوا / السلم نافذته كلها) — ممنوع الخلط 30/40/30.
+    // حركة حدها الأقصى (جداول الشيبر) يمنع القيمة الجديدة → تتبدل بحركة تسمح؛ ما في بديل → نوقف والنمط يظل نظيف.
+    for(var _tuI=0;_tuI<20&&_tuStr.length;_tuI++){
       if(_tuEst()>=_tuBdg*0.90)break;
-      var _tuStep=_tuStr.length&&_tuStr.every(function(it){return it.baseRep%10===0;})?10:(_tuStr.length&&_tuStr.every(function(it){return it.baseRep%5===0;})?5:2);
-      var _tuGrew=false;
-      _tuOrd.forEach(function(it,k){
-        var _tuL=_exLimsForTime([it.ex],lv,team,true);
-        var cap=Math.min(_tuL.max,k>0?_tuOrd[k-1].baseRep:Infinity); // الأصعب ما يتجاوز الأسهل
+      var _tuVals=_tuStr.map(function(it){return it.baseRep;}).sort(function(a,b){return a-b;});
+      var _tuFlat=_tuVals.every(function(v){return v===_tuVals[0];});
+      var _tuG=_tuFlat?0:_tuVals[1]-_tuVals[0];
+      var _tuLad=!_tuFlat&&_tuG>0&&_tuVals.every(function(v,i){return i===0||_tuVals[i]-_tuVals[i-1]===_tuG;});
+      if(!_tuFlat&&!_tuLad)break; // نمط مو نظيف؟ لا نلمسه حتى لا نخلط
+      var _tuStep=_tuFlat?(_tuVals[0]%10===0?10:_tuVals[0]%5===0?5:2):_tuG;
+      if(team===2&&_tuStep%2!==0)_tuStep=_tuStep*2;
+      var _tuNames=items.filter(function(x){return x.kind==='str'&&x.ex;}).map(function(x){return x.ex.name;});
+      var _tuPlan=[],_tuOK=true;
+      _tuStr.forEach(function(it){
+        if(!_tuOK)return;
         var nv=it.baseRep+_tuStep;
-        if(team===2&&nv%2!==0)nv+=1;
-        if(nv<=cap){it.baseRep=nv;it.detail=getDetail(it.ex,nv,null,lv,team);_tuGrew=true;}
+        var lm=_exLimsForTime([it.ex],lv,team,true);
+        if(nv<=lm.max){_tuPlan.push({it:it,nv:nv});return;}
+        var _cnds=getChipperPool(lv,team).filter(function(e){
+          if(_tuNames.indexOf(e.name)>=0)return false;
+          if(e.unit==='time'||e.unit==='carry'||e.unit==='m'||e.unit==='dist'||e.unit==='hold')return false;
+          var l2=_exLimsForTime([e],lv,team,true);
+          return nv>=l2.min&&nv<=l2.max;
+        });
+        if(_cnds.length){var _pe2=pk(_cnds);_tuNames.push(_pe2.name);_tuPlan.push({it:it,nv:nv,swap:_pe2});}
+        else _tuOK=false;
       });
-      if(!_tuGrew)break; // بدون تكبير كارديو — التعبئة بالتكرارات فقط (طلب Laila)
+      if(!_tuOK)break;
+      var _tuDelta=_tuPlan.reduce(function(a,p){return a+p.nv*getSecondsPerRep(p.swap||p.it.ex,lv,team,team===2)-p.it.baseRep*getSecondsPerRep(p.it.ex,lv,team,team===2);},0);
+      if(_tuEst()+_tuDelta>_tuBdg)break; // الدرجة الأعلى ما تدخل بالكاب — نوقف
+      _tuPlan.forEach(function(p){if(p.swap)p.it.ex=p.swap;p.it.baseRep=p.nv;p.it.detail=getDetail(p.it.ex,p.nv,null,lv,team);});
+      _ordRepsByDifficulty(items,lv,team,function(ex){return _exLimsForTime([ex],lv,team,true);},team===2);
     }
   }
   return[{type:'Chipper',title:'Chipper — For Time',infoKey:'i_chipper',infoVars:{t:time},scoreKey:'sc_time',teamKey:team>1?'tm_split':null,items:items,chipperCfg:cfg}];
@@ -1978,7 +2033,7 @@ function mkTabata(time,lv,team,cfg){
       var _cEx=pk(pool);
       _classicItem={kind:'str',ex:_cEx,detail:'20s on / 10s off × 8',noEdit:true};
     }
-    return[{type:'Tabata',title:'Tabata — Single',infoKey:'i_tabata_classic',infoVars:{},scoreKey:'sc_tabata',teamKey:team>1?'tm_simultaneous':null,items:[{kind:'sep',label:'—— 1 MOVEMENT × 8 INTERVALS ——'},_classicItem],tabataCfg:cfg}];
+    return[{type:'Tabata',title:'4 MIN TABATA',infoKey:'i_tabata_classic',infoVars:{},scoreKey:'sc_tabata',teamKey:team>1?'tm_simultaneous':null,items:[_classicItem],tabataCfg:cfg}];
   }
   // ── Complex & Alternating: 2-4 حركات ──
   var _isAlt=(_effectiveMode==='alternating');
@@ -1986,9 +2041,8 @@ function mkTabata(time,lv,team,cfg){
   if(cfg.numMov){
     numMov=cfg.numMov;
   }else{
-    // Complex(مع راحة): ÷5 | Alternating(بدون راحة): ÷4 — مع حد 2-4
-    var _slotDiv=_isAlt?4:5;
-    var totalSlots=Math.min(4,Math.max(2,Math.floor(time/_slotDiv)));
+    // Multi: حسب الوقت بدون سقف — كل تمرين 4 دقائق + راحة دقيقة (5ن-1 ≤ الوقت) (طلب Laila)
+    var totalSlots=Math.max(1,Math.floor((time+1)/5));
     numMov=addCardio?Math.max(1,totalSlots-1):totalSlots;
   }
   var chosen=pkN(pool,numMov);
@@ -2000,15 +2054,27 @@ function mkTabata(time,lv,team,cfg){
     return{kind:'str',ex:ex,detail:_isAlt?'20s on / 10s off':'20s on / 10s off × 8',noEdit:true};
   });
   if(_isAlt){
-    var _altItems=[{kind:'sep',label:'—— ALTERNATING — CYCLE × 8 ROUNDS ——'}].concat(_tabItems);
-    var _altTot=_totalItems*4;
-    return[{type:'Tabata',title:'Tabata — Alternating',infoKey:'i_tabata_alt',infoVars:{n:_totalItems,tot:_altTot},scoreKey:'sc_tabata_alt',teamKey:team>1?'tm_simultaneous':null,items:_altItems,tabataCfg:cfg}];
+    // ── Alternating اليديد (قواعد Laila): سيتات — كل سيت تمرينان بالتناوب 20/10 لمدة 4 دقائق (4 جولات لكل تمرين)،
+    // راحة دقيقة بين السيتات (بدون راحة أخيرة). التلقائي: أكبر عدد سيتات لا يتجاوز وقت المستخدم.
+    var _altSets=cfg.sets||Math.max(1,Math.min(12,Math.floor((time+1)/5))); // تلقائي حتى 12 سيت (الساعة تنملي) — الأزرار اليدوية 1-10
+    if(!cfg.sets)cfg._genSets=_altSets;
+    var _altNeed=_altSets*2;
+    var _altChosen=pkN(pool,Math.min(_altNeed,pool.length));
+    while(_altChosen.length<_altNeed)_altChosen.push(pk(pool)); // احتياط لو المجموعة أصغر من المطلوب
+    var _altItems2=[];
+    for(var _as=0;_as<_altSets;_as++){
+      _altItems2.push({kind:'sep',label:'—— SET '+(_as+1)+' ——'});
+      _altItems2.push({kind:'str',ex:_altChosen[_as*2],detail:'20s on / 10s off',noEdit:true});
+      _altItems2.push({kind:'str',ex:_altChosen[_as*2+1],detail:'20s on / 10s off',noEdit:true});
+    }
+    var _altTot=_altSets*5-1;
+    return[{type:'Tabata',title:_altTot+' MIN TABATA',infoKey:'i_tabata_alt',infoVars:{n:_altSets,tot:_altTot},scoreKey:'sc_tabata_alt',teamKey:team>1?'tm_simultaneous':null,items:_altItems2,tabataCfg:cfg}];
   }
   // Complex: REST إجباري بين الحركات
-  var _tabWithRest=[{kind:'sep',label:'—— '+_totalItems+' MOVEMENTS × 8 INTERVALS ——'}];
+  var _tabWithRest=[]; // بدون عنوان MOVEMENTS × INTERVALS (طلب Laila)
   _tabItems.forEach(function(it,i){_tabWithRest.push(it);if(i<_tabItems.length-1)_tabWithRest.push({kind:'sep',label:'── 1 MIN REST ──'});});
   var _tabTot=_totalItems*4+(_totalItems>1?_totalItems-1:0);
-  return[{type:'Tabata',title:'Tabata — Multi',infoKey:'i_tabata',infoVars:{tot:_tabTot},scoreKey:'sc_tabata',teamKey:team>1?'tm_simultaneous':null,items:_tabWithRest,tabataCfg:cfg}];
+  return[{type:'Tabata',title:_tabTot+' MIN TABATA',infoKey:'i_tabata',infoVars:{tot:_tabTot},scoreKey:'sc_tabata',teamKey:team>1?'tm_simultaneous':null,items:_tabWithRest,tabataCfg:cfg}];
 }
 function mkDeathBy(time,lv,team,cfg){
   cfg=cfg||{};
@@ -2511,32 +2577,182 @@ function mkYGIG(time,lv,team,cfg){
   return[_amrSec];
 }
 
+function _gabFit2(sec,lv,team,blockT,cfg){
+  // ضمان جولتين على الأقل بالفترة: شيل الكارديو (إذا مو مثبت من المستخدم)، بعدين أثقل حركة (إذا العدد مو مثبت)، وآخر حل قلّص التكرارات
+  cfg=cfg||{};
+  var _bSec=blockT*60;
+  var _pw=function(){var pw=0,cnt=0;sec.items.forEach(function(it){if(it.kind==='str'&&it.baseRep&&!it.isRest){pw+=it.baseRep*getSecondsPerRep(it.ex,lv,1,false);cnt++;}else if(it.kind==='cardio'&&it.ex&&it.ex.amount){pw+=_cardioSecEst(it.ex,lv,1,false);cnt++;}});return pw+Math.max(0,cnt-1)*_tSec(lv);};
+  var _g=0;/* حدود التيم = حدود السبلت */
+  while(_g++<12&&Math.floor(_bSec/_pw())<2){
+    var _cd=sec.items.filter(function(it){return it.kind==='cardio';})[0];
+    var _strs=sec.items.filter(function(it){return it.kind==='str'&&it.baseRep&&!it.isRest;});
+    if(_cd&&cfg.withCardio!==true){sec.items.splice(sec.items.indexOf(_cd),1);continue;}
+    if(!cfg.exCnt&&_strs.length>2){
+      var _hv=_strs.reduce(function(m,it){return(it.baseRep*getSecondsPerRep(it.ex,lv,1,false))>(m.baseRep*getSecondsPerRep(m.ex,lv,1,false))?it:m;});
+      sec.items.splice(sec.items.indexOf(_hv),1);continue;
+    }
+    var _any=false;
+    var _minR=_g>8?(team===2?4:3):(team===2?6:4); // آخر مرحلة: ينزل الحد الأدنى درجة
+    _strs.forEach(function(it){
+      var _nr=team===2?Math.max(_minR,Math.floor(it.baseRep*0.85/2)*2):Math.max(_minR,Math.floor(it.baseRep*0.85));
+      if(_nr<it.baseRep){it.baseRep=_nr;it.detail=getDetail(it.ex,_nr,null,lv,team);_any=true;}
+    });
+    if(!_any&&_g<=8){_g=9;continue;}
+    if(!_any)break;
+  }
+}
+function _gabSchemeFill(sec,lv,team,blockT,cfg,usedNames){
+  // تعبئة التايم كاب ضمن السكيمات فقط: (1) رفع درجة كاملة داخل السكيم (فلات +2/+5 لين كابه، سلم نافذة كاملة بنفس الخطوة)
+  // (2) إضافة حركة بقيمة من السكيم نفسه — كل شي ضمن حدود كل تمرين (جداول السبلت للتيم) وبدون أي رقم خارج السكيم
+  if(cfg&&cfg.baseReps)return;
+  var _split=team===2;
+  var _bSec=blockT*60;
+  var _pwOf=function(){var pw=0,cnt=0;sec.items.forEach(function(it){if(it.kind==='str'&&it.baseRep&&!it.isRest){pw+=it.baseRep*getSecondsPerRep(it.ex,lv,1,false);cnt++;}else if(it.kind==='cardio'&&it.ex&&it.ex.amount){pw+=_cardioSecEst(it.ex,lv,1,false);cnt++;}});return pw+Math.max(0,cnt-1)*_tSec(lv);};
+  var _strsOf=function(){return sec.items.filter(function(it){return it.kind==='str'&&it.baseRep&&!it.isRest;});};
+  var _pattern=function(){
+    var vals=_strsOf().map(function(it){return it.baseRep;}).sort(function(a,b){return a-b;});
+    if(!vals.length)return null;
+    if(vals.every(function(v){return v===vals[0];}))return{kind:'flat',v:vals[0]};
+    var g=vals[1]-vals[0],ok=g>0;
+    for(var i=2;i<vals.length;i++)if(vals[i]-vals[i-1]!==g)ok=false;
+    if(ok)return{kind:'ladder',g:g,min:vals[0],max:vals[vals.length-1]};
+    return{kind:'mixed'};
+  };
+  var pw=_pwOf();if(pw<=0)return;
+  var rnds=Math.floor(_bSec/pw);if(rnds<1)return;
+  // (1) رفع درجات كاملة لين ما تعود درجة إضافية تدخل بالوقت
+  var _guard=0;
+  while(_guard++<15){
+    var pat=_pattern();if(!pat||pat.kind==='mixed')break;
+    var strs=_strsOf();var applied=false;
+    if(pat.kind==='flat'){
+      var v=pat.v,cands=[];
+      if(v%2===0&&v+2<=20)cands.push(v+2); // فلات مضاعفات 2: زوجي فقط وكابه 20
+      if(v%5===0&&v+5<=25&&(!_split||(v+5)%2===0))cands.push(v+5); // فلات مضاعفات 5: كابه 25 (وزوجي للتيم)
+      cands.sort(function(a,b){return b-a;});
+      for(var ci=0;ci<cands.length&&!applied;ci++){
+        var nv=cands[ci];
+        if(strs.some(function(it){var lm=_exLims([it.ex],lv,team,_split)||{};return nv>(lm.max||999);}))continue;
+        var addS=strs.reduce(function(a,it){return a+(nv-it.baseRep)*getSecondsPerRep(it.ex,lv,1,false);},0);
+        if((pw+addS)*rnds>_bSec)continue;
+        strs.forEach(function(it){it.baseRep=nv;it.detail=getDetail(it.ex,nv,null,lv,team);});
+        pw+=addS;applied=true;
+      }
+    }else{
+      var g=pat.g;
+      if(_split&&g%2!==0)break;
+      var okL=true,addL=0;
+      strs.forEach(function(it){var lm=_exLims([it.ex],lv,team,_split)||{};if(it.baseRep+g>(lm.max||999))okL=false;addL+=g*getSecondsPerRep(it.ex,lv,1,false);});
+      if(okL&&(pw+addL)*rnds<=_bSec){
+        strs.forEach(function(it){it.baseRep+=g;it.detail=getDetail(it.ex,it.baseRep,null,lv,team);});
+        pw+=addL;applied=true;
+      }
+    }
+    if(!applied)break;
+  }
+  // (2) إضافة حركات بقيمة من السكيم (فلات → نفس القيمة، سلم → امتداد النافذة) — إذا العدد مو مثبت والفراغ باقي
+  var adds=0,added=false;
+  while(adds<2&&!(cfg&&cfg.exCnt)){
+    pw=_pwOf();rnds=Math.floor(_bSec/pw);if(rnds<1)break;
+    if(rnds*pw/_bSec>=0.85)break;
+    var pat2=_pattern();if(!pat2||pat2.kind==='mixed')break;
+    var strs2=_strsOf();if(strs2.length>=6)break;
+    var newVal=pat2.kind==='flat'?pat2.v:(pat2.min-pat2.g>=(_split?6:4)?pat2.min-pat2.g:pat2.max+pat2.g);
+    if(_split&&newVal%2!==0)break;
+    var names=strs2.map(function(it){return it.ex.name;});
+    var excl=(usedNames||[]).concat(names);
+    var cands2=getPool(lv,null,team).filter(function(e){
+      if(excl.indexOf(e.name)>=0)return false;
+      var lm=_exLims([e],lv,team,_split)||{};
+      return newVal>=(lm.min||1)&&newVal<=(lm.max||999);
+    });
+    if(!cands2.length)break;
+    var pe=pk(cands2);
+    var newPw=pw+newVal*getSecondsPerRep(pe,lv,1,false)+_tSec(lv);
+    var newRnds=Math.floor(_bSec/newPw);
+    if(newRnds<2)break;
+    if(newRnds*newPw<=rnds*pw)break;
+    var _ins=-1;for(var _x=0;_x<sec.items.length;_x++){if(sec.items[_x].kind==='cardio'){_ins=_x;break;}}
+    var newIt={kind:'str',ex:pe,detail:getDetail(pe,newVal,null,lv,team),baseRep:newVal};
+    if(_ins>=0)sec.items.splice(_ins,0,newIt);else sec.items.push(newIt);
+    adds++;added=true;
+  }
+  if(added)_ordRepsByDifficulty(sec.items,lv,team,function(ex){return _exLims([ex],lv,team,_split);},_split);
+}
 function mkGroupAB(time,lv,team,cfg){
   cfg=cfg||{};
   var _gabCfg=Object.assign({},cfg);
-  var secA=mkAmrap(time/2,lv,1,_gabCfg)[0];
+  // عدد الفترات: 2 أو 3 — سولو وتيم نفس الشي؛ عشوائي إذا ما اختار المستخدم. التيم 2 تيم سبلت (يتشاركون العدات)
+  var _gabN=cfg.intervals===3?3:cfg.intervals===2?2:pk([2,3]);
+  if(!cfg.intervals)cfg._genIntervals=_gabN;
+  var _blockT=_gabN===2?time/2:Math.floor(time/_gabN);
+  var secA=mkAmrap(_blockT,lv,team,_gabCfg)[0];
+  _gabFit2(secA,lv,team,_blockT,cfg);
   var _aStr=secA.items.filter(function(it){return it.kind==='str';});
   var _aCardio=secA.items.filter(function(it){return it.kind==='cardio';})[0];
-  // B يطابق A في: عدد التمارين + نفس نمط التكرارات (forceRepsArr) + وجود الكارديو وكميته
+  // الفترات التالية تطابق A في: عدد التمارين + نفس نمط التكرارات + وجود الكارديو وكميته
   var _aRepsArr=_aStr.map(function(it){return it.baseRep||10;});
-  var _bCfg=Object.assign({},_gabCfg,{
-    exCnt:_aStr.length,
-    withCardio:!!_aCardio,
-    excludedNames:_aStr.map(function(it){return it.ex.name;}),
-    forceRepsArr:_aRepsArr
+  var _usedNames=_aStr.map(function(it){return it.ex.name;});
+  var secs=[secA];var _letters=['A','B','C'];
+  for(var _gk=1;_gk<_gabN;_gk++){
+    var _kCfg=Object.assign({},_gabCfg,{
+      exCnt:_aStr.length,
+      withCardio:!!_aCardio,
+      excludedNames:_usedNames.slice(),
+      forceRepsArr:_aRepsArr
+    });
+    if(_aCardio&&_aCardio.ex&&_aCardio.ex.amount!=null)_kCfg.cardioAmt=_aCardio.ex.amount;
+    var _sk=mkAmrap(_blockT,lv,team,_kCfg)[0];
+    // مطابقة الصعوبة مع A: تكرارات A المفروضة لازم تظل منطقية — أي حركة أثقل/أخف بكثير تنستبدل بمقاربة
+    (function(){
+      var _kStrIts=_sk.items.filter(function(it){return it.kind==='str';});
+      var _kLocal=_usedNames.slice();_kStrIts.forEach(function(it){if(it.ex)_kLocal.push(it.ex.name);});
+      _kStrIts.forEach(function(it,ix){
+        var _aIt=_aStr[ix];if(!_aIt||!it.ex)return;
+        var _aSpr=getSecondsPerRep(_aIt.ex,lv,1,false);
+        var _kSpr=getSecondsPerRep(it.ex,lv,1,false);
+        if(_kSpr>_aSpr*1.5||_kSpr<_aSpr*0.6){
+          var _cand=getPool(lv,null,1).filter(function(e){
+            if(_kLocal.indexOf(e.name)>=0)return false;
+            if(['time','carry','m','dist','hold'].indexOf(e.unit)>=0&&['time','carry','m','dist','hold'].indexOf(_aIt.ex.unit)<0)return false;
+            var s2=getSecondsPerRep(e,lv,1,false);
+            return s2<=_aSpr*1.4&&s2>=_aSpr*0.7;
+          });
+          if(_cand.length){var _pe=pk(_cand);it.ex=_pe;it.detail=getDetail(_pe,it.baseRep,null,lv,1);_kLocal.push(_pe.name);}
+        }
+      });
+    })();
+    // إصلاح مطابقة الكارديو: نفس الوحدة إجباري (100m ما تصير 100Cal!)
+    if(_aCardio&&_aCardio.ex){
+      var _kC=_sk.items.filter(function(it){return it.kind==='cardio';})[0];
+      if(_kC&&_kC.ex){
+        if(_kC.ex.unit!==_aCardio.ex.unit){
+          var _uPool=CARDIO.filter(function(c){return !c.altOnly&&c.unit===_aCardio.ex.unit&&c.name!==_aCardio.ex.name;});
+          var _uPick=_uPool.length?pk(_uPool):null;
+          _kC.ex=Object.assign({},(_uPick||_aCardio.ex),{amount:_aCardio.ex.amount,unit:_aCardio.ex.unit});
+        }else{
+          _kC.ex=Object.assign({},_kC.ex,{amount:_aCardio.ex.amount});
+        }
+      }
+    }
+    _sk.items.filter(function(it){return it.kind==='str';}).forEach(function(it){_usedNames.push(it.ex.name);});
+    secs.push(_sk);
+  }
+  secs.forEach(function(_gs,_gi){
+    _gs.type=_gi===0?'Interval 1':'Interval 2';
+    _gs.title='Station '+_letters[_gi]+' — AMRAP '+_blockT+' Min';
+    _gs.infoKey=_gi===0?'i_groupA_amrap':'i_groupB_amrap';
+    _gs.groupAbCfg=cfg;
+    if(_gi===0){_gs.scoreKey='sc_rounds_ab';_gs.teamKey=team>1?'tm_gabSplit':null;}
+    else{_gs.teamKey=null;delete _gs.amrapCfg;/* لا تتسرب الإعدادات الداخلية (forceRepsArr/excludedNames) لستور الـ AMRAP */}
+    if(_gs.items)_ordRepsByDifficulty(_gs.items,lv,team,function(ex){return _exLims([ex],lv,team,team===2);},team===2);
+    // ضمان جولتين على الأقل (بدون أي زيادة تكرارات — السكيمات مقدسة)
+    _gabFit2(_gs,lv,team,_blockT,_gi===0?cfg:{withCardio:true,exCnt:(cfg&&cfg.exCnt)||(_aStr.length||1)});
+    // تعبئة التايم كاب بدرجات السكيم الكاملة أو إضافة حركة بقيم السكيم
+    var _oNames=[];secs.forEach(function(_o){if(_o!==_gs&&_o.items)_o.items.forEach(function(x){if(x.kind==='str'&&x.ex)_oNames.push(x.ex.name);});});
+    _gabSchemeFill(_gs,lv,team,_blockT,cfg,_oNames);
   });
-  if(_aCardio&&_aCardio.ex&&_aCardio.ex.amount!=null)_bCfg.cardioAmt=_aCardio.ex.amount;
-  var secB=mkAmrap(time/2,lv,1,_bCfg)[0];
-  secA.type='Group A';secA.title='Station A — AMRAP '+(time/2)+' Min';
-  secA.infoKey='i_groupA_amrap';
-  secA.scoreKey='sc_rounds_ab';secA.teamKey=team>1?'tm_halfA':null;
-  secA.groupAbCfg=cfg;
-  secB.type='Group B';secB.title='Station B — AMRAP '+(time/2)+' Min';
-  secB.infoKey='i_groupB_amrap';
-  secB.groupAbCfg=cfg;
-  // فرض قاعدة الصعوبة على الفترتين (سولو) — يعالج كسور الـ clamp النادرة من محرك AMRAP
-  [secA,secB].forEach(function(_gs){if(_gs&&_gs.items)_ordRepsByDifficulty(_gs.items,lv,1,function(ex){return _exLims([ex],lv,1,false);},false);});
-  return[secA,secB];
+  return secs;
 }
 
 // ── Named Rep Schemes ──
@@ -2626,7 +2842,7 @@ function _secFillRatio(sec,lv,team){
   var _isYgigFT=sec.type==='YGIG / Partner WOD'&&iv.r&&iv.cap;
   var budget=_isYgigFT?(iv.cap*60):(iv.t||S.time||20)*60;
   var lvl=lv||S.level||'intermediate';
-  var _splt=sec.type!=='YGIG / Partner WOD'&&sec.type!=='EMOM'&&sec.type!=='Tabata'&&sec.type!=='Group A'&&sec.type!=='Group B';
+  var _splt=sec.type!=='YGIG / Partner WOD'&&sec.type!=='EMOM'&&sec.type!=='Tabata'&&sec.type!=='Interval 1'&&sec.type!=='Interval 2';
   var gateExArr=[];
   sec.items.forEach(function(x){if((x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount)gateExArr.push(x.ex);});
   var repsArr=strItems.map(function(it){return it.baseRep;});
@@ -2642,7 +2858,7 @@ function _secFillRatio(sec,lv,team){
   }catch(e){return 0;}
   if(_isYgigFT&&iv.r){est=est*iv.r*2;}else if((sec.type==='For Time / RFT'||sec.type==='Buy-In / Cash-Out')&&iv.r){est=est*iv.r;}
   if(sec.type==='EMOM'&&iv.n){var _em=0;for(var _j=0;_j<Math.min(repsArr.length,exArr.length);_j++)_em+=repsArr[_j]*getSecondsPerRep(exArr[_j],lvl,team,false);gateExArr.forEach(function(gx){_em+=_cardioSecEst(gx,lvl,team,false);});est=_em;budget=(iv.n+(gateExArr.length||0))*45;}
-  if((sec.type==='AMRAP'||sec.type==='YGIG / Partner WOD')&&iv.rnd&&iv.rnd>0){var _isYgA=sec.type==='YGIG / Partner WOD';var _amTm=_isYgA?1:team;var _amSp=_isYgA?false:true;var _am=0;for(var _k=0;_k<Math.min(repsArr.length,exArr.length);_k++)_am+=repsArr[_k]*getSecondsPerRep(exArr[_k],lvl,_amTm,_amSp);gateExArr.forEach(function(gx){_am+=_cardioSecEst(gx,lvl,_amTm,_amSp);});if(_isYgA&&(strItems.length+gateExArr.length)>1)_am+=(strItems.length+gateExArr.length-1)*_tSec(lvl);est=_am;budget=iv.tgt||iv.rnd*60;}  if((sec.type==='Group A'||sec.type==='Group B')&&iv.rnd&&iv.rnd>0){var _gab=0;for(var _kg=0;_kg<Math.min(repsArr.length,exArr.length);_kg++)_gab+=repsArr[_kg]*getSecondsPerRep(exArr[_kg],lvl,team,false);gateExArr.forEach(function(gx){_gab+=_cardioSecEst(gx,lvl,team,false);});est=_gab;budget=iv.tgt||iv.rnd*60;}
+  if((sec.type==='AMRAP'||sec.type==='YGIG / Partner WOD')&&iv.rnd&&iv.rnd>0){var _isYgA=sec.type==='YGIG / Partner WOD';var _amTm=_isYgA?1:team;var _amSp=_isYgA?false:true;var _am=0;for(var _k=0;_k<Math.min(repsArr.length,exArr.length);_k++)_am+=repsArr[_k]*getSecondsPerRep(exArr[_k],lvl,_amTm,_amSp);gateExArr.forEach(function(gx){_am+=_cardioSecEst(gx,lvl,_amTm,_amSp);});if(_isYgA&&(strItems.length+gateExArr.length)>1)_am+=(strItems.length+gateExArr.length-1)*_tSec(lvl);est=_am;budget=iv.tgt||iv.rnd*60;}  if(sec.type==='Interval 1'||sec.type==='Interval 2'){var _gab=0,_gCnt=0;for(var _kg=0;_kg<Math.min(repsArr.length,exArr.length);_kg++){_gab+=repsArr[_kg]*getSecondsPerRep(exArr[_kg],lvl,1,false);_gCnt++;}gateExArr.forEach(function(gx){_gab+=_cardioSecEst(gx,lvl,1,false);_gCnt++;});_gab+=Math.max(0,_gCnt-1)*_tSec(lvl);if(_gab<=0)return 0;var _gBd=(iv.t||S.time||20)*60;var _gR=Math.max(1,Math.floor(_gBd/_gab));return(_gR*_gab)/_gBd;/* تعبئة = جولات كاملة × الجولة ÷ الفترة — التوليد الذكي يختار أقرب تركيبة سكيم للتايم كاب */}
   if(sec.type==='Buy-In / Cash-Out'){var _biR2=iv.r||1;var _biStr2=0;for(var _bk2=0;_bk2<Math.min(repsArr.length,exArr.length);_bk2++){var _brpr2=strItems[_bk2].repsPerRound;var _btot2=(_brpr2&&_brpr2.length>1)?_brpr2.reduce(function(a,c){return a+c;},0):(repsArr[_bk2]*_biR2);_biStr2+=_btot2*getSecondsPerRep(exArr[_bk2],lvl,team,team===2);}var _biRnd2=0;gateExArr.forEach(function(gx){_biRnd2+=_cardioSecEst(gx,lvl,team,team===2);});if(strItems.length+gateExArr.length>1)_biRnd2+=(strItems.length+gateExArr.length-1)*tTime;var _biBi2=0;sec.items.filter(function(x){return x.kind==='buyin'&&x.ex&&x.ex.amount;}).forEach(function(it){_biBi2+=_cardioSecEst(it.ex,lvl,team,team===2);});est=_biStr2+_biRnd2*_biR2+_biBi2;budget=(iv.t||S.time||20)*60;}
   if(sec.type==='Ladder'&&sec.scheme&&sec.scheme.length){var _lsch=sec.scheme;var _lEstDiv=sec._estDiv||1;var _lEstTeam=_lEstDiv>1?1:team;var _lTTime=_lEstTeam===2?18:_tSec(lvl);var _lCrdItems=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex;});var _lEst2=0;strItems.forEach(function(it){var _rpr=it.repsPerRound;var _sch=(_rpr&&_rpr.length>1)?_rpr:_lsch;_sch.forEach(function(r){_lEst2+=(r/_lEstDiv)*getSecondsPerRep(it.ex,lvl,_lEstTeam,true);});});_lCrdItems.forEach(function(it){var _ca=it.cardioAmounts;if(_ca&&_ca.length>1){_ca.forEach(function(a){_lEst2+=_cardioSecEst(Object.assign({},it.ex,{amount:a/_lEstDiv}),lvl,_lEstTeam,true);});}else if(it.ex&&it.ex.amount){_lEst2+=_cardioSecEst(Object.assign({},it.ex,{amount:it.ex.amount/_lEstDiv}),lvl,_lEstTeam,true)*_lsch.length;}});_lEst2+=(strItems.length+_lCrdItems.length)*_lsch.length>0?((strItems.length+_lCrdItems.length)*_lsch.length-1)*_lTTime:0;return budget>0?_lEst2/budget:0;}
   return budget>0?est/budget:0;
@@ -2781,7 +2997,7 @@ var LL={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',elit
 function renderWod(){
   window.scrollTo(0,0);
   var w=S.wod;
-  var _chipTime=(function(){if(w.type==='group-ab')return Math.floor(S.time/2)*2;if(w.type==='tabata'){var _ts=w.sections&&w.sections[0];return(_ts&&_ts.infoVars&&_ts.infoVars.tot)||4;}if(w.type==='emom'&&w.sections&&w.sections[0]){var _es=w.sections[0];var _ec=(_es.items||[]).filter(function(x){return x.kind!=='sep';}).length;var _esets=(_es.infoVars&&_es.infoVars.s)||0;var _eact=_ec*_esets;if(_eact>0)return _eact;}return S.time;})();
+  var _chipTime=(function(){if(w.type==='group-ab'){var _gn=0;(w.sections||[]).forEach(function(x){if(x&&(x.type==='Interval 1'||x.type==='Interval 2'))_gn++;});_gn=_gn||2;return Math.floor(S.time/_gn)*_gn;}if(w.type==='tabata'){var _ts=w.sections&&w.sections[0];return(_ts&&_ts.infoVars&&_ts.infoVars.tot)||4;}if(w.type==='emom'&&w.sections&&w.sections[0]){var _es=w.sections[0];var _ec=(_es.items||[]).filter(function(x){return x.kind!=='sep';}).length;var _esets=(_es.infoVars&&_es.infoVars.s)||0;var _eact=_ec*_esets;if(_eact>0)return _eact;}return S.time;})();
   app.innerHTML=dots(4)+'<div class="wh ani"><div class="wl">'+t('wod_day')+'</div><div class="wn"><bdi dir="ltr">'+S.wodName+'</bdi></div><div class="wm"><span class="wb o">'+(TL[w.type]||w.type)+'</span><span class="wb">'+({'beginner':t('lv_b'),'intermediate':t('lv_i'),'advanced':t('lv_a'),'elite':t('lv_e')}[S.level]||LL[S.level])+'</span>'+(CFG.lang==='ar'?'<span id="chip-time-val" class="wb"><bdi dir="ltr">'+_chipTime+' '+arMin(_chipTime)+'</bdi></span>':'<span id="chip-time-val" class="wb">'+_chipTime+' min</span>')+(S.teamSize>1?'<span class="wb b">'+(CFG.lang==='ar'?t('team_chip'):'Team')+' '+S.teamSize+'</span>':'')+'</div></div>'
   +'<div id="secs">'+w.sections.map(function(s,i){return renderSec(s,i)}).join('')+'</div>'
   +'<div style="padding:0 12px"><div class="ar" style="margin:16px 0 0"><button class="ab pri" onclick="regen()" style="flex:2;font-size:14px">'+t('new_wod')+'</button><button class="ab pri" onclick="_swDoSave()" style="font-size:12px">'+(CFG.lang==='ar'?(_SW_editId!==null?'💾 تحديث':'💾 حفظ'):(_SW_editId!==null?'💾 Update':'💾 Save'))+'</button><button class="ab pri" onclick="shareWod()" style="font-size:12px">'+t('share')+'</button></div>'
@@ -2858,20 +3074,20 @@ function cfgGearRow(infoTxt,toggleFn,si,timeEst,preTime){
   return '<div class="si" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span dir="'+(CFG.lang==="ar"?"rtl":"ltr")+'">'+txt+tH+'</span><span onclick="'+toggleFn+'('+si+')" style="cursor:pointer;font-size:15px;flex-shrink:0;opacity:0.6">⚙️</span></div>';
 }
 function renderSecInfo(sec,si,infoTxt){
-  var _amrBoldTime='';if((sec.type==='AMRAP'||sec.type==='YGIG / Partner WOD')&&infoTxt===undefined&&sec.infoKey){var _riv=sec.infoVars||{};var _rlv=S.level||'intermediate';var _isYgigSec=sec.type==='YGIG / Partner WOD'&&!(_riv.r);var _rtm=_isYgigSec?1:(S.teamSize||1);var _rSplit=_isYgigSec?false:true;var _rtT=_rtm===2?18:_tSec(_rlv);var _rpw=0;var _rstrI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _rcardI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});_rstrI.forEach(function(it){_rpw+=it.baseRep*getSecondsPerRep(it.ex,_rlv,_rtm,_rSplit);});_rcardI.forEach(function(cx){_rpw+=_cardioSecEst(cx.ex,_rlv,_rtm,_rSplit);});_rpw+=(_rstrI.length+_rcardI.length-1)*_rtT;if(_rpw>0){var _rwSec=(_riv.t||S.time)*60;var _rdynRnds=Math.max(1,Math.floor(_rwSec/_rpw));if(_isYgigSec&&_rdynRnds%2!==0)_rdynRnds+=1;var _rndSnap=Math.round(_rpw/10)*10;var _rndTime=Math.floor(_rndSnap/60)+':'+((_rndSnap%60)<10?'0':'')+(_rndSnap%60);var _amrTotSec=Math.round(_rdynRnds*_rpw);var _amrTotTime=Math.floor(_amrTotSec/60)+':'+( (_amrTotSec%60)<10?'0':'')+(_amrTotSec%60);_amrBoldTime=_rdynRnds?(CFG.lang==='ar'?(_rdynRnds+' جولات ~'+_rndTime+'/جولة ~'+_amrTotTime):(_rdynRnds+' rounds · ~'+_rndTime+'/round ~'+_amrTotTime)):_amrTotTime;infoTxt=ti(sec.infoKey,Object.assign({},_riv,{rnds:_rdynRnds,rndTime:_rndTime}));if(_rdynRnds){if(CFG.lang==='ar'){infoTxt='أكمل أكبر عدد جولات ممكن | الوقت التقريبي لإتمام ~<bdi>'+_rdynRnds+'</bdi> جولات · ~<bdi>'+_rndTime+'</bdi>/جولة = ~<bdi>'+_amrTotTime+'</bdi> دقيقة';_amrBoldTime='';}else{infoTxt='Complete as many rounds as possible | Estimated time to complete ~<bdi>'+_rdynRnds+'</bdi> rounds · ~<bdi>'+_rndTime+'</bdi>/round = ~<bdi>'+_amrTotTime+'</bdi> min';_amrBoldTime='';}}}}  
-  if(sec.type==='Group A'&&infoTxt===undefined){var _gabT=S.wod&&S.wod.cfg&&S.wod.cfg.time||S.time;var _gabDesc=ti('i_groupA',{cap:_gabT});var _grlv=S.level||'intermediate';var _grtT=_tSec(_grlv);var _gabCalc=function(s){if(!s||!s.items)return null;var _si=s.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _ci=s.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _pw=0;_si.forEach(function(it){_pw+=it.baseRep*getSecondsPerRep(it.ex,_grlv,1,false);});_ci.forEach(function(cx){_pw+=_cardioSecEst(cx.ex,_grlv,1,false);});_pw+=(_si.length+_ci.length-1)*_grtT;if(_pw<=0)return null;var _t=(s.infoVars&&s.infoVars.t)||S.time;var _rnds=Math.max(1,Math.floor(_t*60/_pw));var _snap=Math.round(_pw/10)*10;var _tm=Math.floor(_snap/60)+':'+((_snap%60)<10?'0':'')+(_snap%60);return{rnds:_rnds,rndTime:_tm,t:_t,totSec:Math.round(_rnds*_pw)};};var _secB=S.wod&&S.wod.sections&&S.wod.sections[si+1];var _iA=_gabCalc(sec);var _iB=_gabCalc(_secB);var _gabTotSec=(_iA?_iA.totSec:0)+(_iB?_iB.totSec:0);var _gabBoldTime=_gabTotSec>0?Math.floor(_gabTotSec/60)+':'+( (_gabTotSec%60)<10?'0':'')+(_gabTotSec%60):'';var _restMins=_gabT<=15?1:_gabT>=30?3:2;var _restWord=_restMins===1?'one-minute':_restMins===2?'two-minute':'three-minute';var _iATotFmt=_iA?Math.floor(_iA.totSec/60)+':'+(_iA.totSec%60<10?'0':'')+(_iA.totSec%60):'';var _iBTotFmt=_iB?Math.floor(_iB.totSec/60)+':'+(_iB.totSec%60<10?'0':'')+(_iB.totSec%60):'';var _halfT=Math.floor(_gabT/2);if(CFG.lang==='ar'){infoTxt='أكمل كل <bdi>'+_halfT+'</bdi> '+arMin(_halfT)+' AMRAP قبل الانتقال للتالي | استرح '+(_restMins===1?'دقيقة واحدة':_restMins===2?'دقيقتين':'3 دقائق')+' بين الفترات'+(_iA?' | الفترة الأولى: الوقت التقريبي لإتمام ~<bdi>'+_iA.rnds+'</bdi> جولات · ~<bdi>'+_iA.rndTime+'</bdi>/جولة = <span style="font-weight:900">~<bdi>'+_iATotFmt+'</bdi> دقيقة</span>':'')+(_iB?' | الفترة الثانية: الوقت التقريبي لإتمام ~<bdi>'+_iB.rnds+'</bdi> جولات · ~<bdi>'+_iB.rndTime+'</bdi>/جولة = <span style="font-weight:900">~<bdi>'+_iBTotFmt+'</bdi> دقيقة</span>':'');_gabBoldTime='';}else{infoTxt='Complete each <bdi>'+_halfT+'</bdi> minute AMRAP before moving on to the next | Take '+_restWord+' rest between intervals'+(_iA?' | First Interval: Estimated time to complete ~<bdi>'+_iA.rnds+'</bdi> rounds · ~<bdi>'+_iA.rndTime+'</bdi>/round = <span style="font-weight:900">~<bdi>'+_iATotFmt+'</bdi> min</span>':'')+(_iB?' | Second Interval: Estimated time to complete ~<bdi>'+_iB.rnds+'</bdi> rounds · ~<bdi>'+_iB.rndTime+'</bdi>/round = <span style="font-weight:900">~<bdi>'+_iBTotFmt+'</bdi> min</span>':'');_gabBoldTime='';}}
+  var _amrBoldTime='';if((sec.type==='AMRAP'||sec.type==='YGIG / Partner WOD')&&infoTxt===undefined&&sec.infoKey){var _riv=sec.infoVars||{};var _rlv=S.level||'intermediate';var _isYgigSec=sec.type==='YGIG / Partner WOD'&&!(_riv.r);var _rtm=_isYgigSec?1:(S.teamSize||1);var _rSplit=_isYgigSec?false:true;var _rtT=_rtm===2?18:_tSec(_rlv);var _rpw=0;var _rstrI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _rcardI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});_rstrI.forEach(function(it){_rpw+=it.baseRep*getSecondsPerRep(it.ex,_rlv,_rtm,_rSplit);});_rcardI.forEach(function(cx){_rpw+=_cardioSecEst(cx.ex,_rlv,_rtm,_rSplit);});_rpw+=(_rstrI.length+_rcardI.length-1)*_rtT;if(_rpw>0){var _rwSec=(_riv.t||S.time)*60;var _rdynRnds=Math.max(1,Math.floor(_rwSec/_rpw));if(_isYgigSec&&_rdynRnds%2!==0)_rdynRnds+=1;var _rndSnap=Math.round(_rpw/10)*10;var _rndTime=Math.floor(_rndSnap/60)+':'+((_rndSnap%60)<10?'0':'')+(_rndSnap%60);var _amrTotSec=_rdynRnds*_rndSnap;/* معادلة متسقة: الجولات × وقت الجولة المعروض */var _amrTotTime=Math.floor(_amrTotSec/60)+':'+( (_amrTotSec%60)<10?'0':'')+(_amrTotSec%60);_amrBoldTime=_rdynRnds?(CFG.lang==='ar'?(_rdynRnds+' جولات ~'+_rndTime+'/جولة ~'+_amrTotTime):(_rdynRnds+' rounds · ~'+_rndTime+'/round ~'+_amrTotTime)):_amrTotTime;infoTxt=ti(sec.infoKey,Object.assign({},_riv,{rnds:_rdynRnds,rndTime:_rndTime}));if(_rdynRnds){if(CFG.lang==='ar'){infoTxt='أكمل أكبر عدد جولات ممكن | الوقت التقريبي للتمرين: ~<bdi>'+_rdynRnds+'</bdi> جولات × <bdi>'+_rndTime+'</bdi>/جولة = ~<bdi>'+_amrTotTime+'</bdi> دقيقة';_amrBoldTime='';}else{infoTxt='Complete as many rounds as possible | Estimated workout time: ~<bdi>'+_rdynRnds+'</bdi> rounds × <bdi>'+_rndTime+'</bdi>/round = ~<bdi>'+_amrTotTime+'</bdi> min';_amrBoldTime='';}}}}  
+  if(sec.type==='Interval 1'&&infoTxt===undefined){var _gabT=S.wod&&S.wod.cfg&&S.wod.cfg.time||S.time;var _gabDesc=ti('i_groupA',{cap:_gabT});var _grlv=S.level||'intermediate';var _grtT=_tSec(_grlv);var _gabCalc=function(s){if(!s||!s.items)return null;var _si=s.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _ci=s.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _pw=0;_si.forEach(function(it){_pw+=it.baseRep*getSecondsPerRep(it.ex,_grlv,1,false);});_ci.forEach(function(cx){_pw+=_cardioSecEst(cx.ex,_grlv,1,false);});_pw+=(_si.length+_ci.length-1)*_grtT;if(_pw<=0)return null;var _t=(s.infoVars&&s.infoVars.t)||S.time;var _rnds=Math.max(1,Math.floor(_t*60/_pw));var _snap=Math.round(_pw/10)*10;var _tm=Math.floor(_snap/60)+':'+((_snap%60)<10?'0':'')+(_snap%60);return{rnds:_rnds,rndTime:_tm,t:_t,totSec:_rnds*_snap};};var _secB=S.wod&&S.wod.sections&&S.wod.sections[si+1];_secB=(_secB&&_secB.type==='Interval 2')?_secB:null;var _secC=S.wod&&S.wod.sections&&S.wod.sections[si+2];_secC=(_secC&&_secC.type==='Interval 2')?_secC:null;var _iA=_gabCalc(sec);var _iB=_gabCalc(_secB);var _iC=_gabCalc(_secC);var _gabTotSec=(_iA?_iA.totSec:0)+(_iB?_iB.totSec:0)+(_iC?_iC.totSec:0);var _gabBoldTime=_gabTotSec>0?Math.floor(_gabTotSec/60)+':'+( (_gabTotSec%60)<10?'0':'')+(_gabTotSec%60):'';var _blkTm=Math.floor((sec.infoVars&&sec.infoVars.t)||_gabT/2);var _restMins=_blkTm<=7?1:_blkTm>=15?3:2;var _restWord=_restMins+' min';var _iATotFmt=_iA?_fmtMS(_iA.totSec):'';var _iBTotFmt=_iB?_fmtMS(_iB.totSec):'';var _iCTotFmt=_iC?_fmtMS(_iC.totSec):'';var _halfT=Math.floor((sec.infoVars&&sec.infoVars.t)||_gabT/2);if(CFG.lang==='ar'){infoTxt='أكمل كل <bdi>'+_halfT+'</bdi> '+arMin(_halfT)+' AMRAP قبل الانتقال للتالي | استرح '+(_restMins===1?'دقيقة واحدة':_restMins===2?'دقيقتين':'3 دقائق')+' بين الفترات'+(_iA?' | الفترة الأولى: الوقت التقريبي للتمرين: ~<bdi>'+_iA.rnds+'</bdi> جولات = <span style="font-weight:900">~<bdi>'+_iATotFmt+'</bdi> دقيقة</span>':'')+(_iB?' | الفترة الثانية: الوقت التقريبي للتمرين: ~<bdi>'+_iB.rnds+'</bdi> جولات = <span style="font-weight:900">~<bdi>'+_iBTotFmt+'</bdi> دقيقة</span>':'')+(_iC?' | الفترة الثالثة: الوقت التقريبي للتمرين: ~<bdi>'+_iC.rnds+'</bdi> جولات = <span style="font-weight:900">~<bdi>'+_iCTotFmt+'</bdi> دقيقة</span>':'');_gabBoldTime='';}else{infoTxt='Complete each <bdi>'+_halfT+'</bdi> minute AMRAP before moving on to the next | Take '+_restWord+' rest between intervals'+(_iA?' | 1st Interval: Estimated workout time: ~<bdi>'+_iA.rnds+'</bdi> rounds = <span style="font-weight:900">~<bdi>'+_iATotFmt+'</bdi> min</span>':'')+(_iB?' | 2nd Interval: Estimated workout time: ~<bdi>'+_iB.rnds+'</bdi> rounds = <span style="font-weight:900">~<bdi>'+_iBTotFmt+'</bdi> min</span>':'')+(_iC?' | 3rd Interval: Estimated workout time: ~<bdi>'+_iC.rnds+'</bdi> rounds = <span style="font-weight:900">~<bdi>'+_iCTotFmt+'</bdi> min</span>':'');_gabBoldTime='';}}
   infoTxt=infoTxt!==undefined?infoTxt:(sec.infoKey?ti(sec.infoKey,sec.infoVars||{}):sec.info);
-  if(sec.type==='Chipper'){var _cE='';var _cL=S.level||'intermediate';var _cTm=S.teamSize||1;var _cTr=_cTm===2?18:_tSec(_cL);var _cSI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _cCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _cPW=0;_cSI.forEach(function(it){_cPW+=it.baseRep*getSecondsPerRep(it.ex,_cL,_cTm,_cTm===2);});_cCI.forEach(function(cx){_cPW+=_cardioSecEst(cx.ex,_cL,_cTm,_cTm===2);});_cPW+=(_cSI.length+_cCI.length>1?(_cSI.length+_cCI.length-1)*_cTr:0);if(_cPW>0){var _cs=Math.round(_cPW);_cE=_fmtMS(_cs);}if(CFG.lang==='ar'){infoTxt='أكمل تكرارات كل حركة قبل الانتقال للتالية'+(_cE?' | الوقت التقريبي للإتمام ~<bdi>'+_cE+'</bdi> دقيقة':'');_cE='';}else{infoTxt='Complete all reps of each movement before moving on'+(_cE?' | Estimated time to complete ~<bdi>'+_cE+'</bdi> min':'');_cE='';}return cfgGearRow(infoTxt,'toggleChipperCfg',si,_cE)+renderChipperCfg(sec,si);}
+  if(sec.type==='Chipper'){var _cE='';var _cL=S.level||'intermediate';var _cTm=S.teamSize||1;var _cTr=_cTm===2?18:_tSec(_cL);var _cSI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _cCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _cPW=0;_cSI.forEach(function(it){_cPW+=it.baseRep*getSecondsPerRep(it.ex,_cL,_cTm,_cTm===2);});_cCI.forEach(function(cx){_cPW+=_cardioSecEst(cx.ex,_cL,_cTm,_cTm===2);});_cPW+=(_cSI.length+_cCI.length>1?(_cSI.length+_cCI.length-1)*_cTr:0);if(_cPW>0){var _cs=Math.round(_cPW);_cE=_fmtMS(_cs);}if(CFG.lang==='ar'){infoTxt='أكمل تكرارات كل حركة قبل الانتقال للتالية'+(_cE?' | الوقت التقريبي للتمرين ~<bdi>'+_cE+'</bdi> دقيقة':'');_cE='';}else{infoTxt='Complete all reps of each movement before moving on'+(_cE?' | Estimated workout time ~<bdi>'+_cE+'</bdi> min':'');_cE='';}return cfgGearRow(infoTxt,'toggleChipperCfg',si,_cE)+renderChipperCfg(sec,si);}
   if(sec.type==='AMRAP')return cfgGearRow(infoTxt,'toggleAmrapCfg',si,_amrBoldTime)+renderAmrapCfg(sec,si);
-  if(sec.type==='For Time / RFT'){var _rE='';var _rL=S.level||'intermediate';var _rTm=S.teamSize||1;var _rTr=_rTm===2?18:_tSec(_rL);var _rIV=sec.infoVars||{};var _rRnds=_rIV.r||1;var _rSI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _rCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _rPW=0;_rSI.forEach(function(it){_rPW+=it.baseRep*getSecondsPerRep(it.ex,_rL,_rTm,_rTm===2);});_rCI.forEach(function(cx){_rPW+=_cardioSecEst(cx.ex,_rL,_rTm,_rTm===2);});_rPW+=(_rSI.length+_rCI.length>1?(_rSI.length+_rCI.length-1)*_rTr:0);var _rHasCust=_rSI.some(function(it){return it.repsPerRound&&it.repsPerRound.length>1;})||_rCI.some(function(it){return it.cardioAmounts&&it.cardioAmounts.length>1;});if(_rHasCust&&_rRnds>0){var _rTot=0;_rSI.forEach(function(it){var _rp=it.repsPerRound;var _tt=(_rp&&_rp.length>1)?_rp.reduce(function(a,b){return a+b;},0):it.baseRep*_rRnds;_rTot+=_tt*getSecondsPerRep(it.ex,_rL,_rTm,_rTm===2);});_rCI.forEach(function(cx){var _ca=cx.cardioAmounts;if(_ca&&_ca.length>1){_ca.forEach(function(a){_rTot+=_cardioSecEst(Object.assign({},cx.ex,{amount:a}),_rL,_rTm,_rTm===2);});}else{_rTot+=_cardioSecEst(cx.ex,_rL,_rTm,_rTm===2)*_rRnds;}});_rTot+=(_rSI.length+_rCI.length>1?(_rSI.length+_rCI.length-1)*_rTr:0)*_rRnds;_rPW=_rTot/_rRnds;} /* سكيم يدوي: التقدير من مجموع الشغل الفعلي */ if(_rPW>0){var _rndSec=Math.round(_rPW);var _rndTm=_fmtMS(_rndSec);var _rt=Math.round(_rPW*_rRnds);_rE=CFG.lang==='ar'?(_rRnds+' جولات ~'+_rndTm+'/جولة ~'+_fmtMS(_rt)):(_rRnds+' rounds ~'+_rndTm+'/round ~'+_fmtMS(_rt));var _rtTot=_fmtMS(_rt);if(CFG.lang==='ar'){infoTxt='أكمل <bdi>'+_rRnds+'</bdi> جولات بأسرع وقت ممكن | الوقت التقريبي لإتمام ~<bdi>'+_rtTot+'</bdi> دقيقة';_rE='';}else{infoTxt='Complete <bdi>'+_rRnds+'</bdi> rounds as fast as possible | Estimated time to complete ~<bdi>'+_rtTot+'</bdi> min';_rE='';}}return cfgGearRow(infoTxt,'toggleRftCfg',si,_rE)+renderRftCfg(sec,si);}
+  if(sec.type==='For Time / RFT'){var _rE='';var _rL=S.level||'intermediate';var _rTm=S.teamSize||1;var _rTr=_rTm===2?18:_tSec(_rL);var _rIV=sec.infoVars||{};var _rRnds=_rIV.r||1;var _rSI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _rCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _rPW=0;_rSI.forEach(function(it){_rPW+=it.baseRep*getSecondsPerRep(it.ex,_rL,_rTm,_rTm===2);});_rCI.forEach(function(cx){_rPW+=_cardioSecEst(cx.ex,_rL,_rTm,_rTm===2);});_rPW+=(_rSI.length+_rCI.length>1?(_rSI.length+_rCI.length-1)*_rTr:0);var _rHasCust=_rSI.some(function(it){return it.repsPerRound&&it.repsPerRound.length>1;})||_rCI.some(function(it){return it.cardioAmounts&&it.cardioAmounts.length>1;});if(_rHasCust&&_rRnds>0){var _rTot=0;_rSI.forEach(function(it){var _rp=it.repsPerRound;var _tt=(_rp&&_rp.length>1)?_rp.reduce(function(a,b){return a+b;},0):it.baseRep*_rRnds;_rTot+=_tt*getSecondsPerRep(it.ex,_rL,_rTm,_rTm===2);});_rCI.forEach(function(cx){var _ca=cx.cardioAmounts;if(_ca&&_ca.length>1){_ca.forEach(function(a){_rTot+=_cardioSecEst(Object.assign({},cx.ex,{amount:a}),_rL,_rTm,_rTm===2);});}else{_rTot+=_cardioSecEst(cx.ex,_rL,_rTm,_rTm===2)*_rRnds;}});_rTot+=(_rSI.length+_rCI.length>1?(_rSI.length+_rCI.length-1)*_rTr:0)*_rRnds;_rPW=_rTot/_rRnds;} /* سكيم يدوي: التقدير من مجموع الشغل الفعلي */ if(_rPW>0){var _rndSec=Math.round(_rPW);var _rndTm=_fmtMS(_rndSec);var _rt=Math.round(_rPW*_rRnds);_rE=CFG.lang==='ar'?(_rRnds+' جولات ~'+_rndTm+'/جولة ~'+_fmtMS(_rt)):(_rRnds+' rounds ~'+_rndTm+'/round ~'+_fmtMS(_rt));var _rtTot=_fmtMS(_rt);if(CFG.lang==='ar'){infoTxt='أكمل <bdi>'+_rRnds+'</bdi> جولات بأسرع وقت ممكن | الوقت التقريبي للتمرين ~<bdi>'+_rtTot+'</bdi> دقيقة';_rE='';}else{infoTxt='Complete <bdi>'+_rRnds+'</bdi> rounds as fast as possible | Estimated workout time ~<bdi>'+_rtTot+'</bdi> min';_rE='';}}return cfgGearRow(infoTxt,'toggleRftCfg',si,_rE)+renderRftCfg(sec,si);}
   if(sec.type==='EMOM'){var _emIV=sec.infoVars||{};var _emS=_emIV.s||0;var _emCycle=(sec.items||[]).filter(function(x){return x.kind!=='sep';}).length;var _emMins=_emCycle*_emS;var _emE=_emMins>0?_emMins+':00':'';if(CFG.lang==='ar'){infoTxt='حركة جديدة كل دقيقة | <bdi>'+_emCycle+'</bdi> حركات متناوبة · <bdi>'+_emS+'</bdi> مجموعات · ~45 ثانية عمل/دقيقة';_emE='';}else{infoTxt='Every minute on the minute | <bdi>'+_emCycle+'</bdi> movements rotating · <bdi>'+_emS+'</bdi> sets · ~45s work/min';_emE='';}return cfgGearRow(infoTxt,'toggleEmomCfg',si,_emE)+renderEmomCfg(sec,si);}
-  if(sec.type==='Tabata'){var _tIV=sec.infoVars||{};var _tTot=_tIV.tot||4;var _tTxt;if(CFG.lang==='ar'){if(sec.infoKey==='i_tabata_classic'){_tTxt='حركة واحدة، تتكرر عبر الفترات | 20 ثانية عمل / 10 ثانية راحة × 8 فترات | الوقت الكلي: 4 دقائق';}else if(sec.infoKey==='i_tabata_alt'){_tTxt='تناوب بين كل الحركات في كل فترة | 20 ثانية عمل / 10 ثانية راحة × 8 جولات | الوقت الكلي: <bdi>'+_tTot+'</bdi> دقيقة';}else{_tTxt='أكمل 8 فترات لكل حركة قبل الانتقال للتالية | 20 ثانية عمل / 10 ثانية راحة × 8 فترات لكل حركة | الوقت الكلي: <bdi>'+_tTot+'</bdi> دقيقة';}}else{_tTxt=infoTxt?infoTxt.replace(/Total time: ([\d]+) min/,'Total time: <span style="font-weight:900"><bdi>$1</bdi> min</span>'):infoTxt;}return cfgGearRow(_tTxt,'toggleTabataCfg',si)+renderTabataCfg(sec,si);}
+  if(sec.type==='Tabata'){var _tIV=sec.infoVars||{};var _tTot=_tIV.tot||4;var _tTxt;if(CFG.lang==='ar'){if(sec.infoKey==='i_tabata_classic'){_tTxt='قم بأداء 8 جولات (20 ثانية تمرين، 10 ثوانٍ راحة) بإجمالي 4 دقائق | إجمالي وقت التمرين: 4 دقائق';}else if(sec.infoKey==='i_tabata_alt'){_tTxt='20 ثانية تمرين، 10 ثوانٍ راحة، 4 دقائق لكل مجموعة، بالتبادل بين تمرينين بإجمالي 4 جولات | راحة دقيقة واحدة بين المجموعات | إجمالي وقت التمرين: <bdi>'+_tTot+'</bdi> دقيقة';}else{_tTxt='قم بأداء كل تمرين لمدة 8 جولات (20 ثانية تمرين، 10 ثوانٍ راحة) بإجمالي 4 دقائق لكل تمرين | خذ استراحة لمدة دقيقة واحدة ثم انتقل إلى التمرين التالي | إجمالي وقت التمرين: <bdi>'+_tTot+'</bdi> دقيقة';}}else{_tTxt=infoTxt?infoTxt.replace(/Total (workout )?time: ([\d]+) min/,'Total $1time: <span style="font-weight:900"><bdi>$2</bdi> min</span>'):infoTxt;}return cfgGearRow(_tTxt,'toggleTabataCfg',si)+renderTabataCfg(sec,si);}
   if(sec.type==='Death By'){var _dbIV=sec.infoVars||{};var _dbInc=_dbIV.inc||(S.teamSize===2?2:1);var _dbS=_dbIV.s||(S.teamSize===2?2:1);if(CFG.lang==='ar'){infoTxt='أضف <bdi>'+_dbInc+'</bdi> تكرار كل دقيقة حتى الفشل';}else{infoTxt='Add <bdi>'+_dbInc+'</bdi> rep'+(S.teamSize===2?'s':'')+(S.teamSize===2?' (split)':'')+' each minute until failure';}return cfgGearRow(infoTxt,'toggleDeathByCfg',si)+renderDeathByCfg(sec,si);}
-  if(sec.type==='YGIG / Partner WOD'){var _yE='';var _yLv=S.level||'intermediate';var _yTr=_tSec(_yLv);var _ySI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _yCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _yIV=sec.infoVars||{};if(sec.infoKey==='i_ygig_ft'){var _yRnds=(_yIV.r||1)*2;var _yPW=0;_ySI.forEach(function(it){_yPW+=it.baseRep*getSecondsPerRep(it.ex,_yLv,1,false);});_yCI.forEach(function(cx){_yPW+=_cardioSecEst(cx.ex,_yLv,1,false);});_yPW+=(_ySI.length+_yCI.length>1?(_ySI.length+_yCI.length-1)*_yTr:0);var _yEst=_yPW*_yRnds;if(_yEst>0){var _ys=Math.round(_yEst);var _yRndSec=Math.round(_yPW);var _yRndTm=_fmtMS(_yRndSec);_yE=_yRndTm+'/round ~'+_fmtMS(_ys);}}else{var _yRndsA=_yIV.rnds||0;var _yTgtA=_yIV.tgt||0;if(_yRndsA>0&&_yTgtA>0){var _yEstA=Math.round(_yRndsA*_yTgtA);_yE=_fmtMS(_yEstA);}}if(sec.infoKey==='i_ygig_ft'&&_yEst>0){var _yTotFmt=_fmtMS(_ys);if(CFG.lang==='ar'){infoTxt='أكمل <bdi>'+_yRnds+'</bdi> جولات بأسرع وقت ممكن | الوقت التقريبي لإتمام ~<bdi>'+_yTotFmt+'</bdi> دقيقة';_yE='';}else{infoTxt='Complete <bdi>'+_yRnds+'</bdi> rounds as fast as possible | Estimated time to complete ~<bdi>'+_yTotFmt+'</bdi> min';_yE='';}}return cfgGearRow(infoTxt,'toggleYgigCfg',si,sec.infoKey==='i_ygig_ft'?(_yE?((_yIV.r||1)*2)+' rounds ~'+_yE:''):_amrBoldTime)+renderYgigCfg(sec,si);}
-  if(sec.type==='Buy-In / Cash-Out'){var _bE='';var _bL=S.level||'intermediate';var _bTm=S.teamSize||1;var _bTr=_bTm===2?18:_tSec(_bL);var _bIV=sec.infoVars||{};var _bRnds=_bIV.r||1;var _biItems=sec.items.filter(function(x){return x.kind==='buyin'&&x.ex&&x.ex.amount;});var _bSI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _bCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _bPW=0;var _bRndPW=0;var _bStrWork=0;_bSI.forEach(function(it){var _bTotR=(it.repsPerRound&&it.repsPerRound.length>1)?it.repsPerRound.reduce(function(a,b){return a+b;},0):it.baseRep*_bRnds;_bStrWork+=_bTotR*getSecondsPerRep(it.ex,_bL,_bTm,_bTm===2);});_bCI.forEach(function(cx){_bRndPW+=_cardioSecEst(cx.ex,_bL,_bTm,_bTm===2);});if(_bSI.length+_bCI.length>1)_bRndPW+=(_bSI.length+_bCI.length-1)*_bTr;_bPW+=_bStrWork+_bRndPW*_bRnds;var _bBiPW=0;_biItems.forEach(function(it){if(it.ex&&it.ex.amount)_bBiPW+=_cardioSecEst(it.ex,_bL,_bTm,_bTm===2);});if(_bPW>0||_bBiPW>0){var _bRndSec=Math.round(_bRndPW);var _bRndTm=_fmtMS(_bRndSec);var _bs=Math.round(_bPW+_bBiPW);_bE=_bRnds+' rounds ~'+_bRndTm+'/round ~'+_fmtMS(_bs);}var _hasBuyIn=_biItems.some(function(x){return x.which==='buyin';});var _hasCashOut=_biItems.some(function(x){return x.which==='cashout';});var _bTotFmt=(_bs!==undefined)?_fmtMS(_bs):'';var _bDescEN=(_hasBuyIn&&_hasCashOut)?'Complete buy-in, then WOD, then cash-out':(_hasBuyIn?'Complete buy-in, then WOD':(_hasCashOut?'Complete WOD, then cash-out':'Complete WOD'));var _bDescAR=(_hasBuyIn&&_hasCashOut)?'أكمل البداية، ثم التمرين، ثم النهاية':(_hasBuyIn?'أكمل البداية، ثم التمرين':(_hasCashOut?'أكمل التمرين، ثم النهاية':'أكمل التمرين'));if(CFG.lang==='ar'){infoTxt=_bDescAR+(_bTotFmt?' | الوقت التقريبي لإتمام ~<bdi>'+_bTotFmt+'</bdi> دقيقة':'');_bE='';}else{infoTxt=_bDescEN+(_bTotFmt?' | Estimated time to complete ~<bdi>'+_bTotFmt+'</bdi> min':'');_bE='';}return cfgGearRow(infoTxt,'toggleBuyInCfg',si,_bE)+renderBuyInCfg(sec,si);}
-  if(sec.type==='Ladder'){var _ldE='';var _ldSch=sec.scheme;if(_ldSch&&_ldSch.length){var _ldLv=S.level||'intermediate';var _ldTm=S.teamSize||1;var _ldEstDiv=sec._estDiv||1;var _ldEstTeam=_ldEstDiv>1?1:_ldTm;var _ldTT=_ldEstTeam===2?18:_tSec(_ldLv);var _ldSI=sec.items.filter(function(x){return x.kind==='str'&&!x.isRest;});var _ldCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _ldEst=0;_ldSI.forEach(function(it){var _rpr=it.repsPerRound;var _sch=(_rpr&&_rpr.length>1)?_rpr:_ldSch;_sch.forEach(function(r){_ldEst+=(r/_ldEstDiv)*getSecondsPerRep(it.ex,_ldLv,_ldEstTeam,true);});});_ldCI.forEach(function(cx){var _ca=cx.cardioAmounts;if(_ca&&_ca.length>1){_ca.forEach(function(a){_ldEst+=_cardioSecEst(Object.assign({},cx.ex,{amount:a/_ldEstDiv}),_ldLv,_ldEstTeam,true);});}else if(cx.ex&&cx.ex.amount){_ldEst+=_cardioSecEst(Object.assign({},cx.ex,{amount:cx.ex.amount/_ldEstDiv}),_ldLv,_ldEstTeam,true)*_ldSch.length;}});_ldEst+=(_ldSI.length+_ldCI.length)*_ldSch.length>0?((_ldSI.length+_ldCI.length)*_ldSch.length-1)*_ldTT:0;if(_ldEst>0){var _ls=Math.round(_ldEst);_ldE=_fmtMS(_ls);}}if(CFG.lang==='ar'){infoTxt='سلم تكرارات، العدد يتغير كل جولة'+(_ldE?' | الوقت التقريبي للإتمام ~<bdi>'+_ldE+'</bdi> دقيقة':'');_ldE='';}else{infoTxt='Ladder scheme, changing reps each round'+(_ldE?' | Estimated time to complete ~<bdi>'+_ldE+'</bdi> min':'');_ldE='';}return cfgGearRow(infoTxt||'','toggleLadderCfg',si,_ldE)+renderLadderCfg(sec,si);}
-  if(sec.type==='Group A')return cfgGearRow(infoTxt,'toggleAmrapCfg',si,_gabBoldTime||'')+renderGroupAbAmrapCfg(sec,si);
-  if(sec.type==='Group B')return '';
+  if(sec.type==='YGIG / Partner WOD'){var _yE='';var _yLv=S.level||'intermediate';var _yTr=_tSec(_yLv);var _ySI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _yCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _yIV=sec.infoVars||{};if(sec.infoKey==='i_ygig_ft'){var _yRnds=(_yIV.r||1)*2;var _yPW=0;_ySI.forEach(function(it){_yPW+=it.baseRep*getSecondsPerRep(it.ex,_yLv,1,false);});_yCI.forEach(function(cx){_yPW+=_cardioSecEst(cx.ex,_yLv,1,false);});_yPW+=(_ySI.length+_yCI.length>1?(_ySI.length+_yCI.length-1)*_yTr:0);var _yEst=_yPW*_yRnds;if(_yEst>0){var _ys=Math.round(_yEst);var _yRndSec=Math.round(_yPW);var _yRndTm=_fmtMS(_yRndSec);_yE=_yRndTm+'/round ~'+_fmtMS(_ys);}}else{var _yRndsA=_yIV.rnds||0;var _yTgtA=_yIV.tgt||0;if(_yRndsA>0&&_yTgtA>0){var _yEstA=Math.round(_yRndsA*_yTgtA);_yE=_fmtMS(_yEstA);}}if(sec.infoKey==='i_ygig_ft'&&_yEst>0){var _yTotFmt=_fmtMS(_ys);if(CFG.lang==='ar'){infoTxt='أكمل <bdi>'+_yRnds+'</bdi> جولات بأسرع وقت ممكن | الوقت التقريبي للتمرين ~<bdi>'+_yTotFmt+'</bdi> دقيقة';_yE='';}else{infoTxt='Complete <bdi>'+_yRnds+'</bdi> rounds as fast as possible | Estimated workout time ~<bdi>'+_yTotFmt+'</bdi> min';_yE='';}}return cfgGearRow(infoTxt,'toggleYgigCfg',si,sec.infoKey==='i_ygig_ft'?(_yE?((_yIV.r||1)*2)+' rounds ~'+_yE:''):_amrBoldTime)+renderYgigCfg(sec,si);}
+  if(sec.type==='Buy-In / Cash-Out'){var _bE='';var _bL=S.level||'intermediate';var _bTm=S.teamSize||1;var _bTr=_bTm===2?18:_tSec(_bL);var _bIV=sec.infoVars||{};var _bRnds=_bIV.r||1;var _biItems=sec.items.filter(function(x){return x.kind==='buyin'&&x.ex&&x.ex.amount;});var _bSI=sec.items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});var _bCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _bPW=0;var _bRndPW=0;var _bStrWork=0;_bSI.forEach(function(it){var _bTotR=(it.repsPerRound&&it.repsPerRound.length>1)?it.repsPerRound.reduce(function(a,b){return a+b;},0):it.baseRep*_bRnds;_bStrWork+=_bTotR*getSecondsPerRep(it.ex,_bL,_bTm,_bTm===2);});_bCI.forEach(function(cx){_bRndPW+=_cardioSecEst(cx.ex,_bL,_bTm,_bTm===2);});if(_bSI.length+_bCI.length>1)_bRndPW+=(_bSI.length+_bCI.length-1)*_bTr;_bPW+=_bStrWork+_bRndPW*_bRnds;var _bBiPW=0;_biItems.forEach(function(it){if(it.ex&&it.ex.amount)_bBiPW+=_cardioSecEst(it.ex,_bL,_bTm,_bTm===2);});if(_bPW>0||_bBiPW>0){var _bRndSec=Math.round(_bRndPW);var _bRndTm=_fmtMS(_bRndSec);var _bs=Math.round(_bPW+_bBiPW);_bE=_bRnds+' rounds ~'+_bRndTm+'/round ~'+_fmtMS(_bs);}var _hasBuyIn=_biItems.some(function(x){return x.which==='buyin';});var _hasCashOut=_biItems.some(function(x){return x.which==='cashout';});var _bTotFmt=(_bs!==undefined)?_fmtMS(_bs):'';var _bDescEN=(_hasBuyIn&&_hasCashOut)?'Complete buy-in, then WOD, then cash-out':(_hasBuyIn?'Complete buy-in, then WOD':(_hasCashOut?'Complete WOD, then cash-out':'Complete WOD'));var _bDescAR=(_hasBuyIn&&_hasCashOut)?'أكمل البداية، ثم التمرين، ثم النهاية':(_hasBuyIn?'أكمل البداية، ثم التمرين':(_hasCashOut?'أكمل التمرين، ثم النهاية':'أكمل التمرين'));if(CFG.lang==='ar'){infoTxt=_bDescAR+(_bTotFmt?' | الوقت التقريبي للتمرين ~<bdi>'+_bTotFmt+'</bdi> دقيقة':'');_bE='';}else{infoTxt=_bDescEN+(_bTotFmt?' | Estimated workout time ~<bdi>'+_bTotFmt+'</bdi> min':'');_bE='';}return cfgGearRow(infoTxt,'toggleBuyInCfg',si,_bE)+renderBuyInCfg(sec,si);}
+  if(sec.type==='Ladder'){var _ldE='';var _ldSch=sec.scheme;if(_ldSch&&_ldSch.length){var _ldLv=S.level||'intermediate';var _ldTm=S.teamSize||1;var _ldEstDiv=sec._estDiv||1;var _ldEstTeam=_ldEstDiv>1?1:_ldTm;var _ldTT=_ldEstTeam===2?18:_tSec(_ldLv);var _ldSI=sec.items.filter(function(x){return x.kind==='str'&&!x.isRest;});var _ldCI=sec.items.filter(function(x){return(x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount;});var _ldEst=0;_ldSI.forEach(function(it){var _rpr=it.repsPerRound;var _sch=(_rpr&&_rpr.length>1)?_rpr:_ldSch;_sch.forEach(function(r){_ldEst+=(r/_ldEstDiv)*getSecondsPerRep(it.ex,_ldLv,_ldEstTeam,true);});});_ldCI.forEach(function(cx){var _ca=cx.cardioAmounts;if(_ca&&_ca.length>1){_ca.forEach(function(a){_ldEst+=_cardioSecEst(Object.assign({},cx.ex,{amount:a/_ldEstDiv}),_ldLv,_ldEstTeam,true);});}else if(cx.ex&&cx.ex.amount){_ldEst+=_cardioSecEst(Object.assign({},cx.ex,{amount:cx.ex.amount/_ldEstDiv}),_ldLv,_ldEstTeam,true)*_ldSch.length;}});_ldEst+=(_ldSI.length+_ldCI.length)*_ldSch.length>0?((_ldSI.length+_ldCI.length)*_ldSch.length-1)*_ldTT:0;if(_ldEst>0){var _ls=Math.round(_ldEst);_ldE=_fmtMS(_ls);}}if(CFG.lang==='ar'){infoTxt='سلم تكرارات، العدد يتغير كل جولة'+(_ldE?' | الوقت التقريبي للتمرين ~<bdi>'+_ldE+'</bdi> دقيقة':'');_ldE='';}else{infoTxt='Ladder scheme, changing reps each round'+(_ldE?' | Estimated workout time ~<bdi>'+_ldE+'</bdi> min':'');_ldE='';}return cfgGearRow(infoTxt||'','toggleLadderCfg',si,_ldE)+renderLadderCfg(sec,si);}
+  if(sec.type==='Interval 1')return cfgGearRow(infoTxt,'toggleAmrapCfg',si,_gabBoldTime||'')+renderGroupAbAmrapCfg(sec,si);
+  if(sec.type==='Interval 2')return '';
   if(sec.scheme){
     var schHtml=sec.scheme.join(' → ');
     var schText=sec.cardioExs?ti('i_scheme_cardio',{scheme:schHtml,t:S.wod.cfg.time}):ti('i_scheme',{scheme:schHtml,t:S.wod.cfg.time});
@@ -2884,7 +3100,7 @@ function showWodDesc(type){
   var isAr=CFG.lang==='ar';
   var txt=isAr?d.ar:d.en;
   var dir=isAr?'rtl':'ltr';
-  var label=(type==='Group A'||type==='Group B')?'Interval AMRAP':type;
+  var label=(type==='Interval 1'||type==='Interval 2')?'Interval AMRAP':type;
   var ov=document.createElement('div');
   ov.className='wdi-overlay';
   ov.innerHTML='<div class="wdi-modal"><button class="wdi-close" onclick="this.closest(\'.wdi-overlay\').remove()">✕</button>'
@@ -2931,7 +3147,7 @@ function _secFill(sec){
   var _isYgigFT2=sec.type==='YGIG / Partner WOD'&&iv.r&&iv.cap;
   var budget=_isYgigFT2?(iv.cap*60):(iv.t||S.time)*60;
   var lvl=S.level||'intermediate';
-  var _splt=sec.type!=='YGIG / Partner WOD'&&sec.type!=='EMOM'&&sec.type!=='Tabata'&&sec.type!=='Group A'&&sec.type!=='Group B';
+  var _splt=sec.type!=='YGIG / Partner WOD'&&sec.type!=='EMOM'&&sec.type!=='Tabata'&&sec.type!=='Interval 1'&&sec.type!=='Interval 2';
   var gateExArr=[];var gateItems=[];
   sec.items.forEach(function(x){if((x.kind==='cardio'||x.kind==='station-gate')&&x.ex&&x.ex.amount){gateExArr.push(x.ex);gateItems.push(x);}});
   var repsArr=strItems.map(function(it){return it.baseRep;});
@@ -2968,7 +3184,7 @@ function _secFill(sec){
   }
   if(sec.type==='EMOM'&&iv.n){var _emPW=0;for(var _ci2=0;_ci2<Math.min(repsArr.length,exArr.length);_ci2++)_emPW+=repsArr[_ci2]*getSecondsPerRep(exArr[_ci2],lvl,team,false);gateExArr.forEach(function(gx){_emPW+=_cardioSecEst(gx,lvl,team,false);});est=_emPW;budget=(iv.n+(gateExArr.length||0))*45;}
   if((sec.type==='AMRAP'||sec.type==='YGIG / Partner WOD')&&iv.rnd&&iv.rnd>0){var _amrIsYgig=sec.type==='YGIG / Partner WOD'&&!iv.r;var _amrSplt=!_amrIsYgig;var _amrPW=0;for(var _ci3=0;_ci3<Math.min(repsArr.length,exArr.length);_ci3++)_amrPW+=repsArr[_ci3]*getSecondsPerRep(exArr[_ci3],lvl,_amrIsYgig?1:team,_amrSplt);gateExArr.forEach(function(gx){_amrPW+=_cardioSecEst(gx,lvl,_amrIsYgig?1:team,_amrSplt);});_amrPW+=(totalItems-1)*tTime;var _amrWodSec=(iv.t||S.time)*60;var _amrRnds=Math.max(1,Math.floor(_amrWodSec/_amrPW));est=_amrPW*_amrRnds;budget=_amrWodSec;}
-  if((sec.type==='Group A'||sec.type==='Group B')&&iv.rnd&&iv.rnd>0){var _gabPW=0;var _gabTT=_tSec(lvl);for(var _ci4=0;_ci4<Math.min(repsArr.length,exArr.length);_ci4++)_gabPW+=repsArr[_ci4]*getSecondsPerRep(exArr[_ci4],lvl,1,false);gateExArr.forEach(function(gx){_gabPW+=_cardioSecEst(gx,lvl,1,false);});_gabPW+=(totalItems-1)*_gabTT;if(_gabPW>0){var _gabWodSec=(iv.t||S.time)*60;var _gabRnds=Math.max(1,Math.floor(_gabWodSec/_gabPW));est=_gabPW*_gabRnds;budget=_gabWodSec;}}
+  if((sec.type==='Interval 1'||sec.type==='Interval 2')&&iv.rnd&&iv.rnd>0){var _gabPW=0;var _gabTT=_tSec(lvl);for(var _ci4=0;_ci4<Math.min(repsArr.length,exArr.length);_ci4++)_gabPW+=repsArr[_ci4]*getSecondsPerRep(exArr[_ci4],lvl,1,false);gateExArr.forEach(function(gx){_gabPW+=_cardioSecEst(gx,lvl,1,false);});_gabPW+=(totalItems-1)*_gabTT;if(_gabPW>0){var _gabWodSec=(iv.t||S.time)*60;var _gabRnds=Math.max(1,Math.floor(_gabWodSec/_gabPW));est=_gabPW*_gabRnds;budget=_gabWodSec;}}
   return est/budget;
 }
 // ── Timing Indicator: Gradient Progress Bar ──
@@ -3074,27 +3290,30 @@ function renderSec(sec,si){
   var _longBtn=function(s,i){return s.scheme&&s.scheme.length?'<div style="display:flex;justify-content:flex-end;margin:2px 0 6px"><button onclick="toggleLongForm('+i+')" style="background:rgba(255,120,0,'+(s.longForm?'0.15':'0.06')+');border:1px solid var(--or);border-radius:20px;padding:3px 12px;font-size:11px;color:var(--or);font-weight:700;cursor:pointer">'+(s.longForm?(CFG.lang==='ar'?'مختصر':'Short'):(CFG.lang==='ar'?'كامل':'Long'))+'</button></div>':'';};
   var _renderIt=function(s,i){return'<div>'+(s.scheme&&s.scheme.length?(s.longForm?renderItemsByRound(s,i):renderItems(s.items,i)):renderItems(s.items,i))+'</div>';};
   var _subHdr=function(lbl){return'<div style="font-size:11px;font-weight:700;color:var(--txt3);letter-spacing:1.5px;text-transform:uppercase;margin:8px 0 6px">── '+lbl+' ──</div>';};
-  if(sec.type==='Group A'){
+  if(sec.type==='Interval 1'){
     var _gabBadges=_gabChip(si);
     var gabInner='<span>Interval AMRAP</span>'
       +'<span style="display:flex;align-items:center;gap:4px">'+_gabBadges+(hasDesc?'<button class="wdi-btn" onclick="showWodDesc(\'Group A\')">ⓘ</button>':'')+'</span>';
     return'<div class="ws ani" id="sec-'+si+'" style="border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:0">'
       +'<div class="st" style="display:flex;align-items:center;justify-content:space-between">'+gabInner+'</div>'
-      +'<div class="stt">'+(Math.floor(S.time/2)*2)+' MIN AMRAP</div>'
+      +(function(){var _gN=1;for(var _gi2=si+1;S.wod&&S.wod.sections[_gi2]&&S.wod.sections[_gi2].type==='Interval 2';_gi2++)_gN++;var _gBt=Math.floor((sec.infoVars&&sec.infoVars.t)||S.time/2);return'<div class="stt">'+(_gBt*_gN)+' MIN AMRAP</div>'
       +renderSecInfo(sec,si,undefined)
       +(teamTxt?'<div class="si team">👥 '+teamTxt+'</div>':'')
       +(scoreTxt?'<div class="si sc">🏆 '+scoreTxt+'</div>':'')
-      +'<div class="rsep">── '+Math.floor(S.time/2)+' MIN AMRAP ──</div>'+_renderIt(sec,si)
+      +'<div class="rsep">── '+_gBt+' MIN AMRAP ──</div>';})()+_renderIt(sec,si)
       +'</div>';
   }
-  if(sec.type==='Group B'){
-    var _gaIdx=si>0?si-1:-1;
-    return'<div class="ws ani" id="sec-'+si+'" style="border-top-left-radius:0;border-top-right-radius:0;margin-top:0;border-top:0.5px solid var(--bdr)">'
-      +'<div class="rsep">── '+Math.floor(S.time/2)+' MIN AMRAP ──</div>'+_renderIt(sec,si)
-      +(_gaIdx>=0?'<div style="margin:14px 0 4px"><button onclick="showWodTimer(\'Group A\','+_gaIdx+')" style="width:100%;background:rgba(255,120,0,0.1);border:1px solid var(--or);border-radius:12px;padding:13px;font-size:15px;color:var(--or);font-weight:700;cursor:pointer">⏱ '+t('start_timer')+'</button></div>':'')
+  if(sec.type==='Interval 2'){
+    var _gaIdx=si-1;while(_gaIdx>0&&S.wod.sections[_gaIdx].type==='Interval 2')_gaIdx--;
+    if(_gaIdx<0||!S.wod.sections[_gaIdx]||S.wod.sections[_gaIdx].type!=='Interval 1')_gaIdx=-1;
+    var _gHasNext=S.wod&&S.wod.sections[si+1]&&S.wod.sections[si+1].type==='Interval 2';
+    if(_gHasNext)_gaIdx=-1; // زر التايمر بس على آخر فترة
+    return'<div class="ws ani" id="sec-'+si+'" style="border-top-left-radius:0;border-top-right-radius:0;margin-top:0;border-top:0.5px solid var(--bdr)'+(_gHasNext?';border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:0':'')+'">'
+      +'<div class="rsep">── '+Math.floor((sec.infoVars&&sec.infoVars.t)||S.time/2)+' MIN AMRAP ──</div>'+_renderIt(sec,si)
+      +(_gaIdx>=0?'<div style="margin:14px 0 4px"><button onclick="showWodTimer(\'Interval 1\','+_gaIdx+')" style="width:100%;background:rgba(255,120,0,0.1);border:1px solid var(--or);border-radius:12px;padding:13px;font-size:15px;color:var(--or);font-weight:700;cursor:pointer">⏱ '+t('start_timer')+'</button></div>':'')
       +'</div>';
   }
-  var _chip=(sec.type==='Group A'||sec.type==='Group B')?'':_secChip(sec);
+  var _chip=(sec.type==='Interval 1'||sec.type==='Interval 2')?'':_secChip(sec);
   var stRight=_chip+(hasDesc?'<button class="wdi-btn" onclick="showWodDesc(\''+sec.type+'\')" >ⓘ</button>':'');
   var _stLbl=sec.type,_sttLbl=sec.title;if(sec.type==='YGIG / Partner WOD'){_stLbl='Partner WOD';}if(sec.type==='Chipper'){_sttLbl='For Time';}if(sec.type==='Buy-In / Cash-Out'){_stLbl=sec.title;var _biWt2=sec.biWodType||(sec.buyInCfg&&sec.buyInCfg.wodType)||'rft';var _biR2=(sec.infoVars&&sec.infoVars.r)||'';var _biHasIn=sec.items&&sec.items.some(function(x){return x.kind==='buyin'&&x.which==='buyin';});var _biHasOut=sec.items&&sec.items.some(function(x){return x.kind==='buyin'&&x.which==='cashout';});var _biModLbl=(_biHasIn&&_biHasOut)?'+ Buy-In & Cash-Out':(_biHasIn?'+ Buy-In':'+ Cash-Out');_sttLbl='For Time';}
   return'<div class="ws ani" id="sec-'+si+'"><div class="st" style="display:flex;align-items:center;justify-content:space-between"><span>'+_stLbl+'</span><span style="display:flex;align-items:center;gap:6px">'+stRight+'</span></div><div class="stt"'+(CFG.lang==='ar'?' dir="ltr"':'')+'>'+_sttLbl+'</div>'+roundsBadge
@@ -3227,7 +3446,7 @@ function renderStr(it,si,ii,num,roundIdx){
   var _enCls='en'+(_isSrc?' reo-src':(_isTgt?' reo-tgt':''));
   var _enLabel=_isSrc?'☰':num;
   var _enClick='onclick="'+(_isSrc?'cancelReorder()':(_isTgt?'doReorder('+si+','+ii+')':'startReorder('+si+','+ii+')'))+'"';
-  return'<div class="er" id="ex-'+si+'-'+ii+'"><div class="'+_enCls+'" '+_enClick+'>'+_enLabel+'</div><div class="eb"><div class="ename" style="display:flex;align-items:center;gap:3px">'+ex.name+emTag+'<svg width="14" height="14" viewBox="0 0 24 24" data-name="'+ex.name.replace(/"/g,"&quot;")+'" onclick="openExerciseVideo(this.dataset.name)" style="cursor:pointer;flex-shrink:0" title="Watch on YouTube" fill="none"><path d="M8 5L19 12L8 19V5Z" fill="var(--or)"/></svg></div>'+(it.noEdit?'<div class="edet" style="display:inline-flex;align-items:center;gap:4px">'+fmtDetail(it.detail)+'</div>':'<span style="font-size:14px;color:var(--or);font-weight:700">'+fmtDetail(it.detail)+'</span>'+(it.noPencil?'':'<button onclick="openEditDetail('+si+','+ii+(roundIdx!==undefined?','+roundIdx:'')+')" style="background:none;border:none;padding:0 0 0 3px;font-size:11px;cursor:pointer;line-height:1;vertical-align:middle">&#x270F;&#xFE0F;</button>'))+'</div><div class="ea"><button class="esb" onclick="toggleSwap(\''+si+'\',\''+ii+'\')">'+t('swap')+'</button><button class="esb re" onclick="regenEx('+si+','+ii+',\'str\')">'+t('new_ex')+'</button></div></div>'
+  return'<div class="er" id="ex-'+si+'-'+ii+'"><div class="'+_enCls+'" '+_enClick+'>'+_enLabel+'</div><div class="eb"><div class="ename" style="display:flex;align-items:center;gap:3px">'+ex.name+emTag+'<svg width="14" height="14" viewBox="0 0 24 24" data-name="'+ex.name.replace(/"/g,"&quot;")+'" onclick="openExerciseVideo(this.dataset.name)" style="cursor:pointer;flex-shrink:0" title="Watch on YouTube" fill="none"><path d="M8 5L19 12L8 19V5Z" fill="var(--or)"/></svg></div>'+(_secType==='Tabata'?'':(it.noEdit?'<div class="edet" style="display:inline-flex;align-items:center;gap:4px">'+fmtDetail(it.detail)+'</div>':'<span style="font-size:14px;color:var(--or);font-weight:700">'+fmtDetail(it.detail)+'</span>'+(it.noPencil?'':'<button onclick="openEditDetail('+si+','+ii+(roundIdx!==undefined?','+roundIdx:'')+')" style="background:none;border:none;padding:0 0 0 3px;font-size:11px;cursor:pointer;line-height:1;vertical-align:middle">&#x270F;&#xFE0F;</button>')))+'</div><div class="ea"><button class="esb" onclick="toggleSwap(\''+si+'\',\''+ii+'\')">'+t('swap')+'</button><button class="esb re" onclick="regenEx('+si+','+ii+',\'str\')">'+t('new_ex')+'</button></div></div>'
   +'<div class="sp" id="sp-'+si+'-'+ii+'"><div class="sh" style="display:flex;align-items:center;justify-content:space-between">'+t('similar')+'<button onclick="toggleSwap(\''+si+'\',\''+ii+'\')" style="background:none;border:none;cursor:pointer;font-size:16px;color:#2ECC71;line-height:1;padding:0;margin-left:8px">✕</button></div><div class="so">'
   +_altF.map(function(a){return'<div class="soi" onclick="swapStr('+si+','+ii+',\''+a.replace(/'/g,"\\'")+'\')">'+'<span class="sn">'+a+'</span><span class="stag">→ '+t('use')+'</span></div>'}).join('')
   +'</div><button class="gn" onclick="regenEx('+si+','+ii+',\'str\')">'+t('gen_diff')+'</button>'
@@ -3274,6 +3493,8 @@ function renderCardio(it,si,ii,roundIdx){
   }else{
     amountHtml='<span style="font-size:14px;color:var(--ca);font-weight:700">'+(dispDetail(it.detail)||'Cardio')+'</span>';
   }
+  // تاباتا: بدون وحدات — اسم الحركة فقط (طلب Laila)
+  if(S.wod&&S.wod.sections&&S.wod.sections[si]&&S.wod.sections[si].type==='Tabata')amountHtml='';
   var regenBtn='<button class="csb" onclick="regenEx(\''+si+'\',\''+ii+'\',\'cardio\')">'+t('new_ex')+'</button>';
   return'<div class="cb" id="ex-'+si+'-'+ii+'"><div class="ci">'+cico(ex.name)+'</div><div class="cbb"><div class="cn">'+nameOnly+'</div><div class="cd">'+amountHtml+'</div></div>'+regenBtn+'<button class="csb" onclick="toggleSwap(\''+si+'\',\''+ii+'\')">'+t('swap').replace(' ↕','')+'</button></div>'
   +'<div class="sp cp" id="sp-'+si+'-'+ii+'"><div class="sh ch" style="display:flex;align-items:center;justify-content:space-between">'+t('cardio_alts')+'<button onclick="toggleSwap(\''+si+'\',\''+ii+'\')" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--ca);opacity:0.6;line-height:1;padding:0;margin-left:8px">✕</button></div><div class="so">'
@@ -3499,9 +3720,10 @@ function buildStrDetail(newEx,old,sec){
     return(sec&&sec.scheme&&sec.scheme.length)?schemeLabel(newEx,sec.scheme,S.level,S.teamSize):getDetail(newEx,0,null,S.level,S.teamSize);
   }
   // reps/side: use scheme values if available — but if all scheme values equal (Sweet Spot), use old.baseRep instead
-  var _uiSplit=sec&&sec.type!=='YGIG / Partner WOD'&&sec.type!=='EMOM'&&sec.type!=='Tabata'&&sec.type!=='Group A'&&sec.type!=='Group B';
+  var _uiSplit=sec&&sec.type!=='YGIG / Partner WOD'&&sec.type!=='EMOM'&&sec.type!=='Tabata'&&sec.type!=='Interval 1'&&sec.type!=='Interval 2';
   var _lims=_repLimits(newEx.cat,S.level,S.teamSize,_uiSplit);
-  if(sec&&sec.type==='Chipper'){
+  if(sec&&(sec.type==='Chipper'||(sec.type==='Buy-In / Cash-Out'&&sec.biWodType==='chipper'))){
+    // شيبر (أو نص Buy-In شيبر-ستايل): الحدود من جداول الشيبر حسب الفئة سولو/تيم — مو الجداول العامة
     var _cm=S.teamSize===2?3.0:(_CHIPPER_MULT[S.level]||1.5);
     var _sl=_repLimits(newEx.cat,S.level,1,false);
     var _rMin=_sl.min*_cm,_rMax=_sl.max*_cm;
@@ -3542,7 +3764,7 @@ function swapCardio(si,ii,name){
   var found=null;for(var i=0;i<CARDIO.length;i++){if(CARDIO[i].name===name){found=CARDIO[i];break;}}
   var newUnit=found?found.unit:cur.unit;
   var _swIsChip=sec.type==='Chipper';
-  var _swIsYgig=sec.type==='YGIG / Partner WOD'||sec.type==='Group A'||sec.type==='Group B'; // solo stations
+  var _swIsYgig=sec.type==='YGIG / Partner WOD'||sec.type==='Interval 1'||sec.type==='Interval 2'; // solo stations
   var _swIsEMOM=sec.type==='EMOM';
   var _swTeam=_swIsYgig?1:S.teamSize;
   var newAmount;
@@ -3609,7 +3831,7 @@ function regenEx(si,ii,kind){
       var _userAmt=old.ex&&old.ex.amount;
       var _rgIsChip=sec.type==='Chipper';
       var _isEMOM=sec.type==='EMOM';
-      var _rgIsYgig=sec.type==='YGIG / Partner WOD'||sec.type==='Group A'||sec.type==='Group B'; // solo: each athlete works alone
+      var _rgIsYgig=sec.type==='YGIG / Partner WOD'||sec.type==='Interval 1'||sec.type==='Interval 2'; // solo: each athlete works alone
       var _rgTeam=_rgIsYgig?1:S.teamSize;
       // FIX #3: EMOM-aware clamp — يستخدم _emomCardioLimits بدل _cardioLimits
       var _rgClamp=function(unit,amt){
@@ -3704,7 +3926,7 @@ function regenEx(si,ii,kind){
       }else if(sec.type==='Ladder'){
         // ladder: rebuild detail with correct unit (time/carry already filtered from pool)
         var _lu=newEx.unit||'reps';var _ln=parseInt(((old.detail||'').match(/\d+/)||['10'])[0],10)||10;
-        var _lSplit=sec.type!=='YGIG / Partner WOD'&&sec.type!=='EMOM'&&sec.type!=='Tabata'&&sec.type!=='Group A'&&sec.type!=='Group B';
+        var _lSplit=sec.type!=='YGIG / Partner WOD'&&sec.type!=='EMOM'&&sec.type!=='Tabata'&&sec.type!=='Interval 1'&&sec.type!=='Interval 2';
         var _lLims=_repLimits(newEx.cat,S.level,S.teamSize,_lSplit);_ln=_repSnap(Math.max(_lLims.min,Math.min(_lLims.max,_ln)),_lLims.min,_lLims.max);
         var _isLScheme=old.detail&&old.detail.indexOf(' - ')>-1;
         if(_isLScheme)newDetail=old.detail;
@@ -3713,7 +3935,7 @@ function regenEx(si,ii,kind){
         else if(_lu==='side')newDetail=_ln+' reps each side';
         else newDetail=_ln+' reps';
       }else if(old.isShared){
-        var _shRep=old.baseRep||10;var _shSplit=sec.type!=='YGIG / Partner WOD'&&sec.type!=='EMOM'&&sec.type!=='Tabata'&&sec.type!=='Group A'&&sec.type!=='Group B';var _shLims=_repLimits(newEx.cat,S.level,S.teamSize,_shSplit);_shRep=_repSnap(Math.max(_shLims.min,Math.min(_shLims.max,_shRep)),_shLims.min,_shLims.max);
+        var _shRep=old.baseRep||10;var _shSplit=sec.type!=='YGIG / Partner WOD'&&sec.type!=='EMOM'&&sec.type!=='Tabata'&&sec.type!=='Interval 1'&&sec.type!=='Interval 2';var _shLims=_repLimits(newEx.cat,S.level,S.teamSize,_shSplit);_shRep=_repSnap(Math.max(_shLims.min,Math.min(_shLims.max,_shRep)),_shLims.min,_shLims.max);
         newDetail=getDetail(newEx,_shRep,null,S.level,S.teamSize);
       }else if(sec.scheme&&sec.scheme.length){
         newDetail=buildStrDetail(newEx,old,sec);
@@ -3743,7 +3965,7 @@ function reRenderSec(si){
   var sec=S.wod.sections[si];var el=document.getElementById('sec-'+si);
   if(!el)return;var tmp=document.createElement('div');tmp.innerHTML=renderSec(sec,si);
   el.parentNode.replaceChild(tmp.firstElementChild,el);
-  if(sec&&sec.type==='Group B'&&si>0){var _gaSec=S.wod.sections[si-1];if(_gaSec&&_gaSec.type==='Group A'){var _gaEl=document.getElementById('sec-'+(si-1));if(_gaEl){var _gaTmp=document.createElement('div');_gaTmp.innerHTML=renderSec(_gaSec,si-1);_gaEl.parentNode.replaceChild(_gaTmp.firstElementChild,_gaEl);}}}
+  if(sec&&sec.type==='Interval 2'&&si>0){var _gaIx=si-1;while(_gaIx>0&&S.wod.sections[_gaIx]&&S.wod.sections[_gaIx].type==='Interval 2')_gaIx--;var _gaSec=S.wod.sections[_gaIx];if(_gaSec&&_gaSec.type==='Interval 1'){var _gaEl=document.getElementById('sec-'+_gaIx);if(_gaEl){var _gaTmp=document.createElement('div');_gaTmp.innerHTML=renderSec(_gaSec,_gaIx);_gaEl.parentNode.replaceChild(_gaTmp.firstElementChild,_gaEl);}}}
 }
 function regen(){_SW_editId=null;
   if(S.wod){
@@ -3765,23 +3987,34 @@ function regen(){_SW_editId=null;
   S.wod=null;step4();
 }
 function _buildWodText(){
-  var w=S.wod;var _shareTime=(function(){if(w.type==='group-ab')return Math.floor(S.time/2)*2;if(w.type==='tabata'){var _ts=w.sections&&w.sections[0];return(_ts&&_ts.infoVars&&_ts.infoVars.tot)||4;}if(w.type==='emom'&&w.sections&&w.sections[0]){var _es=w.sections[0];var _ec=(_es.items||[]).filter(function(x){return x.kind!=='sep';}).length;var _esets=(_es.infoVars&&_es.infoVars.s)||0;var _eact=_ec*_esets;if(_eact>0)return _eact;}return S.time;})();var txt='🏋️ WOD: '+S.wodName+'\n'+LL[S.level]+' | '+_shareTime+' min'+(S.teamSize>1?' | Team '+S.teamSize:'')+'\n\n';
+  var w=S.wod;var _shareTime=(function(){if(w.type==='group-ab'){var _gn=0;(w.sections||[]).forEach(function(x){if(x&&(x.type==='Interval 1'||x.type==='Interval 2'))_gn++;});_gn=_gn||2;return Math.floor(S.time/_gn)*_gn;}if(w.type==='tabata'){var _ts=w.sections&&w.sections[0];return(_ts&&_ts.infoVars&&_ts.infoVars.tot)||4;}if(w.type==='emom'&&w.sections&&w.sections[0]){var _es=w.sections[0];var _ec=(_es.items||[]).filter(function(x){return x.kind!=='sep';}).length;var _esets=(_es.infoVars&&_es.infoVars.s)||0;var _eact=_ec*_esets;if(_eact>0)return _eact;}return S.time;})();var txt='🏋️ WOD: '+S.wodName+'\n'+LL[S.level]+' | '+_shareTime+' min'+(S.teamSize>1?' | Team '+S.teamSize:'')+'\n\n';
   function _gabItems(items){var _o='';items.forEach(function(it){if(it.kind==='sep')return;if(it.kind==='cardio'){var _ca=it.ex.amount!=null?fmtCa(it.ex):(it.detail||'');var _caC=_ca?_ca.replace(/\s*reps$/i,'').trim():'';_o+=(_caC?_caC+'  ':'')+it.ex.name+'\n';return;}var _d=fmtDetail(it.detail)||(it.baseRep?it.baseRep+' reps':'');var _dc=_d.replace(/\s*reps$/i,'').trim();_o+=(_dc?_dc+'  ':'')+it.ex.name+'\n';});return _o;}
+  // شريط المساعدة الأصفر مال التيم — ينضاف بالشير لكل الأنواع لما تيم 2 (بدون أيقونات)
+  function _tmShareTxt(s){if(!(S.teamSize>1&&s&&s.teamKey))return'';var _tt=ti(s.teamKey,s.teamVars||{});if(!_tt)return'';_tt=String(_tt).replace(/<[^>]+>/g,'').replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu,'').replace(/\s{2,}/g,' ').trim();return _tt?_tt+'\n\n':'';}
   w.sections.forEach(function(s,si){
-    if(s.type==='Group B'){return;}
-    if(s.type==='Group A'){
+    if(s.type==='Interval 2'){return;}
+    if(s.type==='Interval 1'){
       var _gabT=S.wod&&S.wod.cfg&&S.wod.cfg.time||S.time;
-      var _gabHalf=Math.floor(_gabT/2);
+      var _gabHalf=Math.floor((s.infoVars&&s.infoVars.t)||_gabT/2);
+      var _gabRestM=_gabHalf<=7?1:_gabHalf>=15?3:2;
+      var _gabRestW=_gabRestM+' min';
       txt+='━━ Interval AMRAP ━━\n\n'+(s.score?'🏆 '+s.score+'\n\n':'');
+      txt+=(CFG.lang==='ar'
+        ?('أكمل كل '+_gabHalf+' '+arMin(_gabHalf)+' AMRAP قبل الانتقال للتالي | استرح '+(_gabRestM===1?'دقيقة واحدة':_gabRestM===2?'دقيقتين':'3 دقائق')+' بين الفترات')
+        :('Complete each '+_gabHalf+' minute AMRAP before moving on to the next | Take '+_gabRestW+' rest between intervals'))+'\n\n';
+      txt+=_tmShareTxt(s);
       txt+='── '+_gabHalf+' MIN AMRAP ──\n';
       txt+=_gabItems(s.items);
-      var _secB=w.sections[si+1];
-      if(_secB&&_secB.type==='Group B'){txt+='\n── '+_gabHalf+' MIN AMRAP ──\n';txt+=_gabItems(_secB.items);}
+      var _gbi=si+1;
+      while(w.sections[_gbi]&&w.sections[_gbi].type==='Interval 2'){txt+='\n── '+_gabHalf+' MIN AMRAP ──\n';txt+=_gabItems(w.sections[_gbi].items);_gbi++;}
       txt+='\n';
       return;
     }
     var _sTitleDisp=(s.type==='Buy-In / Cash-Out'||s.type==='Chipper')?'For Time':dispDetail(s.title);
-    txt+='━━ '+_sTitleDisp+' ━━\n\n'+(s.score?'🏆 '+s.score+'\n\n':'');
+    txt+='━━ '+_sTitleDisp+' ━━\n\n';
+    if(s.type==='Tabata'&&s.infoKey){txt+=ti(s.infoKey,s.infoVars||{})+'\n\n';}
+    txt+=_tmShareTxt(s);
+    txt+=(s.score?'🏆 '+s.score+'\n\n':'');
     if(s.type==='Death By'){
       var _dbCfg=s.deathByCfg||{};var _dbStart=_dbCfg._genStart||1;var _dbInc=_dbCfg._genInc||1;
       var _dbEx1=s.items[0]&&s.items[0].ex?s.items[0].ex.name:'';
@@ -3797,7 +4030,7 @@ function _buildWodText(){
       s.scheme.forEach(function(_,r){txt+='── ROUND '+(r+1)+' ──\n';s.items.forEach(function(it){if(it.kind==='sep')return;if(it.kind==='cardio'){var _caA=it.cardioAmounts&&it.cardioAmounts.length>1;var _ca=_caA?(it.cardioAmounts.every(function(v){return v===it.cardioAmounts[0];})?it.cardioAmounts[0]+' '+(it.ex.unit||'Cal'):it.cardioAmounts.join(' - ')+' '+(it.ex.unit||'Cal')):(it.ex.amount!=null?fmtCa(it.ex):(it.detail||''));var _caC=_ca?_ca.replace(/\s*reps$/i,'').trim():'';txt+=(_caC?_caC+'  ':'')+it.ex.name+'\n';return;}if(it.kind==='str'){var _rd=getRoundRep(it.detail,r)||(it.baseRep?it.baseRep+' reps':'');var _rdC=_rd.replace(/\s*reps$/i,'').trim();txt+=(_rdC?_rdC+'  ':'')+it.ex.name+'\n';}});});
     }else{
       var _isBICO=s.type==='Buy-In / Cash-Out';var _isTabataTxt=s.type==='Tabata';var _txSep=_isTabataTxt?' — ':'  ';
-      s.items.forEach(function(it){if(it.kind==='sep'||it.kind==='scheme-header'){if(_isBICO){var _sl=it.label||'';if(_sl.indexOf('CASH-OUT')>=0){txt+='\n';return;}if(_sl.indexOf('BUY-IN')>=0&&_sl.indexOf('ROUND')<0){return;}}txt+=it.label+'\n';return;}if(it.kind==='buyin'){var _biAmt=it.ex&&it.ex.amount!=null?fmtCa(it.ex):'';var _biName=it.ex?it.ex.name:it.label.replace(/^[^—]+— /,'');if(_isBICO){var _biPfx=it.which==='cashout'?'CASH-OUT':'BUY-IN';txt+=_biPfx+': '+(_biAmt?_biAmt+'  ':'')+_biName+'\n'+(it.which==='buyin'?'\n':'');}else{txt+=(_biAmt?_biAmt+'  ':'')+_biName+'\n';}return;}if(it.kind==='station-header'){return;}if(it.kind==='station-gate'){var _sg=it.ex.amount!=null?fmtCa(it.ex):(it.detail||'');txt+=(_sg?_sg+'  ':'')+it.ex.name+'\n';return;}if(it.kind==='cardio'){var _caA=it.cardioAmounts&&it.cardioAmounts.length>1;var _ca=_caA?(it.cardioAmounts.every(function(v){return v===it.cardioAmounts[0];})?it.cardioAmounts[0]+' '+(it.ex.unit||'Cal'):it.cardioAmounts.join(' - ')+' '+(it.ex.unit||'Cal')):(it.ex.amount!=null?fmtCa(it.ex):(it.detail||''));var _caC=_ca?_ca.replace(/\s*reps$/i,'').trim():'';txt+=(it.emomMin?it.emomMin+' : ':'')+(_caC?_caC+_txSep:'')+it.ex.name+'\n';return;}var _d=fmtDetail(it.detail)||(it.baseRep?it.baseRep+' reps':'');var _dc=_d.replace(/\s*reps$/i,'').trim();txt+=(it.emomMin?it.emomMin+' : ':'')+(_dc?_dc+_txSep:'')+it.ex.name+'\n';});
+      s.items.forEach(function(it){if(it.kind==='sep'||it.kind==='scheme-header'){if(_isBICO){var _sl=it.label||'';if(_sl.indexOf('CASH-OUT')>=0){txt+='\n';return;}if(_sl.indexOf('BUY-IN')>=0&&_sl.indexOf('ROUND')<0){return;}}txt+=it.label+'\n';return;}if(it.kind==='buyin'){var _biAmt=it.ex&&it.ex.amount!=null?fmtCa(it.ex):'';var _biName=it.ex?it.ex.name:it.label.replace(/^[^—]+— /,'');if(_isBICO){var _biPfx=it.which==='cashout'?'CASH-OUT':'BUY-IN';txt+=_biPfx+': '+(_biAmt?_biAmt+'  ':'')+_biName+'\n'+(it.which==='buyin'?'\n':'');}else{txt+=(_biAmt?_biAmt+'  ':'')+_biName+'\n';}return;}if(it.kind==='station-header'){return;}if(it.kind==='station-gate'){var _sg=it.ex.amount!=null?fmtCa(it.ex):(it.detail||'');txt+=(_sg?_sg+'  ':'')+it.ex.name+'\n';return;}if(it.kind==='cardio'){var _caA=it.cardioAmounts&&it.cardioAmounts.length>1;var _ca=_caA?(it.cardioAmounts.every(function(v){return v===it.cardioAmounts[0];})?it.cardioAmounts[0]+' '+(it.ex.unit||'Cal'):it.cardioAmounts.join(' - ')+' '+(it.ex.unit||'Cal')):(it.ex.amount!=null?fmtCa(it.ex):(it.detail||''));var _caC=_ca?_ca.replace(/\s*reps$/i,'').trim():'';if(_isTabataTxt)_caC='';txt+=(it.emomMin?it.emomMin+' : ':'')+(_caC?_caC+_txSep:'')+it.ex.name+'\n';return;}var _d=fmtDetail(it.detail)||(it.baseRep?it.baseRep+' reps':'');var _dc=_isTabataTxt?'':_d.replace(/\s*reps$/i,'').trim();txt+=(it.emomMin?it.emomMin+' : ':'')+(_dc?_dc+_txSep:'')+it.ex.name+'\n';});
     }
     txt+='\n';
   });
@@ -3885,7 +4118,7 @@ function toggleAmrapCardio(si){
 }
 function regenAmrap(si){
   var sec=S.wod.sections[si];
-  if(sec.type==='Group A'){regenGroupAb(si);return;}
+  if(sec.type==='Interval 1'){regenGroupAb(si);return;}
   var cfg=sec.amrapCfg||{};
   var _sr=_stickyRep(sec,S.level,S.teamSize);if(_sr&&!cfg.baseReps)cfg=Object.assign({},cfg,{baseReps:_sr});
   var _sc=_stickyCardio(sec);
@@ -4110,14 +4343,18 @@ function showTabataTimer(si){
       }
       if(m<n-1)seq.push({phase:'between',dur:60,label:'REST',sub:'1 MIN — Next: '+nmNext,mov:'',intv:0,tot:0});
     }
-  }else{ // alternating
-    var n=movs.length;
-    for(var r=1;r<=8;r++){
-      for(var m=0;m<n;m++){
-        var nm=movs[m]?(movs[m].ex&&movs[m].ex.name)||'':'';
-        seq.push({phase:'work',dur:20,label:'WORK',sub:'Round '+r+' / 8 · '+( m+1)+'/'+n,mov:nm,intv:r,tot:8});
-        seq.push({phase:'rest',dur:10,label:'REST',sub:'Round '+r+' / 8 · '+(m+1)+'/'+n,mov:nm,intv:r,tot:8});
+  }else{ // alternating اليديد: سيتات — كل سيت تمرينان بالتناوب 8 فترات (4 جولات لكل تمرين) + راحة دقيقة بين السيتات
+    var nSets=Math.max(1,Math.floor(movs.length/2));
+    for(var s2=0;s2<nSets;s2++){
+      var _mA=movs[s2*2]?(movs[s2*2].ex&&movs[s2*2].ex.name)||'':'';
+      var _mB=movs[s2*2+1]?(movs[s2*2+1].ex&&movs[s2*2+1].ex.name)||'':_mA;
+      for(var i2=1;i2<=8;i2++){
+        var _mv=(i2%2===1)?_mA:_mB;
+        var _rd=Math.ceil(i2/2);
+        seq.push({phase:'work',dur:20,label:'WORK',sub:'Set '+(s2+1)+' / '+nSets+' · Round '+_rd+' / 4',mov:_mv,intv:i2,tot:8});
+        seq.push({phase:'rest',dur:10,label:'REST',sub:'Set '+(s2+1)+' / '+nSets+' · Round '+_rd+' / 4',mov:_mv,intv:i2,tot:8});
       }
+      if(s2<nSets-1){var _nxA=movs[(s2+1)*2]?(movs[(s2+1)*2].ex&&movs[(s2+1)*2].ex.name)||'':'';seq.push({phase:'between',dur:60,label:'REST',sub:'1 MIN — Next: SET '+(s2+2)+(_nxA?' · '+_nxA:''),mov:'',intv:0,tot:0});}
     }
   }
   seq.push({phase:'done',dur:0,label:'DONE!',sub:'',mov:'',intv:0,tot:0});
@@ -4128,7 +4365,7 @@ function showTabataTimer(si){
   // Build overlay
   var ov=document.createElement('div');
   ov.id='tab-timer-ov';
-  ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;font-family:inherit;overflow:hidden;';
+  ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;font-family:inherit;overflow:hidden;direction:ltr;';ov.dir='ltr';
   document.body.appendChild(ov);
   _lockBodyScroll();
   _tabTimerRender();
@@ -4156,7 +4393,9 @@ function showTabataTimer(si){
 var _bodyScrollY=0;
 function _lockBodyScroll(){_bodyScrollY=window.scrollY||window.pageYOffset||0;document.documentElement.style.overflow='hidden';document.body.classList.add('timer-open');}
 function _unlockBodyScroll(){document.documentElement.style.overflow='';document.body.classList.remove('timer-open');window.scrollTo(0,_bodyScrollY);}
+var _timerNoDetail=false; // Tabata: بدون وحدات بالتايمر
 function _timerItemDetail(it){
+  if(_timerNoDetail&&it.kind!=='buyin')return'';
   // buyin/cashout: always show the cardio amount
   if(it.kind==='buyin'&&it.ex&&it.ex.amount!=null)return (it.which==='cashout'?'CASH-OUT: ':'BUY-IN: ')+fmtCa(it.ex);
   // explicit detail string (Tabata, EMOM, ascending ladder)
@@ -4182,34 +4421,46 @@ function _timerItemDetail(it){
 function _renderTimerExList(si){
   if(si===undefined||si===null||!S.wod)return'';
   var sec=S.wod.sections[si];if(!sec||!sec.items)return'';
+  _timerNoDetail=sec.type==='Tabata';
   var _tmSep='&nbsp;&nbsp;';
   // ── A/B AMRAP: render both groups ──
-  if(sec.type==='Group A'){
-    var secB=S.wod.sections[si+1];
+  if(sec.type==='Interval 1'){
+    // كتل انتيرفالات مضغوطة: الخط يتصغر تلقائي — وإذا ما كفى، عمودان (نفس أسلوب التاباتا)
     var titleHtml='<div style="font-size:17px;font-weight:800;color:#fff;text-align:center;margin-bottom:8px;letter-spacing:0.2px">Interval AMRAP</div>';
-    var allItems=[];
-    var _gabHalf=Math.floor((S.wod&&S.wod.cfg&&S.wod.cfg.time||S.time)/2)+' MIN AMRAP';
-    allItems.push({_sep:true,label:_gabHalf});
-    sec.items.forEach(function(it){if(it.kind==='str'||it.kind==='cardio'||it.kind==='station-gate'||it.kind==='buyin')allItems.push(it);});
-    if(secB&&secB.type==='Group B'&&secB.items){
-      allItems.push({_sep:true,label:_gabHalf,_second:true});
-      secB.items.forEach(function(it){if(it.kind==='str'||it.kind==='cardio'||it.kind==='station-gate'||it.kind==='buyin')allItems.push(it);});
+    var _gabHalf=Math.floor((sec.infoVars&&sec.infoVars.t)||(S.wod&&S.wod.cfg&&S.wod.cfg.time||S.time)/2)+' MIN AMRAP';
+    var _gGroups=[{label:_gabHalf,items:[]}];
+    sec.items.forEach(function(it){if(it.kind==='str'||it.kind==='cardio'||it.kind==='station-gate'||it.kind==='buyin')_gGroups[0].items.push(it);});
+    var _gtbI=si+1;
+    while(S.wod.sections[_gtbI]&&S.wod.sections[_gtbI].type==='Interval 2'&&S.wod.sections[_gtbI].items){
+      var _gg={label:_gabHalf,items:[]};
+      S.wod.sections[_gtbI].items.forEach(function(it){if(it.kind==='str'||it.kind==='cardio'||it.kind==='station-gate'||it.kind==='buyin')_gg.items.push(it);});
+      _gGroups.push(_gg);_gtbI++;
     }
-    var n=allItems.filter(function(x){return!x._sep;}).length;
+    var n=_gGroups.reduce(function(a,g){return a+g.items.length;},0);
     if(!n)return'';
-    var fs=Math.max(11,Math.floor(window.innerHeight*0.38/(n*2.2)));if(fs>17)fs=17;
-    var fsSub=Math.max(10,fs-2);
-    var py=n<=4?10:n<=7?7:5;
-    var rows=allItems.map(function(it){
-      if(it._sep)return'<div style="text-align:center;padding:10px 0 6px'+(it._second?';margin-top:18px':'')+';font-size:12px;font-weight:700;letter-spacing:2px;color:#ff7800" dir="ltr">'+dispDetail(it.label)+'</div>';
-      var nm=(it.ex&&it.ex.name)||'';
-      var dt=_timerItemDetail(it);
-      return'<div style="text-align:center;padding:'+py+'px 0;" dir="ltr">'
-        +(dt?'<span style="color:#ff7800;font-size:'+fs+'px;font-weight:700">'+dt.replace(/\s*reps$/i,'').trim()+'</span>'+_tmSep:'')
-        +'<span style="color:rgba(255,255,255,0.92);font-size:'+fs+'px;font-weight:700">'+nm+'</span>'
-        +'</div>';
-    }).join('');
-    return'<div class="timer-ex-list" style="flex:1;min-height:0;overscroll-behavior:contain;background:rgba(0,0,0,0.35);border-top:1px solid rgba(255,255,255,0.1);overflow-y:scroll;-webkit-overflow-scrolling:touch;">'
+    var _gRows=n+_gGroups.length;
+    var _gTwo=_gRows>10;
+    var fs=_gTwo?(n<=10?14:n<=14?13:12):(_gRows<=7?17:_gRows<=9?15:_gRows<=11?13:12);
+    var _gSmallVp=window.innerHeight<720;
+    if(_gSmallVp&&fs>11)fs--;
+    var _gHdrFs=_gTwo?10:12;
+    var _gPy=_gTwo?(_gSmallVp?2:3):_gRows<=7?8:5;
+    var _gCell=function(g){return'<div style="margin-bottom:'+(_gTwo?8:14)+'px">'
+      +'<div style="text-align:center;padding:'+(_gTwo?'4px 0 2px':'8px 0 4px')+';font-size:'+_gHdrFs+'px;font-weight:700;letter-spacing:2px;color:#ff7800" dir="ltr">'+dispDetail(g.label)+'</div>'
+      +g.items.map(function(it){
+        var nm=(it.ex&&it.ex.name)||'';
+        var dt=_timerItemDetail(it);
+        return'<div style="text-align:center;padding:'+_gPy+'px 0;" dir="ltr">'
+          +(dt?'<span style="color:#ff7800;font-size:'+fs+'px;font-weight:700">'+dt.replace(/\s*reps$/i,'').trim()+'</span>'+_tmSep:'')
+          +'<span style="color:rgba(255,255,255,0.92);font-size:'+fs+'px;font-weight:700">'+nm+'</span>'
+          +'</div>';
+      }).join('')+'</div>';};
+    var rows;
+    if(_gTwo){
+      var _gHalfN=Math.ceil(_gGroups.length/2);
+      rows='<div style="display:flex;gap:10px"><div style="flex:1">'+_gGroups.slice(0,_gHalfN).map(_gCell).join('')+'</div><div style="flex:1">'+_gGroups.slice(_gHalfN).map(_gCell).join('')+'</div></div>';
+    }else{rows=_gGroups.map(_gCell).join('');}
+    return'<div class="timer-ex-list" style="flex:1;min-height:0;overscroll-behavior:contain;background:rgba(0,0,0,0.35);border-top:1px solid rgba(255,255,255,0.1);overflow-y:auto;-webkit-overflow-scrolling:touch;">'
       +'<div style="max-width:480px;margin:0 auto;padding:12px 24px 16px;text-align:center;width:100%;box-sizing:border-box">'
       +titleHtml+rows+'</div></div>';
   }
@@ -4256,7 +4507,7 @@ function _renderTimerExList(si){
     var singleSepHtml=onlySep.length?'<div style="font-size:12px;font-weight:700;letter-spacing:2px;color:#ff7800;text-align:center;margin-bottom:14px" dir="ltr">'+dispDetail(onlySep[0].label)+'</div>':'<div style="margin-bottom:12px"></div>';
     displayItems=onlyEx;
     var n=displayItems.length;
-    var twoCols=n>=13;
+    var twoCols=n>=11;
     var fs=Math.max(11,Math.floor(window.innerHeight*0.38/(n*2.2)));
     if(fs>17)fs=17;
     if(twoCols)fs=12;
@@ -4307,19 +4558,49 @@ function _renderTimerExList(si){
       +'<div style="max-width:480px;margin:0 auto;padding:12px 24px 16px;text-align:center;width:100%;box-sizing:border-box">'
       +titleHtml+singleSepHtml+rows+'</div></div>';
   }
-  // Multiple seps: render sep labels as orange dividers inline
+  // ── Tabata: كتل سيتات مضغوطة — عمودان إذا كثرت عشان تبين كل التمارين بدون سكرول ──
+  if(sec.type==='Tabata'){
+    var _tbGroups=[];var _tbCur=null;
+    displayItems.forEach(function(it){
+      if(it._sep){_tbCur={label:it.label,exs:[]};_tbGroups.push(_tbCur);}
+      else{if(!_tbCur){_tbCur={label:'',exs:[]};_tbGroups.push(_tbCur);}_tbCur.exs.push((it.ex&&it.ex.name)||'');}
+    });
+    var _tbTwo=_tbGroups.length>5; // عمود واحد حتى 5 مجموعات — عمودان بعدها
+    var _tbBig=_tbGroups.length>8; // 9+ مجموعات: تكثيف أكبر عشان يبينون كلهم
+    var _tbExN=_tbGroups.reduce(function(a,g){return a+g.exs.length;},0); // الحجم حسب عدد التمارين الفعلي
+    var _tbFs=_tbExN<=3?17:_tbExN<=6?16:_tbExN<=8?14:_tbExN<=10?13:_tbExN<=16?12:11;
+    var _tbHdrFs=_tbBig?9:10;
+    var _tbBm=_tbBig?4:10;
+    var _tbPy=_tbBig?1:2;
+    var _tbCell=function(g){return'<div style="margin-bottom:'+_tbBm+'px">'
+      +(g.label?'<div style="font-size:'+_tbHdrFs+'px;font-weight:700;letter-spacing:2px;color:#ff7800;margin-bottom:2px" dir="ltr">'+dispDetail(g.label)+'</div>':'')
+      +g.exs.map(function(nm){return'<div style="color:rgba(255,255,255,0.92);font-size:'+_tbFs+'px;font-weight:700;padding:'+_tbPy+'px 0">'+nm+'</div>';}).join('')
+      +'</div>';};
+    var _tbRows;
+    if(_tbTwo){
+      var _tbHalf=Math.ceil(_tbGroups.length/2);
+      _tbRows='<div style="display:flex;gap:12px"><div style="flex:1">'+_tbGroups.slice(0,_tbHalf).map(_tbCell).join('')+'</div><div style="flex:1">'+_tbGroups.slice(_tbHalf).map(_tbCell).join('')+'</div></div>';
+    }else{_tbRows=_tbGroups.map(_tbCell).join('');}
+    return'<div class="timer-ex-list" style="flex:1;min-height:0;overscroll-behavior:contain;background:rgba(0,0,0,0.35);border-top:1px solid rgba(255,255,255,0.1);overflow-y:auto;-webkit-overflow-scrolling:touch;">'
+      +'<div style="max-width:480px;margin:0 auto;padding:12px 24px 16px;text-align:center;width:100%;box-sizing:border-box">'+titleHtml+_tbRows+'</div></div>';
+  }
+  // Multiple seps: كتل مضغوطة — الخط يتصغر تلقائي، وإذا ما كفى عمودان (بدون سكرول)
   var n=displayItems.filter(function(x){return !x._sep;}).length;
-  var needsScroll=n>10;
-  var fs=needsScroll?12:Math.max(11,Math.floor(window.innerHeight*0.38/(n*2.2)));
+  var _msGroups=[];var _msCur=null;
+  displayItems.forEach(function(it){
+    if(it._sep){_msCur={label:it.label,items:[]};_msGroups.push(_msCur);}
+    else{if(!_msCur){_msCur={label:'',items:[]};_msGroups.push(_msCur);}_msCur.items.push(it);}
+  });
+  var _msRows=n+_msGroups.length;
+  var _msTwo=_msRows>11;
+  var fs=_msTwo?(n<=12?13:12):Math.max(11,Math.floor(window.innerHeight*0.38/(n*2.2)));
   if(fs>17)fs=17;
+  var _msSmallVp=window.innerHeight<720;
+  if(_msTwo&&_msSmallVp&&fs>11)fs--;
   var fsSub=Math.max(10,fs-2);
-  var py=n<=4?10:n<=7?7:5;
-  var exIdx=0;
-  var rows=displayItems.map(function(it){
-    if(it._sep){
-      return'<div style="text-align:center;padding:10px 0 6px;font-size:12px;font-weight:700;letter-spacing:2px;color:#ff7800" dir="ltr">'+dispDetail(it.label)+'</div>';
-    }
-    var i=exIdx++;
+  var py=_msTwo?(_msSmallVp?2:3):n<=4?10:n<=7?7:5;
+  var _msHdrFs=_msTwo?10:12;
+  var _msItemHtml=function(it){
     var nm=(it.ex&&it.ex.name)||'';
     if(it.kind==='buyin'){
       var _bpfx=it.which==='cashout'?'CASH-OUT: ':'BUY-IN: ';
@@ -4339,7 +4620,15 @@ function _renderTimerExList(si){
       +(dt?'<span style="color:#ff7800;font-size:'+fs+'px;font-weight:700">'+dt.replace(/\s*reps$/i,'').trim()+'</span>'+_tmSep:'')
       +'<span style="color:rgba(255,255,255,0.92);font-size:'+fs+'px;font-weight:700">'+nm+'</span>'
       +'</div>';
-  }).join('');
+  };
+  var _msCell=function(g){return'<div style="margin-bottom:'+(_msTwo?8:4)+'px">'
+    +(g.label?'<div style="text-align:center;padding:'+(_msTwo?'4px 0 2px':'10px 0 6px')+';font-size:'+_msHdrFs+'px;font-weight:700;letter-spacing:2px;color:#ff7800" dir="ltr">'+dispDetail(g.label)+'</div>':'')
+    +g.items.map(_msItemHtml).join('')+'</div>';};
+  var rows;
+  if(_msTwo){
+    var _msHalf=Math.ceil(_msGroups.length/2);
+    rows='<div style="display:flex;gap:10px"><div style="flex:1">'+_msGroups.slice(0,_msHalf).map(_msCell).join('')+'</div><div style="flex:1">'+_msGroups.slice(_msHalf).map(_msCell).join('')+'</div></div>';
+  }else{rows=_msGroups.map(_msCell).join('');}
   var listStyle='flex:1;min-height:0;overscroll-behavior:contain;background:rgba(0,0,0,0.35);border-top:1px solid rgba(255,255,255,0.1);overflow-y:auto;-webkit-overflow-scrolling:touch;';
   return'<div class="timer-ex-list" style="'+listStyle+'">'
     +'<div style="max-width:480px;margin:0 auto;padding:12px 24px 16px;text-align:center;width:100%;box-sizing:border-box">'
@@ -4378,7 +4667,7 @@ function _tabTimerStop(){if(_tabTimer.iv)clearInterval(_tabTimer.iv);_tabTimer.i
 function showWodTimer(type,si){
   if(type==='Tabata'){showTabataTimer(si);return;}
   // Countdown types
-  if(type==='AMRAP'||type==='Group A'){showAmrapTimer(si);return;}
+  if(type==='AMRAP'||type==='Interval 1'){showAmrapTimer(si);return;}
   // YGIG: RFT if iv.r && iv.cap, else AMRAP
   if(type==='YGIG / Partner WOD'){
     var _iv=S.wod.sections[si].infoVars||{};
@@ -4403,19 +4692,20 @@ function _fmtClock(sec){var m=Math.floor(sec/60),s=sec%60;return(m<10?'0':'')+m+
 function showAmrapTimer(si){
   var sec=S.wod.sections[si];
   var _rawMin=(S.wod.cfg.time||20);
-  var totalMin=(sec.type==='Group A')?Math.floor(_rawMin/2)*2:_rawMin;
-  var label=(sec.type==='Group A'?'Interval AMRAP':sec.type==='YGIG / Partner WOD'?'YGIG AMRAP':'AMRAP');
-  var _gabRestSec=(sec.type==='Group A')?(_rawMin<=15?1:_rawMin>=30?3:2)*60:0;
-  _wodTimer={iv:null,paused:false,elapsed:0,totalSec:totalMin*60,type:'amrap',curMin:0,totalMin:totalMin,minSec:0,movs:[],finished:false,label:label,si:si,gabRestSec:_gabRestSec,restIv:null,restRemSec:0,restDone:false};
+  var _gabNtm=1;if(sec.type==='Interval 1'){for(var _gti=si+1;S.wod.sections[_gti]&&S.wod.sections[_gti].type==='Interval 2';_gti++)_gabNtm++;}
+  var totalMin=(sec.type==='Interval 1')?Math.floor(_rawMin/_gabNtm)*_gabNtm:_rawMin;
+  var label=(sec.type==='Interval 1'?'Interval AMRAP':sec.type==='YGIG / Partner WOD'?'YGIG AMRAP':'AMRAP');
+  var _gabRestSec=(sec.type==='Interval 1')?(function(){var _bm=Math.floor(_rawMin/_gabNtm);return(_bm<=7?1:_bm>=15?3:2)*60;})():0;
+  _wodTimer={iv:null,paused:false,elapsed:0,totalSec:totalMin*60,type:'amrap',curMin:0,totalMin:totalMin,minSec:0,movs:[],finished:false,label:label,si:si,gabRestSec:_gabRestSec,restIv:null,restRemSec:0,restDone:false,gabN:_gabNtm,breaksDone:0};
   _unlockAudio();_wodBeepStart();
-  var ov=document.createElement('div');ov.id='wod-timer-ov';ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;font-family:inherit;overflow:hidden;';
+  var ov=document.createElement('div');ov.id='wod-timer-ov';ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;font-family:inherit;overflow:hidden;direction:ltr;';ov.dir='ltr';
   document.body.appendChild(ov);_lockBodyScroll();_wodTimerRender();
   _wodTimer.iv=setInterval(function(){
     if(_wodTimer.paused)return;
     _wodTimer.elapsed++;
     var rem=_wodTimer.totalSec-_wodTimer.elapsed;
     if(rem<=0){_wodBeepDone();_wodTimer.finished=true;_wodTimerRender();clearInterval(_wodTimer.iv);_wodTimer.iv=null;return;}
-    if(_wodTimer.label==='Interval AMRAP'&&_wodTimer.elapsed===Math.floor(_wodTimer.totalSec/2)&&!_wodTimer.halfDone){
+    if(_wodTimer.label==='Interval AMRAP'&&(function(){var _n=_wodTimer.gabN||2;for(var _b=1;_b<_n;_b++){if(_wodTimer.elapsed===Math.floor(_wodTimer.totalSec*_b/_n)&&_wodTimer.breaksDone<_b)return true;}return false;})()){_wodTimer.breaksDone=(_wodTimer.breaksDone||0)+1;
       _wodBeep(880,0.15);setTimeout(function(){_wodBeep(880,0.15);},200);setTimeout(function(){_wodBeep(1100,0.4);},400);
       _wodTimer.paused=true;_wodTimer.halfAlert=true;_wodTimer.restRemSec=_wodTimer.gabRestSec;_wodTimer.restDone=false;
       _wodTimer.restIv=setInterval(function(){
@@ -4436,7 +4726,7 @@ function showRftTimer(si){
   var capSec=(S.wod.cfg.time||20)*60;
   _wodTimer={iv:null,paused:false,elapsed:0,totalSec:capSec,type:'rft',curMin:0,totalMin:0,minSec:0,movs:[],finished:false,label:_lbl,si:si};
   _unlockAudio();_wodBeepStart();
-  var ov=document.createElement('div');ov.id='wod-timer-ov';ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;font-family:inherit;overflow:hidden;';
+  var ov=document.createElement('div');ov.id='wod-timer-ov';ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;font-family:inherit;overflow:hidden;direction:ltr;';ov.dir='ltr';
   document.body.appendChild(ov);_lockBodyScroll();_wodTimerRender();
   _wodTimer.iv=setInterval(function(){
     if(_wodTimer.paused)return;
@@ -4465,7 +4755,7 @@ function showCapTimer(si){
     isDB:_isDB,dbStart:_dbStart,dbInc:_dbInc,dbLastMin:-1,flash:false,si:si,
     dbExCnt:_dbExCnt,dbEx2Style:_dbEx2Style,dbEx1Name:_dbEx1Name,dbEx2Name:_dbEx2Name,dbFixed:_dbFixed};
   _unlockAudio();_wodBeepStart();
-  var ov=document.createElement('div');ov.id='wod-timer-ov';ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;font-family:inherit;overflow:hidden;';
+  var ov=document.createElement('div');ov.id='wod-timer-ov';ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;font-family:inherit;overflow:hidden;direction:ltr;';ov.dir='ltr';
   document.body.appendChild(ov);_lockBodyScroll();_wodTimerRender();
   _wodTimer.iv=setInterval(function(){
     if(_wodTimer.paused)return;
@@ -4492,7 +4782,7 @@ function showEmomTimer(si){
   var movs=sec.items.filter(function(it){return it.kind==='str'||it.kind==='cardio';});
   _wodTimer={iv:null,paused:false,elapsed:0,totalSec:totalMin*60,type:'emom',curMin:1,totalMin:totalMin,minSec:60,movs:movs,finished:false,si:si};
   _unlockAudio();_wodBeepStart();
-  var ov=document.createElement('div');ov.id='wod-timer-ov';ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;font-family:inherit;overflow:hidden;';
+  var ov=document.createElement('div');ov.id='wod-timer-ov';ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;font-family:inherit;overflow:hidden;direction:ltr;';ov.dir='ltr';
   document.body.appendChild(ov);_lockBodyScroll();_wodTimerRender();
   _wodTimer.iv=setInterval(function(){
     if(_wodTimer.paused)return;
@@ -4623,12 +4913,13 @@ function renderTabataCfg(sec,si){
   var S_btn='background:var(--bg2);border:0.5px solid var(--bdr);border-radius:7px;padding:5px 10px;font-size:13px;color:var(--txt2);cursor:pointer;font-weight:600;font-family:inherit;min-height:30px';
   var S_sel='background:var(--or);border:0.5px solid var(--or);border-radius:7px;padding:5px 10px;font-size:13px;color:#000;cursor:pointer;font-weight:600;font-family:inherit;min-height:30px';
   // يضيء فقط لو المستخدم اختار بنفسه
-  var movBtns=[1,2,3,4,5,6,7,8].map(function(n){return'<button onclick="setTabataVal('+si+',\'numMov\','+n+',this)" style="'+(cfg.numMov===n?S_sel:S_btn)+'">'+n+'</button>';}).join('');
+  var movBtns=[1,2,3,4,5,6,7,8,9,10].map(function(n){return'<button onclick="setTabataVal('+si+',\'numMov\','+n+',this)" style="'+(cfg.numMov===n?S_sel:S_btn)+'">'+n+'</button>';}).join('');
   var cv=cfg.withCardio;
   var _mode=cfg.mode; // undefined = عشوائي
   var _isSingle=_mode==='single';
   var _isMulti=_mode==='multi';
   var _isAlt=_mode==='alternating';
+  var _isAltEff=(cfg.mode||cfg._genMode)==='alternating'; // للعرض: SETS + إخفاء الكارديو حتى لو التناوب جا من العشوائي
   return'<div id="tabata-cfg-'+si+'" style="display:none;background:var(--bg3);border:0.5px solid var(--bdr);border-radius:10px;padding:12px;margin-top:6px">'
   +'<div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button onclick="randomTabata('+si+')" style="background:rgba(99,102,241,0.12);border:0.5px solid #6366f1;border-radius:20px;padding:4px 12px;font-size:11px;color:#6366f1;cursor:pointer;font-weight:600">'+t('random')+'</button></div>'
   +'<div style="font-size:13px;font-weight:600;color:var(--txt2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px">'+(CFG.lang==='ar'?'الوضع':'MODE')+'</div>'
@@ -4637,10 +4928,12 @@ function renderTabataCfg(sec,si){
   +'<button onclick="setTabataMode('+si+',\'multi\')" style="'+(_isMulti?S_sel:S_btn)+';min-width:80px;text-align:center">'+(CFG.lang==='ar'?'متعدد':'Multi')+'</button>'
   +'<button onclick="setTabataMode('+si+',\'alternating\')" style="'+(_isAlt?S_sel:S_btn)+';min-width:80px;text-align:center">'+(CFG.lang==='ar'?'تناوب':'Alternating')+'</button>'
   +'</div>'
-  +(_isSingle?'':('<div style="font-size:13px;font-weight:600;color:var(--txt2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px">'+t('tab_mov')+'</div>'
+  +(_isAltEff?('<div style="font-size:13px;font-weight:600;color:var(--txt2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px">'+(CFG.lang==='ar'?'عدد السيتات':'SETS')+'</div>'
+  +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;direction:'+(CFG.lang==='ar'?'rtl':'ltr')+'">'+[1,2,3,4,5,6,7,8,9,10].map(function(n){return'<button onclick="setTabataVal('+si+',\'sets\','+n+',this)" style="'+(cfg.sets===n?S_sel:S_btn)+'">'+n+'</button>';}).join('')+'</div>')
+  :_isSingle?'':('<div style="font-size:13px;font-weight:600;color:var(--txt2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px">'+t('tab_mov')+'</div>'
   +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;direction:'+(CFG.lang==='ar'?'rtl':'ltr')+'">'+movBtns+'</div>'))
-  +'<div style="font-size:13px;font-weight:600;color:var(--txt2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px">'+t('em_cardio')+'</div>'
-  +'<div style="display:flex;gap:6px;margin-bottom:14px;direction:'+(CFG.lang==='ar'?'rtl':'ltr')+'"><button id="tabata-cardio-'+si+'" onclick="toggleTabataCardio('+si+')" style="'+(cv===true?S_sel:S_btn)+';min-width:60px;text-align:center">'+(cv===true?(CFG.lang==='ar'?'تشغيل':'ON'):(CFG.lang==='ar'?'إيقاف':'OFF'))+'</button></div>'
+  +(_isAltEff?'':('<div style="font-size:13px;font-weight:600;color:var(--txt2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px">'+t('em_cardio')+'</div>'
+  +'<div style="display:flex;gap:6px;margin-bottom:14px;direction:'+(CFG.lang==='ar'?'rtl':'ltr')+'"><button id="tabata-cardio-'+si+'" onclick="toggleTabataCardio('+si+')" style="'+(cv===true?S_sel:S_btn)+';min-width:60px;text-align:center">'+(cv===true?(CFG.lang==='ar'?'تشغيل':'ON'):(CFG.lang==='ar'?'إيقاف':'OFF'))+'</button></div>'))
   +'<button onclick="regenTabata('+si+')" style="width:100%;background:var(--or);color:#000;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;min-height:42px">↺ '+t('chip_regen')+'</button>'
   +'</div>';
 }
@@ -5017,6 +5310,8 @@ function renderGroupAbAmrapCfg(sec,si){
   var cv=cfg.withCardio;
   return'<div id="amrap-cfg-'+si+'" style="display:none;background:var(--bg3);border:0.5px solid var(--bdr);border-radius:10px;padding:12px;margin-top:6px">'
   +'<div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button onclick="randomGroupAb('+si+')" style="background:rgba(99,102,241,0.12);border:0.5px solid #6366f1;border-radius:20px;padding:4px 12px;font-size:11px;color:#6366f1;cursor:pointer;font-weight:600">'+t('random')+'</button></div>'
+  +('<div style="font-size:13px;font-weight:600;color:var(--txt2);text-transform:uppercase;margin-bottom:6px">'+(CFG.lang==='ar'?'عدد الفترات':'INTERVALS')+'</div>'
+  +'<div style="display:flex;gap:6px;margin-bottom:12px;direction:'+(CFG.lang==='ar'?'rtl':'ltr')+'">'+[2,3].map(function(n){return'<button onclick="setGabIntervals('+si+','+n+',this)" style="'+(cfg.intervals===n?S_sel:S_btn)+';min-width:44px;text-align:center">'+n+'</button>';}).join('')+'</div>')
   +'<div style="font-size:13px;font-weight:600;color:var(--txt2);text-transform:uppercase;margin-bottom:6px">'+t('am_mov')+'</div>'
   +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;direction:'+(CFG.lang==='ar'?'rtl':'ltr')+'">'+movBtns+'</div>'
   +'<div style="font-size:13px;font-weight:600;color:var(--txt2);text-transform:uppercase;margin-bottom:6px">'+t('chip_cardio')+'</div>'
@@ -5024,47 +5319,85 @@ function renderGroupAbAmrapCfg(sec,si){
   +'<button onclick="regenGroupAb('+si+')" style="width:100%;background:var(--or);color:#000;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;min-height:42px">↺ '+t('chip_regen')+'</button>'
   +'</div>';
 }
+function setGabIntervals(si,val,btn){
+  var sec=S.wod.sections[si];if(!sec.amrapCfg)sec.amrapCfg={};
+  var parent=btn.parentElement;
+  Array.from(parent.children).forEach(function(b){b.style.background='var(--bg2)';b.style.borderColor='var(--bdr)';b.style.color='var(--txt2)';});
+  if(sec.amrapCfg.intervals===val){delete sec.amrapCfg.intervals;return;}
+  sec.amrapCfg.intervals=val;btn.style.background='var(--or)';btn.style.borderColor='var(--or)';btn.style.color='#000';
+}
+function _rebuildGroupAb(si,cfg,forceN){
+  // يبني n فترات (2/3) ويستبدل السكشنات الحالية — سولو وتيم نفس الشي (التيم 2 تيم سبلت)
+  var _n=forceN||(cfg.intervals===3?3:cfg.intervals===2?2:(function(){var c=1;for(var i=si+1;S.wod.sections[i]&&S.wod.sections[i].type==='Interval 2';i++)c++;return c;})());
+  var blockTime=_n===2?Math.floor(S.wod.cfg.time/2):Math.floor(S.wod.cfg.time/_n);
+  var _mkA=function(t,lv,tm,c){return mkAmrap(t,lv,tm,c);};
+  var _letters=['A','B','C'];var _used=[];var newSecs=[];
+  var _aCardio=null;var _aStrIts=[];
+  for(var _k=0;_k<_n;_k++){
+    var _kCfg=_k===0?cfg:Object.assign({},cfg,{excludedNames:_used.slice(),withCardio:!!_aCardio});
+    if(_k>0&&_aCardio&&_aCardio.ex&&_aCardio.ex.amount!=null)_kCfg.cardioAmt=_aCardio.ex.amount;
+    var _sk=(_regenBest(_mkA,blockTime,S.level,S.teamSize,_kCfg)||[mkAmrap(blockTime,S.level,S.teamSize,_kCfg)[0]])[0];
+    if(_k===0){_gabFit2(_sk,S.level,S.teamSize,blockTime,cfg);_gabSchemeFill(_sk,S.level,S.teamSize,blockTime,cfg,_used);_aCardio=_sk.items?_sk.items.filter(function(it){return it.kind==='cardio';})[0]:null;_aStrIts=_sk.items?_sk.items.filter(function(it){return it.kind==='str';}):[];}
+    else{
+    // مطابقة الصعوبة مع A: تكرارات A المفروضة لازم تظل منطقية — أي حركة أثقل/أخف بكثير تنستبدل بمقاربة
+    (function(){
+      var _kStrIts=_sk.items.filter(function(it){return it.kind==='str';});
+      var _kLocal=_used.slice();_kStrIts.forEach(function(it){if(it.ex)_kLocal.push(it.ex.name);});
+      _kStrIts.forEach(function(it,ix){
+        var _aIt=_aStrIts[ix];if(!_aIt||!it.ex)return;
+        var _aSpr=getSecondsPerRep(_aIt.ex,S.level,1,false);
+        var _kSpr=getSecondsPerRep(it.ex,S.level,1,false);
+        if(_kSpr>_aSpr*1.5||_kSpr<_aSpr*0.6){
+          var _cand=getPool(S.level,null,1).filter(function(e){
+            if(_kLocal.indexOf(e.name)>=0)return false;
+            if(['time','carry','m','dist','hold'].indexOf(e.unit)>=0&&['time','carry','m','dist','hold'].indexOf(_aIt.ex.unit)<0)return false;
+            var s2=getSecondsPerRep(e,S.level,1,false);
+            return s2<=_aSpr*1.4&&s2>=_aSpr*0.7;
+          });
+          if(_cand.length){var _pe=pk(_cand);it.ex=_pe;it.detail=getDetail(_pe,it.baseRep,null,S.level,1);_kLocal.push(_pe.name);}
+        }
+      });
+    })();
+
+    // إصلاح مطابقة الكارديو: نفس الوحدة إجباري (100m ما تصير 100Cal!)
+    if(_aCardio&&_aCardio.ex){
+      var _kC=_sk.items.filter(function(it){return it.kind==='cardio';})[0];
+      if(_kC&&_kC.ex){
+        if(_kC.ex.unit!==_aCardio.ex.unit){
+          var _uPool=CARDIO.filter(function(c){return !c.altOnly&&c.unit===_aCardio.ex.unit&&c.name!==_aCardio.ex.name;});
+          var _uPick=_uPool.length?pk(_uPool):null;
+          _kC.ex=Object.assign({},(_uPick||_aCardio.ex),{amount:_aCardio.ex.amount,unit:_aCardio.ex.unit});
+        }else{
+          _kC.ex=Object.assign({},_kC.ex,{amount:_aCardio.ex.amount});
+        }
+      }
+    }
+    }
+    if(_k>0){_gabFit2(_sk,S.level,S.teamSize,blockTime,{withCardio:true,exCnt:(_aStrIts.length||1)});_gabSchemeFill(_sk,S.level,S.teamSize,blockTime,cfg,_used);}
+    _sk.items&&_sk.items.filter(function(it){return it.kind==='str';}).forEach(function(it){_used.push(it.ex.name);});
+    _sk.type=_k===0?'Interval 1':'Interval 2';
+    _sk.title='Station '+_letters[_k]+' — AMRAP '+blockTime+' Min';
+    _sk.infoKey=_k===0?'i_groupA_amrap':'i_groupB_amrap';
+    _sk.groupAbCfg=cfg;
+    if(_k===0){_sk.scoreKey='sc_rounds_ab';_sk.teamKey=S.teamSize>1?'tm_gabSplit':null;_sk.amrapCfg=cfg;}
+    else{_sk.teamKey=null;delete _sk.amrapCfg;/* لا تتسرب الإعدادات الداخلية لستور الـ AMRAP */}
+    newSecs.push(_sk);
+  }
+  // استبدل السكشنات القديمة (A + كل الـB المتتالية) بالجديدة
+  var _oldN=1;for(var _oi=si+1;S.wod.sections[_oi]&&S.wod.sections[_oi].type==='Interval 2';_oi++)_oldN++;
+  Array.prototype.splice.apply(S.wod.sections,[si,_oldN].concat(newSecs));
+  render();
+}
 function regenGroupAb(si){
   var sec=S.wod.sections[si];var cfg=sec.amrapCfg||{};
   var _secB2=S.wod.sections[si+1];
   var _sr=_stickyRep(sec,S.level,S.teamSize)||(_secB2?_stickyRep(_secB2,S.level,S.teamSize):null);
   if(_sr&&!cfg.baseReps)cfg=Object.assign({},cfg,{baseReps:_sr});
-  var blockTime=Math.floor(S.wod.cfg.time/2);
-  var _mkA=function(t,lv,tm,c){return mkAmrap(t,lv,1,c);};
-  var secA=(_regenBest(_mkA,blockTime,S.level,1,cfg)||[mkAmrap(blockTime,S.level,1,cfg)[0]])[0];
-  var _aStr=secA.items?secA.items.filter(function(it){return it.kind==='str';}).map(function(it){return it.ex.name;}):[];
-  var _bCfg=Object.assign({},cfg,{excludedNames:_aStr});
-  var secB=(_regenBest(_mkA,blockTime,S.level,1,_bCfg)||[mkAmrap(blockTime,S.level,1,_bCfg)[0]])[0];
-  secA.type='Group A';secA.title='Station A — AMRAP '+blockTime+' Min';
-  secA.infoKey='i_groupA_amrap';
-  secA.scoreKey='sc_rounds_ab';secA.teamKey=S.teamSize>1?'tm_halfA':null;
-  secA.groupAbCfg=cfg;
-  secB.type='Group B';secB.title='Station B — AMRAP '+blockTime+' Min';
-  secB.infoKey='i_groupB_amrap';
-  secB.groupAbCfg=cfg;
-  S.wod.sections[si]=secA;if(S.wod.sections[si+1])S.wod.sections[si+1]=secB;
-  var el=document.getElementById('sec-'+si);if(el)el.outerHTML=renderSec(secA,si);
-  var el2=document.getElementById('sec-'+(si+1));if(el2)el2.outerHTML=renderSec(secB,si+1);
+  _rebuildGroupAb(si,cfg);
 }
 function randomGroupAb(si){
   if(!S.cfgStore)S.cfgStore={};S.cfgStore['group-ab']={};
-  var cfg={};
-  var blockTime=Math.floor(S.wod.cfg.time/2);
-  var _mkA=function(t,lv,tm,c){return mkAmrap(t,lv,1,c);};
-  var secA=(_regenBest(_mkA,blockTime,S.level,1,cfg)||[mkAmrap(blockTime,S.level,1,cfg)[0]])[0];
-  var _aStr=secA.items?secA.items.filter(function(it){return it.kind==='str';}).map(function(it){return it.ex.name;}):[];
-  var _bCfg=Object.assign({},cfg,{excludedNames:_aStr});
-  var secB=(_regenBest(_mkA,blockTime,S.level,1,_bCfg)||[mkAmrap(blockTime,S.level,1,_bCfg)[0]])[0];
-  secA.type='Group A';secA.title='Station A — AMRAP '+blockTime+' Min';
-  secA.infoKey='i_groupA_amrap';
-  secA.scoreKey='sc_rounds_ab';secA.teamKey=S.teamSize>1?'tm_halfA':null;
-  secA.groupAbCfg=cfg;
-  secB.type='Group B';secB.title='Station B — AMRAP '+blockTime+' Min';
-  secB.infoKey='i_groupB_amrap';
-  secB.groupAbCfg=cfg;
-  S.wod.sections[si]=secA;if(S.wod.sections[si+1])S.wod.sections[si+1]=secB;
-  var el=document.getElementById('sec-'+si);if(el)el.outerHTML=renderSec(secA,si);
-  var el2=document.getElementById('sec-'+(si+1));if(el2)el2.outerHTML=renderSec(secB,si+1);
+  _rebuildGroupAb(si,{},pk([2,3]));
 }
 function openSchemeEdit(si){
   var sec=S.wod&&S.wod.sections[si];
@@ -5222,7 +5555,7 @@ function manualSwapCardio(si,ii){
     var _mswRatePerUnit=_cardioSecEst(Object.assign({},found,{amount:1}),S.level,1,false);
     var _mswEquiv=(_mswRatePerUnit>0&&_mswCurTime>0)?Math.round(_mswCurTime/_mswRatePerUnit):0;
     var _mswIsChip=sec.type==='Chipper';
-    var _mswIsYgig=sec.type==='YGIG / Partner WOD'||sec.type==='Group A'||sec.type==='Group B';
+    var _mswIsYgig=sec.type==='YGIG / Partner WOD'||sec.type==='Interval 1'||sec.type==='Interval 2';
     var _mswTm=_mswIsYgig?1:S.teamSize;
     newAmount=_cardioClamp(newUnit,_mswEquiv||found.amount,S.level,_mswTm,_mswIsChip);
     // 30% time cap
@@ -5668,6 +6001,8 @@ function _swLoadEntry(id,resetEdit){
   for(var i=0;i<saved.length;i++){if(saved[i].id===id){entry=saved[i];break;}}
   if(!entry||!entry.snap)return;
   var snap=_swDeepCopy(entry.snap);
+  // ترحيل الأسماء القديمة بالمحفوظات: Group A/B → Interval 1/2
+  if(snap.wod&&snap.wod.sections)snap.wod.sections.forEach(function(_ms){if(_ms&&_ms.type==='Group A')_ms.type='Interval 1';if(_ms&&_ms.type==='Group B')_ms.type='Interval 2';});
   S.wod=snap.wod;S.level=snap.level;S.time=snap.time;S.teamSize=snap.teamSize||1;S.wodName=snap.wodName||'';
   if(S.wod&&!S.wod.cfg)S.wod.cfg=S;
   S.step=4;
