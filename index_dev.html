@@ -1039,7 +1039,7 @@ function _exLims(exArr,lv,team,split){
 }
 // ── For Time (Chipper): معاملات تضخيم الحد الأعلى للتكرارات ──
 var _CHIPPER_MULT={beginner:1.5,intermediate:1.5,advanced:1.5,elite:1.5};
-var _CARDIO_CNT_MOV={2:[4,6,8,10,12],3:[6,9,12],4:[8,12]};
+var _CARDIO_CNT_MOV={2:[2,4,6,8,10,12],3:[3,6,9,12],4:[4,8,12]};
 function _exLimsForTime(exArr,lv,team,split){
   var _mult=(team!==2)?(_CHIPPER_MULT[lv]||1.0):3.0;
   var _snapMax=function(cat,lv,team,split){
@@ -1730,8 +1730,8 @@ function mkChipper(time,lv,team,cfg){
     var numStations=(cfg.cardioCount>=2)?cfg.cardioCount:(cfg.stationCount||pk(_availStCnts));
     var _stLockN=cfg.cardioCount>=2; // لما المستخدم يختار cardioCount، numStations ثابت
     // ── sz: حسب الجدول والوقت ──
-    var _szAll={2:[2,3,4,5,6],3:[2,3,4],4:[2,3]};
-    var _szByTime={2:time<=15?[2,3]:time<=30?[2,3,4,5]:[2,3,4,5,6],3:time<=15?[2]:time<=30?[2,3]:[2,3,4],4:time<=30?[2]:[2,3]};
+    var _szAll={2:[1,2,3,4,5,6],3:[1,2,3,4],4:[1,2,3]};
+    var _szByTime={2:time<=15?[1,2,3]:time<=30?[1,2,3,4,5]:[1,2,3,4,5,6],3:time<=15?[1,2]:time<=30?[1,2,3]:[1,2,3,4],4:time<=30?[1,2]:[1,2,3]};
     // ── حد الحركات الكلي حسب الوقت ──
     var _stMaxTotalMov=time<=15?6:time<=25?8:time<=35?10:12;
     // لما cardioCount محدد: exCnt من _CARDIO_CNT_MOV، sz مشتق منه
