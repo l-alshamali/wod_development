@@ -1055,17 +1055,26 @@ function _exLimsForTime(exArr,lv,team,split){
   if(!isFinite(acc.max)||acc.max<acc.min){var fb2=exArr.reduce(function(a,e){var l=_snapMax(e.cat,lv,team,split);return{min:Math.min(a.min,l.min),max:Math.max(a.max,l.max)};},{min:Infinity,max:0});return{min:isFinite(fb2.min)?fb2.min:8,max:fb2.max||30};}
   return acc;
 }
+// _similarSet: حركتان متشابهتان لو أي وحدة ببدائل الثانية (اتجاهين) — لتجنب توليد بدائل مع بعض
+function _isSimilar(a,b){
+  if(!a||!b)return false;
+  if(a.alts&&a.alts.indexOf(b.name)>=0)return true;
+  if(b.alts&&b.alts.indexOf(a.name)>=0)return true;
+  return false;
+}
 function pkN(a,n){
   var shuffled=a.slice().sort(function(){return Math.random()-.5});
   if(!shuffled.length)return [];
-  var picked=[],excluded={};
+  var picked=[];
+  // المرحلة 1: ما نختار حركة تشبه أي حركة مختارة (اتجاهين)
   for(var i=0;i<shuffled.length&&picked.length<n;i++){
     var ex=shuffled[i];
-    if(excluded[ex.name])continue;
+    var clash=false;
+    for(var p=0;p<picked.length;p++){if(_isSimilar(ex,picked[p])){clash=true;break;}}
+    if(clash)continue;
     picked.push(ex);
-    if(ex.alts)ex.alts.forEach(function(alt){excluded[alt]=true;});
   }
-  // لو ما كفى، أكمل من الباقي بدون قيود
+  // المرحلة 2 (حل أخير لو البول صغير): أكمل من الباقي بدون قيود — ما نكسر عدد الحركات
   if(picked.length<n){
     for(var j=0;j<shuffled.length&&picked.length<n;j++){
       if(picked.indexOf(shuffled[j])<0)picked.push(shuffled[j]);
@@ -2730,17 +2739,22 @@ function mkGroupAB(time,lv,team,cfg){
   var _blockT=_gabN===2?time/2:Math.floor(time/_gabN);
   var secA=mkAmrap(_blockT,lv,team,_gabCfg)[0];
   _gabFit2(secA,lv,team,_blockT,cfg);
+  _gabSchemeFill(secA,lv,team,_blockT,cfg,[]); // عبّي الفترة الأولى كاملة أول — هي المرجع للعدد والجولات
+  _gabFit2(secA,lv,team,_blockT,cfg); // أعد ضمان الجولتين بعد التعبئة (يشيل أي حركة زايدة) — العدد النهائي هو المرجع
   var _aStr=secA.items.filter(function(it){return it.kind==='str';});
   var _aCardio=secA.items.filter(function(it){return it.kind==='cardio';})[0];
   // الفترات التالية تطابق A في: عدد التمارين + نفس نمط التكرارات + وجود الكارديو وكميته
   var _aRepsArr=_aStr.map(function(it){return it.baseRep||10;});
+  // أسماء مستبعَدة عبر الفترات: الحركات المستخدمة + بدائلها (حتى لا تطلع حركة بديلة لحركة بفترة ثانية)
   var _usedNames=_aStr.map(function(it){return it.ex.name;});
+  var _usedSim=_usedNames.slice();
+  _aStr.forEach(function(it){if(it.ex&&it.ex.alts)it.ex.alts.forEach(function(a){if(_usedSim.indexOf(a)<0)_usedSim.push(a);});});
   var secs=[secA];var _letters=['A','B','C'];
   for(var _gk=1;_gk<_gabN;_gk++){
     var _kCfg=Object.assign({},_gabCfg,{
       exCnt:_aStr.length,
       withCardio:!!_aCardio,
-      excludedNames:_usedNames.slice(),
+      excludedNames:_usedSim.slice(),
       forceRepsArr:_aRepsArr
     });
     if(_aCardio&&_aCardio.ex&&_aCardio.ex.amount!=null)_kCfg.cardioAmt=_aCardio.ex.amount;
@@ -2748,7 +2762,8 @@ function mkGroupAB(time,lv,team,cfg){
     // مطابقة الصعوبة مع A: تكرارات A المفروضة لازم تظل منطقية — أي حركة أثقل/أخف بكثير تنستبدل بمقاربة
     (function(){
       var _kStrIts=_sk.items.filter(function(it){return it.kind==='str';});
-      var _kLocal=_usedNames.slice();_kStrIts.forEach(function(it){if(it.ex)_kLocal.push(it.ex.name);});
+      var _kUsedEx=_aStr.slice();_kStrIts.forEach(function(it){if(it.ex)_kUsedEx.push(it.ex);});
+      var _kLocal=_usedSim.slice();_kStrIts.forEach(function(it){if(it.ex)_kLocal.push(it.ex.name);});
       _kStrIts.forEach(function(it,ix){
         var _aIt=_aStr[ix];if(!_aIt||!it.ex)return;
         var _aSpr=getSecondsPerRep(_aIt.ex,lv,1,false);
@@ -2756,11 +2771,12 @@ function mkGroupAB(time,lv,team,cfg){
         if(_kSpr>_aSpr*1.5||_kSpr<_aSpr*0.6){
           var _cand=getPool(lv,null,1).filter(function(e){
             if(_kLocal.indexOf(e.name)>=0)return false;
+            if(_kUsedEx.some(function(u){return _isSimilar(e,u);}))return false;
             if(['time','carry','m','dist','hold'].indexOf(e.unit)>=0&&['time','carry','m','dist','hold'].indexOf(_aIt.ex.unit)<0)return false;
             var s2=getSecondsPerRep(e,lv,1,false);
-            return s2<=_aSpr*1.4&&s2>=_aSpr*0.7;
+            return s2<=_aSpr*1.25&&s2>=_aSpr*0.8;
           });
-          if(_cand.length){var _pe=pk(_cand);it.ex=_pe;it.detail=getDetail(_pe,it.baseRep,null,lv,1);_kLocal.push(_pe.name);}
+          if(_cand.length){var _pe=pk(_cand);it.ex=_pe;it.detail=getDetail(_pe,it.baseRep,null,lv,1);_kLocal.push(_pe.name);_kUsedEx.push(_pe);}
         }
       });
     })();
@@ -2777,7 +2793,7 @@ function mkGroupAB(time,lv,team,cfg){
         }
       }
     }
-    _sk.items.filter(function(it){return it.kind==='str';}).forEach(function(it){_usedNames.push(it.ex.name);});
+    _sk.items.filter(function(it){return it.kind==='str';}).forEach(function(it){_usedNames.push(it.ex.name);if(_usedSim.indexOf(it.ex.name)<0)_usedSim.push(it.ex.name);if(it.ex.alts)it.ex.alts.forEach(function(a){if(_usedSim.indexOf(a)<0)_usedSim.push(a);});});
     secs.push(_sk);
   }
   secs.forEach(function(_gs,_gi){
@@ -2788,13 +2804,42 @@ function mkGroupAB(time,lv,team,cfg){
     if(_gi===0){_gs.scoreKey='sc_rounds_ab';_gs.teamKey=team>1?'tm_gabSplit':null;}
     else{_gs.teamKey=null;delete _gs.amrapCfg;/* لا تتسرب الإعدادات الداخلية (forceRepsArr/excludedNames) لستور الـ AMRAP */}
     if(_gs.items)_ordRepsByDifficulty(_gs.items,lv,team,function(ex){return _exLims([ex],lv,team,team===2);},team===2);
-    // ضمان جولتين على الأقل (بدون أي زيادة تكرارات — السكيمات مقدسة)
-    _gabFit2(_gs,lv,team,_blockT,_gi===0?cfg:{withCardio:true,exCnt:(cfg&&cfg.exCnt)||(_aStr.length||1)});
-    // تعبئة التايم كاب بدرجات السكيم الكاملة أو إضافة حركة بقيم السكيم
-    var _oNames=[];secs.forEach(function(_o){if(_o!==_gs&&_o.items)_o.items.forEach(function(x){if(x.kind==='str'&&x.ex)_oNames.push(x.ex.name);});});
-    _gabSchemeFill(_gs,lv,team,_blockT,cfg,_oNames);
+    // الفترات التالية: نفس عدد حركات A بالضبط (ما نشيل/نضيف) — العدد ثابت للكل
   });
+  // وازِن الجولات: عدّل تكرارات كل فترة عشان جولاتها تقارب الفترة الأولى (نفس العدد يظل)
+  _gabBalanceRounds(secs,lv,team,_blockT);
+  secs.forEach(function(_gs){if(_gs.items)_ordRepsByDifficulty(_gs.items,lv,team,function(ex){return _exLims([ex],lv,team,team===2);},team===2);});
   return secs;
+}
+function _gabBalanceRounds(secs,lv,team,blockT){
+  if(!secs||secs.length<2)return;
+  var _bSec=blockT*60,_split=team===2;
+  var _pwOf=function(sec){var pw=0,cnt=0;sec.items.forEach(function(it){if(it.kind==='str'&&it.baseRep&&!it.isRest){pw+=it.baseRep*getSecondsPerRep(it.ex,lv,1,false);cnt++;}else if(it.kind==='cardio'&&it.ex&&it.ex.amount){pw+=_cardioSecEst(it.ex,lv,1,false);cnt++;}});return pw+Math.max(0,cnt-1)*_tSec(lv);};
+  var _roundsOf=function(sec){var pw=_pwOf(sec);return pw>0?Math.max(1,Math.floor(_bSec/pw)):1;};
+  // أرضية جولتين: نزّل تكرارات أي فترة تحت جولتين (بدون شيل حركات — العدد ثابت)
+  var _floor2=function(sec){var g=0;while(g++<25&&_roundsOf(sec)<2){var strs=sec.items.filter(function(it){return it.kind==='str'&&it.baseRep&&!it.isRest;});if(!strs.length)break;var vals=strs.map(function(it){return it.baseRep;});var step=vals.every(function(v){return v%10===0;})?10:(vals.every(function(v){return v%5===0;})?5:2);if(_split&&step%2!==0)step=2;var ch=false;strs.forEach(function(it){var lm=_exLims([it.ex],lv,team,_split)||{min:2,max:999};var nv=it.baseRep-step;if(_split&&nv%2!==0)nv-=1;if(nv>=(lm.min||2)&&nv<it.baseRep){it.baseRep=nv;it.detail=getDetail(it.ex,nv,null,lv,team);ch=true;}});if(!ch){/* التكرارات بالحد الأدنى وما زال <جولتين → شيل أثقل حركة (حل أخير نادر) */if(strs.length>1){var _hv=strs.reduce(function(m,it){return(it.baseRep*getSecondsPerRep(it.ex,lv,1,false))>(m.baseRep*getSecondsPerRep(m.ex,lv,1,false))?it:m;});sec.items.splice(sec.items.indexOf(_hv),1);}else break;}}};
+  _floor2(secs[0]); // الفترة الأولى (المرجع) لازم جولتين قبل ما نحسب الهدف
+  var _Rref=Math.max(2,_roundsOf(secs[0])); // جولات الفترة الأولى = الهدف (جولتين على الأقل)
+  for(var i=1;i<secs.length;i++){
+    var sec=secs[i];var guard=0;
+    while(guard++<25){
+      var R=_roundsOf(sec);
+      if(R===_Rref)break;
+      var _diff0=Math.abs(R-_Rref);
+      var strs=sec.items.filter(function(it){return it.kind==='str'&&it.baseRep&&!it.isRest;});
+      if(!strs.length)break;
+      var vals=strs.map(function(it){return it.baseRep;});
+      var step=vals.every(function(v){return v%10===0;})?10:(vals.every(function(v){return v%5===0;})?5:2);
+      if(_split&&step%2!==0)step=2;
+      var _snap=strs.map(function(it){return it.baseRep;}); // نسخة للتراجع لو تجاوزنا الهدف
+      var changed=false,dir=(R<_Rref)?-1:1; // بطيئة→نزّل · سريعة→ارفع
+      strs.forEach(function(it){var lm=_exLims([it.ex],lv,team,_split)||{min:2,max:999};var nv=it.baseRep+dir*step;if(_split&&nv%2!==0)nv-=dir;if(nv>=(lm.min||2)&&nv<=(lm.max||999)&&nv!==it.baseRep){it.baseRep=nv;it.detail=getDetail(it.ex,nv,null,lv,team);changed=true;}});
+      if(!changed)break; // وصلنا الحدود
+      var _Rnew=_roundsOf(sec);
+      if(_Rnew<2||Math.abs(_Rnew-_Rref)>_diff0){strs.forEach(function(it,k){it.baseRep=_snap[k];it.detail=getDetail(it.ex,_snap[k],null,lv,team);});break;} // نزلنا تحت جولتين أو تجاوزنا وابعدنا → تراجع، خذ الأقرب
+    }
+    _floor2(sec); // ضمان أخير: جولتين على الأقل
+  }
 }
 
 // ── Named Rep Schemes ──
@@ -2946,6 +2991,48 @@ function generate(cfg){
     if(_fills.every(function(f){return f>=0.90&&f<=1.10;}))break;
   }
   var _finalSecs=_bestSecs||secs;
+  // ── ممر تنظيف التشابه: ما نخلي حركتين بديلتين لبعض بنفس الوود (كل التطبيق) ──
+  // الانتيرفال: عبر كل الفترات؛ باقي الأنواع: داخل السكشن. نفس الحركة المتكررة تظل (مقصودة).
+  (function(){
+    if(!_finalSecs||!_finalSecs.length)return;
+    var _crossWod=(type==='group-ab'); // الانتيرفال يتجنّب عبر الفترات
+    var _globalUsed=[]; // للانتيرفال: كل الحركات عبر الفترات
+    _finalSecs.forEach(function(sec){
+      if(!sec||!sec.items)return;
+      var lv=cfg.level,team=cfg.teamSize;
+      var _seen=_crossWod?_globalUsed:[];
+      sec.items.forEach(function(it){
+        if(it.kind!=='str'||!it.ex||it.isRest)return;
+        var _clash=_seen.some(function(u){return u.name!==it.ex.name&&_isSimilar(u,it.ex);});
+        if(_clash){
+          var _spr=getSecondsPerRep(it.ex,lv,1,false);
+          var _names=[];_finalSecs.forEach(function(s2){(s2.items||[]).forEach(function(x){if(x.kind==='str'&&x.ex)_names.push(x.ex.name);});});
+          var _allEx=_seen.concat([it.ex]);
+          // البديل من نفس بول النوع: التاباتا من بولها، الباقي من البول العام
+          var _isTb=sec.type==='Tabata';
+          var _srcPool=_isTb?STR.filter(function(e){return TABATA_STR_NAMES.indexOf(e.name)>=0;}):getPool(lv,null,team);
+          var _cand=_srcPool.filter(function(e){
+            if(_names.indexOf(e.name)>=0)return false;
+            if((e.unit||'reps')!==(it.ex.unit||'reps'))return false;
+            if(_allEx.some(function(u){return _isSimilar(e,u);}))return false;
+            var s2=getSecondsPerRep(e,lv,1,false);
+            return s2>=_spr*0.7&&s2<=_spr*1.4;
+          });
+          if(_cand.length){var _pe=pk(_cand);it.ex=_pe;it.detail=getDetail(_pe,it.baseRep||10,null,lv,team);}
+        }
+        _seen.push(it.ex);
+      });
+    });
+    // الانتيرفال: بعد التبديل أعد موازنة الجولات (نفس العدد، تكرارات تقارب الفترة الأولى)
+    if(_crossWod){
+      var _ivSecs=_finalSecs.filter(function(s){return s&&s.items&&(s.type==='Interval 1'||s.type==='Interval 2');});
+      if(_ivSecs.length>1){
+        var _bt=Math.floor((_ivSecs[0].infoVars&&_ivSecs[0].infoVars.t)||(cfg.time/_ivSecs.length));
+        if(typeof _gabBalanceRounds==='function')_gabBalanceRounds(_ivSecs,cfg.level,cfg.teamSize,_bt);
+        _ivSecs.forEach(function(s){if(s.items)_ordRepsByDifficulty(s.items,cfg.level,cfg.teamSize,function(ex){return _exLims([ex],cfg.level,cfg.teamSize,cfg.teamSize===2);},cfg.teamSize===2);});
+      }
+    }
+  })();
   // YGIG: ygigCfg يحتوي فقط اختيارات المستخدم + الفورمات للـ UI (بدون عشوائي)
   if((type==='ygig'||type==='ygig-amrap'||type==='ygig-ft')&&_finalSecs&&_finalSecs[0]){
     var _ygKey=type==='ygig'?'ygig':type;
@@ -3950,11 +4037,16 @@ function regenEx(si,ii,kind){
     }
     if(S.teamSize===2){var _tsCarryFilt=_basePool.filter(function(e){return e.unit!=='carry';});if(_tsCarryFilt.length)_basePool=_tsCarryFilt;}
     if(!_basePool.length)_basePool=getPool(S.level);
+    // الحركات الحالية بالوود: نفس السكشن — وللانتيرفال كل الفترات (ما نطلع بديل لأي حركة موجودة)
     var _actItems=sec.items.filter(function(it,i){return it.kind==='str'&&i!==ii&&it.ex;});
-    var _actN=_actItems.map(function(it){return it.ex.name;});
-    // استثني كذلك الـ alts للتمارين الحاليه لتجنب المتشابهين
-    var _simN=_actItems.reduce(function(acc,it){return acc.concat(it.ex.alts||[]);}, []);
-    var _strPool=_basePool.filter(function(e){return _actN.indexOf(e.name)<0&&_simN.indexOf(e.name)<0;});
+    var _isIvSec=(sec.type==='Interval 1'||sec.type==='Interval 2');
+    if(_isIvSec&&S.wod&&S.wod.sections){
+      S.wod.sections.forEach(function(s2){if(s2===sec||!s2||(s2.type!=='Interval 1'&&s2.type!=='Interval 2'))return;(s2.items||[]).forEach(function(it){if(it.kind==='str'&&it.ex)_actItems.push(it);});});
+    }
+    var _actEx=_actItems.map(function(it){return it.ex;});
+    var _actN=_actEx.map(function(e){return e.name;});
+    // استثني الحركات الحالية + أي حركة مشابهة لها (اتجاهين)
+    var _strPool=_basePool.filter(function(e){return _actN.indexOf(e.name)<0&&!_actEx.some(function(u){return _isSimilar(e,u);});});
     if(!_strPool.length)_strPool=_basePool.filter(function(e){return _actN.indexOf(e.name)<0;});
     if(!_strPool.length)_strPool=_basePool;
     do{newEx=pk(_strPool);}while(newEx.name===old.ex.name&&_strPool.length>1);
@@ -5394,7 +5486,7 @@ function _rebuildGroupAb(si,cfg,forceN){
             if(_kLocal.indexOf(e.name)>=0)return false;
             if(['time','carry','m','dist','hold'].indexOf(e.unit)>=0&&['time','carry','m','dist','hold'].indexOf(_aIt.ex.unit)<0)return false;
             var s2=getSecondsPerRep(e,S.level,1,false);
-            return s2<=_aSpr*1.4&&s2>=_aSpr*0.7;
+            return s2<=_aSpr*1.25&&s2>=_aSpr*0.8;
           });
           if(_cand.length){var _pe=pk(_cand);it.ex=_pe;it.detail=getDetail(_pe,it.baseRep,null,S.level,1);_kLocal.push(_pe.name);}
         }
