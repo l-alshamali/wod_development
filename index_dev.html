@@ -2737,11 +2737,25 @@ function mkGroupAB(time,lv,team,cfg){
   var _gabN=cfg.intervals===3?3:cfg.intervals===2?2:pk([2,3]);
   if(!cfg.intervals)cfg._genIntervals=_gabN;
   var _blockT=_gabN===2?time/2:Math.floor(time/_gabN);
+  if(!cfg.exCnt&&(!_gabCfg.exCnt||_gabCfg.exCnt<2))_gabCfg.exCnt=Math.max(2,cfg.exCnt||0); // الانتيرفال: حركتين على الأقل بكل فترة
   var secA=mkAmrap(_blockT,lv,team,_gabCfg)[0];
   _gabFit2(secA,lv,team,_blockT,cfg);
   _gabSchemeFill(secA,lv,team,_blockT,cfg,[]); // عبّي الفترة الأولى كاملة أول — هي المرجع للعدد والجولات
   _gabFit2(secA,lv,team,_blockT,cfg); // أعد ضمان الجولتين بعد التعبئة (يشيل أي حركة زايدة) — العدد النهائي هو المرجع
   var _aStr=secA.items.filter(function(it){return it.kind==='str';});
+  // ضمان نهائي: الفترة الأولى (المرجع) حركتين على الأقل — لو نقصت أضف من البول
+  if(_aStr.length<2){
+    var _need=2-_aStr.length,_exN0=secA.items.filter(function(x){return x.kind==='str'&&x.ex;}).map(function(x){return x.ex.name;});
+    for(var _ai=0;_ai<_need;_ai++){
+      var _cnd=getPool(lv,null,team).filter(function(e){if(_exN0.indexOf(e.name)>=0)return false;if(['time','carry','m','dist','hold'].indexOf(e.unit)>=0)return false;var b=secA.items.filter(function(x){return x.kind==='str'&&x.ex;})[0];return !b||!_isSimilar(e,b.ex);});
+      if(!_cnd.length)break;var _pe0=pk(_cnd);_exN0.push(_pe0.name);
+      var _r0=(_aStr[0]&&_aStr[0].baseRep)||10;
+      var _ins0=-1;for(var _x0=0;_x0<secA.items.length;_x0++){if(secA.items[_x0].kind==='cardio'){_ins0=_x0;break;}}
+      var _it0={kind:'str',ex:_pe0,detail:getDetail(_pe0,_r0,null,lv,team),baseRep:_r0};
+      if(_ins0>=0)secA.items.splice(_ins0,0,_it0);else secA.items.push(_it0);
+    }
+    _aStr=secA.items.filter(function(it){return it.kind==='str';});
+  }
   var _aCardio=secA.items.filter(function(it){return it.kind==='cardio';})[0];
   // الفترات التالية تطابق A في: عدد التمارين + نفس نمط التكرارات + وجود الكارديو وكميته
   var _aRepsArr=_aStr.map(function(it){return it.baseRep||10;});
@@ -2817,7 +2831,7 @@ function _gabBalanceRounds(secs,lv,team,blockT){
   var _pwOf=function(sec){var pw=0,cnt=0;sec.items.forEach(function(it){if(it.kind==='str'&&it.baseRep&&!it.isRest){pw+=it.baseRep*getSecondsPerRep(it.ex,lv,1,false);cnt++;}else if(it.kind==='cardio'&&it.ex&&it.ex.amount){pw+=_cardioSecEst(it.ex,lv,1,false);cnt++;}});return pw+Math.max(0,cnt-1)*_tSec(lv);};
   var _roundsOf=function(sec){var pw=_pwOf(sec);return pw>0?Math.max(1,Math.floor(_bSec/pw)):1;};
   // أرضية جولتين: نزّل تكرارات أي فترة تحت جولتين (بدون شيل حركات — العدد ثابت)
-  var _floor2=function(sec){var g=0;while(g++<25&&_roundsOf(sec)<2){var strs=sec.items.filter(function(it){return it.kind==='str'&&it.baseRep&&!it.isRest;});if(!strs.length)break;var vals=strs.map(function(it){return it.baseRep;});var step=vals.every(function(v){return v%10===0;})?10:(vals.every(function(v){return v%5===0;})?5:2);if(_split&&step%2!==0)step=2;var ch=false;strs.forEach(function(it){var lm=_exLims([it.ex],lv,team,_split)||{min:2,max:999};var nv=it.baseRep-step;if(_split&&nv%2!==0)nv-=1;if(nv>=(lm.min||2)&&nv<it.baseRep){it.baseRep=nv;it.detail=getDetail(it.ex,nv,null,lv,team);ch=true;}});if(!ch){/* التكرارات بالحد الأدنى وما زال <جولتين → شيل أثقل حركة (حل أخير نادر) */if(strs.length>1){var _hv=strs.reduce(function(m,it){return(it.baseRep*getSecondsPerRep(it.ex,lv,1,false))>(m.baseRep*getSecondsPerRep(m.ex,lv,1,false))?it:m;});sec.items.splice(sec.items.indexOf(_hv),1);}else break;}}};
+  var _floor2=function(sec){var g=0;while(g++<25&&_roundsOf(sec)<2){var strs=sec.items.filter(function(it){return it.kind==='str'&&it.baseRep&&!it.isRest;});if(!strs.length)break;var vals=strs.map(function(it){return it.baseRep;});var step=vals.every(function(v){return v%10===0;})?10:(vals.every(function(v){return v%5===0;})?5:2);if(_split&&step%2!==0)step=2;var ch=false;strs.forEach(function(it){var lm=_exLims([it.ex],lv,team,_split)||{min:2,max:999};var nv=it.baseRep-step;if(_split&&nv%2!==0)nv-=1;if(nv>=(lm.min||2)&&nv<it.baseRep){it.baseRep=nv;it.detail=getDetail(it.ex,nv,null,lv,team);ch=true;}});if(!ch){/* التكرارات بالحد الأدنى → شيل أثقل حركة فقط لو باقي أكثر من حركتين (ممنوع أقل من حركتين بأي فترة) */if(strs.length>2){var _hv=strs.reduce(function(m,it){return(it.baseRep*getSecondsPerRep(it.ex,lv,1,false))>(m.baseRep*getSecondsPerRep(m.ex,lv,1,false))?it:m;});sec.items.splice(sec.items.indexOf(_hv),1);}else break;}}};
   _floor2(secs[0]); // الفترة الأولى (المرجع) لازم جولتين قبل ما نحسب الهدف
   var _Rref=Math.max(2,_roundsOf(secs[0])); // جولات الفترة الأولى = الهدف (جولتين على الأقل)
   for(var i=1;i<secs.length;i++){
