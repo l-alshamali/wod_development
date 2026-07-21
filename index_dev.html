@@ -1616,6 +1616,50 @@ function mkRFT(time,lv,team,cfg){
     _applyRepScheme(items,lv,team,team===2,cfg);
   }
 
+  // ── مطابقة الوقت عند إقفال الجولات/الحركات (طلب Laila): الجولات مقفولة → عدّل التكرارات
+  //    ضمن حد كل حركة حتى نقترب من سقف الوقت — بشرط ألا نتجاوز الكاب أبداً (لو زاد ننزّل التكرارات) ──
+  if(_rftAuto&&(cfg.rounds||cfg.exCnt)&&!cfg.baseReps&&!cfg.schemeReps){
+    var _fuCard=items.find(function(x){return x.kind==='cardio'&&x.ex;});
+    var _fuCEx=_fuCard?_fuCard.ex:null;
+    var _fuAdj=items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest&&x.ex&&x.ex.unit!=='time'&&x.ex.unit!=='carry';});
+    if(_fuAdj.length){
+      var _fuStep=_isTS2R?(_rftLS%2===0?_rftLS:_rftLS*2):_rftLS;
+      var _fuAllStr=function(){return items.filter(function(x){return x.kind==='str'&&x.baseRep&&!x.isRest;});};
+      // نفس مُقدّر الشريط المعروض (_secFill) حتى نستهدف التعبئة اللي يشوفها المستخدم فعلاً
+      var _fuTT=(team===2)?18:_tSec(lv);
+      var _fuTotEst=function(){var _s=_fuAllStr();var e=0;_s.forEach(function(x){e+=x.baseRep*getSecondsPerRep(x.ex,lv,team,_rftSplit);});if(_fuCEx)e+=_cardioSecEst(_fuCEx,lv,team,_rftSplit);var _tot=_s.length+(_fuCEx?1:0);e+=(_tot>1?(_tot-1)*_fuTT:0);return e*rounds;};
+      var _fuMx=function(ex){var _l=_exLims([ex],lv,team,_rftSplit)||{max:999};return Math.floor(Math.min(_l.max,_rftLadderCap)/_rftLS)*_rftLS;};
+      // أرضية مطلقة منخفضة للتقليل: الأولوية عدم تجاوز الكاب (طلب Laila) — ننزل تحت الحد "المعتاد" لو لزم كي نبقى تحت السقف
+      var _fuMn=function(ex){return 4;};
+      // أرقام نظيفة فقط (سكيمات Laila): زوجي أو من مضاعفات 5 — ممنوع 7/13/... (dir: -1 نزول / +1 صعود)
+      var _fuClean=function(v,dir){if(v%5===0||v%2===0)return v;return dir<0?v-1:v+1;};
+      // خطوة/حد أدنى للكارديو (رافعة إضافية للتقليل عند الحاجة)
+      var _fuCStep=_fuCEx?(_fuCEx.unit==='Cal'?5:(_fuCEx.unit==='m'?50:_fuStep)):0;
+      var _fuCMin=_fuCEx?(_fuCEx.unit==='Cal'?5:(_fuCEx.unit==='m'?50:3)):0;
+      var _g1=0;
+      // مرحلة ١: لو تجاوزنا الكاب — نزّل تكرارات أعلى حركة، وإذا وصلت كلها الأرضية نزّل الكارديو، حتى ننزل تحت الكاب
+      while(_g1++<1200&&_fuTotEst()>_rftBdg2){
+        var _rI=-1,_rTop=-1;
+        for(var _ri4=0;_ri4<_fuAdj.length;_ri4++){if(_fuAdj[_ri4].baseRep>_fuMn(_fuAdj[_ri4].ex)&&_fuAdj[_ri4].baseRep>_rTop){_rTop=_fuAdj[_ri4].baseRep;_rI=_ri4;}}
+        if(_rI>=0){_fuAdj[_rI].baseRep=Math.max(_fuMn(_fuAdj[_rI].ex),_fuClean(_fuAdj[_rI].baseRep-_fuStep,-1));_fuAdj[_rI].detail=getDetail(_fuAdj[_rI].ex,_fuAdj[_rI].baseRep,null,lv,team);continue;}
+        if(_fuCEx&&_fuCEx.amount>_fuCMin){var _nA=Math.max(_fuCMin,_fuCEx.amount-_fuCStep);_fuCard.ex=Object.assign({},_fuCEx,{amount:_nA});_fuCEx=_fuCard.ex;if(_fuCard.cardioAmounts&&_fuCard.cardioAmounts.length)_fuCard.cardioAmounts=_fuCard.cardioAmounts.map(function(){return _nA;});continue;}
+        break; // كل الرافعات بالحد الأدنى ولا يزال فوق الكاب (الإعداد مكتظ — يحتاج تقليل جولات/حركات)
+      }
+      var _g2=0;
+      // مرحلة ٢: لو ما زلنا تحت الكاب — ارفع تكرارات الحركة الأكثر مساحة، مع ضمان عدم تجاوز الكاب
+      while(_g2++<800&&_fuTotEst()<_rftBdg2){
+        var _uI=-1,_uHead=-1;
+        for(var _ui=0;_ui<_fuAdj.length;_ui++){var _h=_fuMx(_fuAdj[_ui].ex)-_fuAdj[_ui].baseRep;if(_h>=_fuStep&&_h>_uHead){_uHead=_h;_uI=_ui;}}
+        if(_uI<0)break; // كل الحركات وصلت سقفها
+        var _uOld=_fuAdj[_uI].baseRep;
+        _fuAdj[_uI].baseRep=Math.min(_fuMx(_fuAdj[_uI].ex),_fuClean(_fuAdj[_uI].baseRep+_fuStep,+1));
+        if(_fuAdj[_uI].baseRep<=_uOld){_fuAdj[_uI].baseRep=_uOld;break;}
+        if(_fuTotEst()>_rftBdg2){_fuAdj[_uI].baseRep=_uOld;break;} // ممنوع تجاوز الكاب — تراجع وتوقف
+        _fuAdj[_uI].detail=getDetail(_fuAdj[_uI].ex,_fuAdj[_uI].baseRep,null,lv,team);
+      }
+    }
+  }
+
   // العنوان: سكيم متغير → "For Time (21-15-9)" | جولات ثابتة → "X Rounds For Time"
   var _rftTitle=rounds+' Rounds For Time';
   return[{type:'For Time / RFT',title:_rftTitle,infoKey:'i_rft',infoVars:{r:rounds,t:time},scoreKey:'sc_time',teamKey:team>1?'tm_partition':null,items:items,scheme:reps,chosen:chosen,rftCfg:cfg}];
@@ -3391,13 +3435,14 @@ function _gabChip(si){
   return'<span style="display:inline-flex;flex-direction:column;min-width:180px">'+barA+barB+'</span>';
 }
 
+function _arrVaries(a){return !!(a&&a.length>1&&!a.every(function(v){return v===a[0];}));}
 function renderSec(sec,si){
   // ── Dynamic round count: RFT / YGIG FT / Buy-In — adjusts when reps change ──
-  // سكيم يدوي متعدد الجولات (repsPerRound/cardioAmounts) → عدد الجولات مقفول على طول السكيم،
-  // والتقدير/الشريط يُحسبان من مجموع الشغل الفعلي (يرتفع مع زيادة التكرارات — الكاب ثابت)
-  var _drCustomLock=sec.type==='For Time / RFT'&&sec.items&&sec.items.some(function(x){return(x.repsPerRound&&x.repsPerRound.length>1)||(x.cardioAmounts&&x.cardioAmounts.length>1);});
+  // سكيم يدوي *متغيّر* بين الجولات (repsPerRound/cardioAmounts بقيم مختلفة) → عدد الجولات مقفول على طول السكيم.
+  // سكيم موحّد (نفس الرقم كل جولة) = فلات → يعيد حساب الجولات عند تغيير التكرارات (طلب Laila).
+  var _drCustomLock=sec.type==='For Time / RFT'&&sec.items&&sec.items.some(function(x){return _arrVaries(x.repsPerRound)||_arrVaries(x.cardioAmounts);});
   if(_drCustomLock){
-    var _dcLen=0;sec.items.forEach(function(x){if(x.repsPerRound&&x.repsPerRound.length>1)_dcLen=Math.max(_dcLen,x.repsPerRound.length);if(x.cardioAmounts&&x.cardioAmounts.length>1)_dcLen=Math.max(_dcLen,x.cardioAmounts.length);});
+    var _dcLen=0;sec.items.forEach(function(x){if(_arrVaries(x.repsPerRound))_dcLen=Math.max(_dcLen,x.repsPerRound.length);if(_arrVaries(x.cardioAmounts))_dcLen=Math.max(_dcLen,x.cardioAmounts.length);});
     if(!sec.infoVars)sec.infoVars={};
     sec.infoVars.r=_dcLen;sec._drPW=null;sec._drBudget=null;
     sec.title=_dcLen+' Rounds For Time';
@@ -3420,9 +3465,12 @@ function renderSec(sec,si){
       if(_drYgig){var _ygLkR=sec.ygigCfg&&sec.ygigCfg.roundsEach;if(_ygLkR){_drN=_ygLkR;}else{var _drBE=_ygigFtBand(_drTimeCap);_drN=Math.max(_drBE[0],Math.min(_drBE[1]+1,_drN));}} // اختيار المستخدم يقفل الجولات؛ وإلا سقف الجدول+1 (طلب Laila)
       if(!sec.infoVars)sec.infoVars={};
       if(sec.type!=='Buy-In / Cash-Out'){sec.infoVars.r=_drN;sec.infoVars.rt=_drN*2;}sec._drPW=_drPW;sec._drBudget=_drTimeCap*60;
-      if(sec.type==='For Time / RFT'){var _rftActR=(sec.rftCfg&&sec.rftCfg.rounds)||_drN;sec.infoVars.r=_rftActR;sec.title=_rftActR+' Rounds For Time';if(sec.scheme&&sec.scheme.length&&sec.scheme.length!==_rftActR){var _ssV=sec.scheme[0]||10;sec.scheme=[];for(var _ssK=0;_ssK<_rftActR;_ssK++)sec.scheme.push(_ssV);}var _drSep=sec.items.find(function(x){return x.kind==='sep';});if(_drSep)_drSep.label='── '+_rftActR+' ROUNDS ──';}
+      if(sec.type==='For Time / RFT'){var _rftActR=(sec.rftCfg&&sec.rftCfg.rounds)||_drN;sec.infoVars.r=_rftActR;sec.title=_rftActR+' Rounds For Time';if(sec.scheme&&sec.scheme.length&&sec.scheme.length!==_rftActR){var _ssV=sec.scheme[0]||10;sec.scheme=[];for(var _ssK=0;_ssK<_rftActR;_ssK++)sec.scheme.push(_ssV);}
+        // سكيمات موحّدة لكل جولة (repsPerRound/cardioAmounts بنفس القيمة) → أعِد قياسها لطول الجولات الجديد حتى يبقى التقدير والعرض متسقين
+        sec.items.forEach(function(x){if(x.repsPerRound&&x.repsPerRound.length>1&&!_arrVaries(x.repsPerRound)&&x.repsPerRound.length!==_rftActR){var _uv=x.repsPerRound[0];x.repsPerRound=[];for(var _uk=0;_uk<_rftActR;_uk++)x.repsPerRound.push(_uv);}if(x.cardioAmounts&&x.cardioAmounts.length>1&&!_arrVaries(x.cardioAmounts)&&x.cardioAmounts.length!==_rftActR){var _uc=x.cardioAmounts[0];x.cardioAmounts=[];for(var _uk2=0;_uk2<_rftActR;_uk2++)x.cardioAmounts.push(_uc);}});
+        var _drSep=sec.items.find(function(x){return x.kind==='sep';});if(_drSep)_drSep.label='── '+_rftActR+' ROUNDS ──';}
       else if(_drYgig){sec.title='YGIG - '+(_drN*2)+' Rounds For Time';var _drSepY=sec.items.find(function(x){return x.kind==='sep';});if(_drSepY)_drSepY.label='── '+(_drN*2)+' Rounds ──';}
-      else if(sec.type==='Buy-In / Cash-Out'){var _biLkR=sec.buyInCfg&&sec.buyInCfg.rounds;if(_biLkR){sec.infoVars.r=_biLkR;}else{sec.infoVars.r=sec.biWodType==='chipper'?1:(sec.scheme&&sec.scheme.length>0?sec.scheme.length:1);}var _drSepB=sec.items.find(function(x){return x.kind==='sep'&&x.label&&x.label.indexOf('ROUNDS')>=0;});if(_drSepB)_drSepB.label='── '+sec.infoVars.r+' ROUNDS ──';}
+      else if(sec.type==='Buy-In / Cash-Out'){var _biLkR=sec.buyInCfg&&sec.buyInCfg.rounds;var _biHasRPR=sec.items.some(function(x){return _arrVaries(x.repsPerRound);});if(_biLkR){sec.infoVars.r=_biLkR;}else if(sec.biWodType==='rft'&&!_biHasRPR){var _biGateSec=0;sec.items.filter(function(x){return x.kind==='buyin'&&x.ex&&x.ex.amount;}).forEach(function(it){_biGateSec+=_cardioSecEst(it.ex,_drLv,_drTmEff,_drSplit);});var _biMidBudget=Math.max(300,_drTimeCap*60-_biGateSec);sec.infoVars.r=Math.max(1,Math.round(_biMidBudget/_drPW));if(sec.scheme&&sec.scheme.length){var _biSv=sec.scheme[0]||10;sec.scheme=[];for(var _biSk=0;_biSk<sec.infoVars.r;_biSk++)sec.scheme.push(_biSv);}}else{sec.infoVars.r=sec.biWodType==='chipper'?1:(sec.scheme&&sec.scheme.length>0?sec.scheme.length:1);}var _drSepB=sec.items.find(function(x){return x.kind==='sep'&&x.label&&x.label.indexOf('ROUNDS')>=0;});if(_drSepB)_drSepB.label='── '+sec.infoVars.r+' ROUNDS ──';}
     }
   }
   var infoTxt=sec.infoKey?ti(sec.infoKey,sec.infoVars||{}):sec.info;
