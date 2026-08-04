@@ -3991,6 +3991,14 @@ function swapCardio(si,ii,name){
     else{var _pcl=_cardioLimits(_swTeam,true,S.level);_pmn=unit==='Cal'?_pcl.calMin:unit==='m'?_pcl.mtrMin:_pcl.duMin;_pmx=unit==='Cal'?_pcl.calMax:unit==='m'?_pcl.mtrMax:_pcl.duMax;}
     return Math.max(_pmn,Math.min(_pmx,amt||_pmn));
   };
+  // Unit CHANGED -> the value is a derived conversion, not the user's own number: snap it to the sanctioned scheme series
+  var _swSnapClamp=function(unit,amt){
+    var _qmn,_qmx;
+    if(_swIsEMOM){var _qec=_emomCardioLimits(S.level,1);_qmn=unit==='Cal'?_qec.calMin:unit==='m'?_qec.mtrMin:_qec.duMin;_qmx=unit==='Cal'?_qec.calMax:unit==='m'?_qec.mtrMax:_qec.duMax;}
+    else if(_swIsChip){var _qccl=_chipperCL(S.level,_swTeam);_qmn=unit==='Cal'?_qccl.calMin:unit==='m'?_qccl.mtrMin:_qccl.duMin;_qmx=unit==='Cal'?_qccl.calMax:unit==='m'?_qccl.mtrMax:_qccl.duMax;}
+    else{var _qcl=_cardioLimits(_swTeam,true,S.level);_qmn=unit==='Cal'?_qcl.calMin:unit==='m'?_qcl.mtrMin:_qcl.duMin;_qmx=unit==='Cal'?_qcl.calMax:unit==='m'?_qcl.mtrMax:_qcl.duMax;}
+    return _cardioNearestSer(unit,Math.max(_qmn,Math.min(_qmx,amt||_qmn)),_qmn,_qmx);
+  };
   // Ladder: preserve scheme amounts; user-edited per-round cardio: keep each round's value (clamped to the new exercise's range, no series-snap); others: clamp to unit limits
   if(old.cardioAmounts){
     if(sec.type==='Ladder'&&sec.scheme&&sec.scheme.length){newItem.cardioAmounts=sec.scheme.slice();}
@@ -3999,7 +4007,7 @@ function swapCardio(si,ii,name){
       newItem.cardioAmounts=old.cardioAmounts.map(function(v){
         var _swVAmt=v;
         if(!_swSameU){var _swVSec=_cardioSecEst({name:cur.name,unit:cur.unit,amount:v},S.level,_swTeam,_swIsChip?false:true);var _swVRate=_cardioSecEst({name:name,unit:newUnit,amount:1},S.level,_swTeam,_swIsChip?false:true);_swVAmt=(_swVSec>0&&_swVRate>0)?Math.round(_swVSec/_swVRate):newAmount;}
-        return _swPlainClamp(newUnit,_swVAmt);
+        return _swSameU?_swPlainClamp(newUnit,_swVAmt):_swSnapClamp(newUnit,_swVAmt);
       });
       newItem.ex=Object.assign({},newItem.ex,{amount:newItem.cardioAmounts[0]});
     }
@@ -4045,6 +4053,14 @@ function regenEx(si,ii,kind){
         else{var _pcl=_cardioLimits(_rgTeam,true,S.level);_pmn=unit==='Cal'?_pcl.calMin:unit==='m'?_pcl.mtrMin:_pcl.duMin;_pmx=unit==='Cal'?_pcl.calMax:unit==='m'?_pcl.mtrMax:_pcl.duMax;}
         return Math.max(_pmn,Math.min(_pmx,amt||_pmn));
       };
+      // Unit CHANGED -> derived conversion, not the user's own number: snap to the sanctioned scheme series
+      var _rgSnapClamp=function(unit,amt){
+        var _qmn,_qmx;
+        if(_isEMOM){var _qec=_emomCardioLimits(S.level,1);_qmn=unit==='Cal'?_qec.calMin:unit==='m'?_qec.mtrMin:_qec.duMin;_qmx=unit==='Cal'?_qec.calMax:unit==='m'?_qec.mtrMax:_qec.duMax;}
+        else if(_rgIsChip){var _qccl=_chipperCL(S.level,_rgTeam);_qmn=unit==='Cal'?_qccl.calMin:unit==='m'?_qccl.mtrMin:_qccl.duMin;_qmx=unit==='Cal'?_qccl.calMax:unit==='m'?_qccl.mtrMax:_qccl.duMax;}
+        else{var _qcl=_cardioLimits(_rgTeam,true,S.level);_qmn=unit==='Cal'?_qcl.calMin:unit==='m'?_qcl.mtrMin:_qcl.duMin;_qmx=unit==='Cal'?_qcl.calMax:unit==='m'?_qcl.mtrMax:_qcl.duMax;}
+        return _cardioNearestSer(unit,Math.max(_qmn,Math.min(_qmx,amt||_qmn)),_qmn,_qmx);
+      };
       // حاول نفس الوحدة أولاً
       var _sameUnit=_cardioPool.filter(function(c){return c.unit===_oldUnit;});
       var _diffNames=_sameUnit.map(function(c){return c.name;}).filter(function(n,i,a){return a.indexOf(n)===i&&n!==_oldName;});
@@ -4074,7 +4090,7 @@ function regenEx(si,ii,kind){
           _newItem4.cardioAmounts=old.cardioAmounts.map(function(v){
             var _rgVAmt=v;
             if(!_rgSameU){var _rgVSec=_cardioSecEst({name:_oldName,unit:_oldUnit,amount:v},S.level,_rgTeam,_rgIsChip?false:true);var _rgVRate=_cardioSecEst({name:newEx.name,unit:newEx.unit,amount:1},S.level,_rgTeam,_rgIsChip?false:true);_rgVAmt=(_rgVSec>0&&_rgVRate>0)?Math.round(_rgVSec/_rgVRate):newEx.amount;}
-            return _rgPlainClamp(newEx.unit,_rgVAmt);
+            return _rgSameU?_rgPlainClamp(newEx.unit,_rgVAmt):_rgSnapClamp(newEx.unit,_rgVAmt);
           });
           newEx=Object.assign({},newEx,{amount:_newItem4.cardioAmounts[0]});
           _newItem4.ex=newEx;
@@ -6282,4 +6298,4 @@ if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostnam
 }
 </script>
 </body>
-</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+</html>
