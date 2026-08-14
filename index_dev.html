@@ -6230,6 +6230,14 @@ function _swLoadEntry(id,resetEdit){
   var saved=_swLoad(),entry=null;
   for(var i=0;i<saved.length;i++){if(saved[i].id===id){entry=saved[i];break;}}
   if(!entry||!entry.snap)return;
+  // فتح تمرين محفوظ = ياخذ تاريخ اليوم ويطلع فوق القائمة (بدون ما ياكل خانة جديدة من الحد الأقصى)
+  var _swToday=_swFmtDate();
+  if(entry.dateSaved!==_swToday){
+    entry.dateSaved=_swToday;
+    var _swReord=saved.filter(function(w){return w.id!==entry.id;});
+    _swReord.unshift(entry);
+    _swStore(_swReord);
+  }
   var snap=_swDeepCopy(entry.snap);
   // ترحيل الأسماء القديمة بالمحفوظات: Group A/B → Interval 1/2
   if(snap.wod&&snap.wod.sections)snap.wod.sections.forEach(function(_ms){if(_ms&&_ms.type==='Group A')_ms.type='Interval 1';if(_ms&&_ms.type==='Group B')_ms.type='Interval 2';});
