@@ -1098,10 +1098,10 @@ function _timeCfg(time){
   return{min:8,max:12};
 }
 var _CARRY_VALS={beginner:'30m',intermediate:'60m',advanced:'90m',elite:'120m'};
-var _amrapTgtMap=[{max:7,range:[90,90]},{max:14,range:[120,150]},{max:60,range:[120,180]}];
-function _amrapTgt(time){var e=_amrapTgtMap.find(function(e){return time<=e.max;});var r=e?e.range:[120,180];return r[0]===r[1]?r[0]:ri(r[0],r[1]);}
-var _amrapTgtMapTeam=[{max:7,range:[120,120]},{max:14,range:[120,180]},{max:60,range:[120,210]}];
-function _amrapTgtTeam(time){var e=_amrapTgtMapTeam.find(function(e){return time<=e.max;});var r=e?e.range:[120,210];return r[0]===r[1]?r[0]:ri(r[0],r[1]);}
+var _amrapTgtMap=[{max:7,range:[90,90]},{max:14,range:[120,150]},{max:19,range:[120,180]},{max:29,range:[150,210]},{max:39,range:[180,240]},{max:49,range:[210,270]},{max:59,range:[240,300]},{max:60,range:[300,300]}];
+function _amrapTgt(time){var e=_amrapTgtMap.find(function(e){return time<=e.max;});var r=e?e.range:[300,300];return r[0]===r[1]?r[0]:ri(r[0],r[1]);}
+var _amrapTgtMapTeam=[{max:7,range:[120,120]},{max:14,range:[120,180]},{max:19,range:[150,210]},{max:29,range:[180,240]},{max:39,range:[210,270]},{max:49,range:[240,300]},{max:59,range:[270,330]},{max:60,range:[360,360]}];
+function _amrapTgtTeam(time){var e=_amrapTgtMapTeam.find(function(e){return time<=e.max;});var r=e?e.range:[360,360];return r[0]===r[1]?r[0]:ri(r[0],r[1]);}
 var _TIME_VALS={beginner:'30s',intermediate:'45s',advanced:'60s',elite:'90s'};
 function _teamDistVal(val,team){if(!val||team!==2)return val;var n=parseInt(val,10);var u=val.replace(/[0-9]/g,'');return(Math.round(n*1.5/5)*5)+u;}
 function getDetail(ex,reps,suffix,lv,team){
@@ -4498,7 +4498,61 @@ function renderEmomCfg(sec,si){
 function toggleTabataCfg(si){var el=document.getElementById('tabata-cfg-'+si);if(el)el.style.display=el.style.display==='none'?'block':'none';}
 
 // ─── TABATA TIMER ────────────────────────────────────────────────────────────
-var _tabTimer={iv:null,seq:[],idx:0,rem:0,paused:false};
+var _tabTimer={iv:null,seq:[],idx:0,rem:0,paused:false,cum:[],wallAnchor:0};
+// ─── Wake Lock: تبقي الشاشة شغالة أثناء التايمر ──────────────────────────────
+var _wakeLock=null;
+function _wlRequest(){try{if('wakeLock' in navigator){navigator.wakeLock.request('screen').then(function(wl){_wakeLock=wl;wl.addEventListener('release',function(){_wakeLock=null;});}).catch(function(){});}}catch(e){}}
+function _wlRelease(){try{if(_wakeLock){_wakeLock.release().catch(function(){});_wakeLock=null;}}catch(e){}}
+// ─── مزامنة بالوقت الفعلي — يصحح الأرقام إذا الشاشة انطفت أو التطبيق راح للخلفية ──
+function _tabElapsedSinceStart(){var t=_tabTimer;var prev=t.idx>0?(t.cum[t.idx-1]||0):0;var cur=t.seq[t.idx]||{dur:0};return prev+((cur.dur||0)-t.rem);}
+function _wodTimerSync(){
+  var wt=_wodTimer;
+  if(!document.getElementById('wod-timer-ov')||wt.finished)return;
+  if(wt.halfAlert&&!wt.restDone){
+    var remR=Math.max(0,(wt.gabRestSec||0)-Math.floor((Date.now()-(wt.restWallAnchor||Date.now()))/1000));
+    wt.restRemSec=remR;
+    if(remR<=0){
+      if(wt.restIv){clearInterval(wt.restIv);wt.restIv=null;}
+      wt.restDone=true;wt.halfAlert=false;wt.paused=false;wt.halfDone=true;wt.wallAnchor=Date.now()-wt.elapsed*1000;_wodBeepStart();
+    }
+    _wodTimerRender();
+    return;
+  }
+  if(wt.paused||!wt.wallAnchor)return;
+  var real=Math.floor((Date.now()-wt.wallAnchor)/1000);
+  if(real<=wt.elapsed)return;
+  wt.elapsed=real;
+  if(wt.type==='amrap'){
+    if(wt.totalSec-wt.elapsed<=0){_wodBeepDone();wt.finished=true;if(wt.iv){clearInterval(wt.iv);wt.iv=null;}}
+  }else if(wt.type==='rft'){
+    if(wt.elapsed>=wt.totalSec){_rftFinish();return;}
+  }else if(wt.type==='cap'){
+    if(wt.isDB)wt.dbLastMin=Math.floor(wt.elapsed/60)+1;
+    if(wt.totalSec-wt.elapsed<=0){_wodBeepDone();wt.finished=true;if(wt.iv){clearInterval(wt.iv);wt.iv=null;}}
+  }else if(wt.type==='emom'){
+    wt.curMin=Math.floor(wt.elapsed/60)+1;wt.minSec=60-(wt.elapsed%60);
+    if(wt.curMin>wt.totalMin){_wodBeepDone();wt.finished=true;if(wt.iv){clearInterval(wt.iv);wt.iv=null;}}
+  }
+  _wodTimerRender();
+}
+function _tabTimerSync(){
+  var t=_tabTimer;
+  if(!document.getElementById('tab-timer-ov')||t.paused||!t.wallAnchor||!t.cum.length)return;
+  var real=Math.floor((Date.now()-t.wallAnchor)/1000);
+  var curElapsed=_tabElapsedSinceStart();
+  if(real<=curElapsed)return;
+  var total=t.cum[t.cum.length-1];
+  if(real>=total){t.idx=t.cum.length-1;t.rem=0;t.wallAnchor=Date.now()-total*1000;_tabTimerRender();return;}
+  var idx=0;while(t.cum[idx]<=real)idx++;
+  t.idx=idx;t.rem=t.cum[idx]-real;t.wallAnchor=Date.now()-real*1000;
+  _tabTimerRender();
+}
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible'){
+    if(document.getElementById('wod-timer-ov')){_wlRequest();_wodTimerSync();}
+    else if(document.getElementById('tab-timer-ov')){_wlRequest();_tabTimerSync();}
+  }
+});
 var _audioCtx=null;
 var _audioReady=false;
 function _unlockAudio(){
@@ -4572,9 +4626,11 @@ function showTabataTimer(si){
     }
   }
   seq.push({phase:'done',dur:0,label:'DONE!',sub:'',mov:'',intv:0,tot:0});
-  _tabTimer.seq=seq;_tabTimer.idx=0;_tabTimer.rem=seq[0].dur;_tabTimer.paused=false;_tabTimer.si=si;
+  var _tabCum=[],_tabCs=0;seq.forEach(function(p){_tabCs+=p.dur;_tabCum.push(_tabCs);});
+  _tabTimer.seq=seq;_tabTimer.idx=0;_tabTimer.rem=seq[0].dur;_tabTimer.paused=false;_tabTimer.si=si;_tabTimer.cum=_tabCum;_tabTimer.wallAnchor=Date.now();
   if(_tabTimer.iv)clearInterval(_tabTimer.iv);
   _unlockAudio(); // فك قفل الصوت — iOS/Android
+  _wlRequest();
 
   // Build overlay
   var ov=document.createElement('div');
@@ -4874,8 +4930,8 @@ function _tabTimerRender(){
    +_renderTimerExList(t.si);
 }
 
-function _tabTimerToggle(){_tabTimer.paused=!_tabTimer.paused;_tabTimerRender();}
-function _tabTimerStop(){if(_tabTimer.iv)clearInterval(_tabTimer.iv);_tabTimer.iv=null;var ov=document.getElementById('tab-timer-ov');if(ov)ov.remove();_unlockBodyScroll();}
+function _tabTimerToggle(){_tabTimer.paused=!_tabTimer.paused;if(!_tabTimer.paused)_tabTimer.wallAnchor=Date.now()-_tabElapsedSinceStart()*1000;_tabTimerRender();}
+function _tabTimerStop(){if(_tabTimer.iv)clearInterval(_tabTimer.iv);_tabTimer.iv=null;var ov=document.getElementById('tab-timer-ov');if(ov)ov.remove();_unlockBodyScroll();_wlRelease();}
 
 // ─── WOD TIMER DISPATCHER ────────────────────────────────────────────────────
 function showWodTimer(type,si){
@@ -4910,8 +4966,8 @@ function showAmrapTimer(si){
   var totalMin=(sec.type==='Interval 1')?Math.floor(_rawMin/_gabNtm)*_gabNtm:_rawMin;
   var label=(sec.type==='Interval 1'?'Interval AMRAP':sec.type==='YGIG / Partner WOD'?'YGIG AMRAP':'AMRAP');
   var _gabRestSec=(sec.type==='Interval 1')?(function(){var _bm=Math.floor(_rawMin/_gabNtm);return(_bm<=7?1:_bm>=15?3:2)*60;})():0;
-  _wodTimer={iv:null,paused:false,elapsed:0,totalSec:totalMin*60,type:'amrap',curMin:0,totalMin:totalMin,minSec:0,movs:[],finished:false,label:label,si:si,gabRestSec:_gabRestSec,restIv:null,restRemSec:0,restDone:false,gabN:_gabNtm,breaksDone:0};
-  _unlockAudio();_wodBeepStart();
+  _wodTimer={iv:null,paused:false,elapsed:0,totalSec:totalMin*60,type:'amrap',curMin:0,totalMin:totalMin,minSec:0,movs:[],finished:false,label:label,si:si,gabRestSec:_gabRestSec,restIv:null,restRemSec:0,restDone:false,gabN:_gabNtm,breaksDone:0,wallAnchor:Date.now(),restWallAnchor:0};
+  _unlockAudio();_wodBeepStart();_wlRequest();
   var ov=document.createElement('div');ov.id='wod-timer-ov';ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;font-family:inherit;overflow:hidden;direction:ltr;';ov.dir='ltr';
   document.body.appendChild(ov);_lockBodyScroll();_wodTimerRender();
   _wodTimer.iv=setInterval(function(){
@@ -4921,11 +4977,11 @@ function showAmrapTimer(si){
     if(rem<=0){_wodBeepDone();_wodTimer.finished=true;_wodTimerRender();clearInterval(_wodTimer.iv);_wodTimer.iv=null;return;}
     if(_wodTimer.label==='Interval AMRAP'&&(function(){var _n=_wodTimer.gabN||2;for(var _b=1;_b<_n;_b++){if(_wodTimer.elapsed===Math.floor(_wodTimer.totalSec*_b/_n)&&_wodTimer.breaksDone<_b)return true;}return false;})()){_wodTimer.breaksDone=(_wodTimer.breaksDone||0)+1;
       _wodBeep(880,0.15);setTimeout(function(){_wodBeep(880,0.15);},200);setTimeout(function(){_wodBeep(1100,0.4);},400);
-      _wodTimer.paused=true;_wodTimer.halfAlert=true;_wodTimer.restRemSec=_wodTimer.gabRestSec;_wodTimer.restDone=false;
+      _wodTimer.paused=true;_wodTimer.halfAlert=true;_wodTimer.restRemSec=_wodTimer.gabRestSec;_wodTimer.restDone=false;_wodTimer.restWallAnchor=Date.now();
       _wodTimer.restIv=setInterval(function(){
         _wodTimer.restRemSec--;
         if(_wodTimer.restRemSec<=3&&_wodTimer.restRemSec>0)_wodBeepCountdown();
-        if(_wodTimer.restRemSec<=0){clearInterval(_wodTimer.restIv);_wodTimer.restIv=null;_wodTimer.restDone=true;_wodTimer.halfAlert=false;_wodTimer.halfDone=true;_wodTimer.paused=false;_wodBeepStart();}
+        if(_wodTimer.restRemSec<=0){clearInterval(_wodTimer.restIv);_wodTimer.restIv=null;_wodTimer.restDone=true;_wodTimer.halfAlert=false;_wodTimer.halfDone=true;_wodTimer.paused=false;_wodTimer.wallAnchor=Date.now()-_wodTimer.elapsed*1000;_wodBeepStart();}
         _wodTimerRender();
       },1000);
     }
@@ -4938,8 +4994,8 @@ function showRftTimer(si){
   var sec=S.wod.sections[si];
   var _lbl=sec.type==='Chipper'?'CHIPPER':sec.type==='Buy-In / Cash-Out'?'BUY-IN / CASH-OUT':sec.type==='YGIG / Partner WOD'?'YGIG FOR TIME':'FOR TIME';
   var capSec=(S.wod.cfg.time||20)*60;
-  _wodTimer={iv:null,paused:false,elapsed:0,totalSec:capSec,type:'rft',curMin:0,totalMin:0,minSec:0,movs:[],finished:false,label:_lbl,si:si};
-  _unlockAudio();_wodBeepStart();
+  _wodTimer={iv:null,paused:false,elapsed:0,totalSec:capSec,type:'rft',curMin:0,totalMin:0,minSec:0,movs:[],finished:false,label:_lbl,si:si,wallAnchor:Date.now()};
+  _unlockAudio();_wodBeepStart();_wlRequest();
   var ov=document.createElement('div');ov.id='wod-timer-ov';ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;font-family:inherit;overflow:hidden;direction:ltr;';ov.dir='ltr';
   document.body.appendChild(ov);_lockBodyScroll();_wodTimerRender();
   _wodTimer.iv=setInterval(function(){
@@ -4967,8 +5023,8 @@ function showCapTimer(si){
   var _dbFixed=_isDB&&_dbExCnt===2&&_dbEx2Style==='fixed'?parseInt((sec.items[1]&&sec.items[1].detail)||'0')||0:0;
   _wodTimer={iv:null,paused:false,elapsed:0,totalSec:capSec,type:'cap',curMin:0,totalMin:0,minSec:0,movs:[],finished:false,label:_lbl,
     isDB:_isDB,dbStart:_dbStart,dbInc:_dbInc,dbLastMin:-1,flash:false,si:si,
-    dbExCnt:_dbExCnt,dbEx2Style:_dbEx2Style,dbEx1Name:_dbEx1Name,dbEx2Name:_dbEx2Name,dbFixed:_dbFixed};
-  _unlockAudio();_wodBeepStart();
+    dbExCnt:_dbExCnt,dbEx2Style:_dbEx2Style,dbEx1Name:_dbEx1Name,dbEx2Name:_dbEx2Name,dbFixed:_dbFixed,wallAnchor:Date.now()};
+  _unlockAudio();_wodBeepStart();_wlRequest();
   var ov=document.createElement('div');ov.id='wod-timer-ov';ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;font-family:inherit;overflow:hidden;direction:ltr;';ov.dir='ltr';
   document.body.appendChild(ov);_lockBodyScroll();_wodTimerRender();
   _wodTimer.iv=setInterval(function(){
@@ -4994,8 +5050,8 @@ function showEmomTimer(si){
   var _emSets=(sec.infoVars&&sec.infoVars.s)||0;
   var totalMin=(_emCyc*_emSets)||S.wod.cfg.time||20;
   var movs=sec.items.filter(function(it){return it.kind==='str'||it.kind==='cardio';});
-  _wodTimer={iv:null,paused:false,elapsed:0,totalSec:totalMin*60,type:'emom',curMin:1,totalMin:totalMin,minSec:60,movs:movs,finished:false,si:si};
-  _unlockAudio();_wodBeepStart();
+  _wodTimer={iv:null,paused:false,elapsed:0,totalSec:totalMin*60,type:'emom',curMin:1,totalMin:totalMin,minSec:60,movs:movs,finished:false,si:si,wallAnchor:Date.now()};
+  _unlockAudio();_wodBeepStart();_wlRequest();
   var ov=document.createElement('div');ov.id='wod-timer-ov';ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;font-family:inherit;overflow:hidden;direction:ltr;';ov.dir='ltr';
   document.body.appendChild(ov);_lockBodyScroll();_wodTimerRender();
   _wodTimer.iv=setInterval(function(){
@@ -5072,8 +5128,8 @@ function _wodTimerRender(){
    +'</div></div>'
    +_renderTimerExList(wt.si);
 }
-function _wodTimerToggle(){_wodTimer.paused=!_wodTimer.paused;if(!_wodTimer.paused&&_wodTimer.halfAlert){if(_wodTimer.restIv){clearInterval(_wodTimer.restIv);_wodTimer.restIv=null;}_wodTimer.halfAlert=false;_wodTimer.restDone=false;_wodTimer.halfDone=true;}_wodTimerRender();}
-function _wodTimerStop(){if(_wodTimer.iv)clearInterval(_wodTimer.iv);_wodTimer.iv=null;if(_wodTimer.restIv)clearInterval(_wodTimer.restIv);_wodTimer.restIv=null;var ov=document.getElementById('wod-timer-ov');if(ov)ov.remove();_unlockBodyScroll();}
+function _wodTimerToggle(){_wodTimer.paused=!_wodTimer.paused;if(!_wodTimer.paused&&_wodTimer.halfAlert){if(_wodTimer.restIv){clearInterval(_wodTimer.restIv);_wodTimer.restIv=null;}_wodTimer.halfAlert=false;_wodTimer.restDone=false;_wodTimer.halfDone=true;}if(!_wodTimer.paused)_wodTimer.wallAnchor=Date.now()-_wodTimer.elapsed*1000;_wodTimerRender();}
+function _wodTimerStop(){if(_wodTimer.iv)clearInterval(_wodTimer.iv);_wodTimer.iv=null;if(_wodTimer.restIv)clearInterval(_wodTimer.restIv);_wodTimer.restIv=null;var ov=document.getElementById('wod-timer-ov');if(ov)ov.remove();_unlockBodyScroll();_wlRelease();}
 
 // ─────────────────────────────────────────────────────────────────────────────
 function setTabataVal(si,key,val,btn){
